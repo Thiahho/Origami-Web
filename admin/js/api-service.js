@@ -80,7 +80,7 @@ class ApiService {
   // ==================== AUTHENTICATION ====================
 
   async login(email, password) {
-    const response = await this.axios.post("/api/Admin/login", {
+    const response = await this.axios.post("/Admin/login", {
       email,
       password,
     });
@@ -88,12 +88,12 @@ class ApiService {
   }
 
   async logout() {
-    const response = await this.axios.post("/api/Admin/logout");
+    const response = await this.axios.post("/Admin/logout");
     return response.data;
   }
 
   async verifySession() {
-    const response = await this.axios.get("/api/Admin/verify");
+    const response = await this.axios.get("/Admin/verify");
     return response.data;
   }
 
