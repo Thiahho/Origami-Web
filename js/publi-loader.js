@@ -34,7 +34,7 @@ fetch("Footer/footer.html")
       });
     }
 
-    const apiBase = window.apiConfig?.apiUrl || "";
+    const apiBase = window.apiConfig.apiUrl;
     const res = await axios.get(`${apiBase}/api/Admin/verify`, {
       withCredentials: true,
     });
