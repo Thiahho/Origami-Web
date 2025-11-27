@@ -375,6 +375,36 @@ try
 
     var app = builder.Build();
 
+    // 🔄 EJECUTAR MIGRACIONES AUTOMÁTICAMENTE AL INICIAR
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+
+            Log.Information("🔍 Verificando estado de la base de datos...");
+
+            // Aplicar migraciones pendientes
+            var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
+            {
+                Log.Information($"📦 Aplicando {pendingMigrations.Count()} migraciones pendientes...");
+                await context.Database.MigrateAsync();
+                Log.Information("✅ Migraciones aplicadas exitosamente");
+            }
+            else
+            {
+                Log.Information("✅ Base de datos actualizada (no hay migraciones pendientes)");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "❌ Error al ejecutar migraciones de base de datos");
+            throw; // Detener inicio si las migraciones fallan
+        }
+    }
+
     // 11. Configuración de Swagger por entorno
     var enableSwagger = builder.Configuration.GetValue<bool>("Swagger:EnabledInProduction", false);
     var swaggerPassword = Environment.GetEnvironmentVariable("SWAGGER_PASSWORD") 

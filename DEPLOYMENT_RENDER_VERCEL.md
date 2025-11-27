@@ -70,8 +70,9 @@ git status --ignored
 3. **Esperar a que se cree** (1-2 minutos)
 
 4. **Copiar Connection String:**
-   - En la página de la base de datos, encontrar **"Internal Database URL"**
-   - Copiar (formato: `postgresql://user:pass@host:5432/db`)
+   - En la página de la base de datos, encontrar **"Internal Database URL"** (NO la External)
+   - ⚠️ **IMPORTANTE:** Usa la **Internal** porque el backend y la BD están en Render
+   - Copiar (formato: `postgresql://user:pass@host-internal:5432/db`)
    - **GUARDAR** para el siguiente paso
 
 ### Paso 3: Configurar Gmail SMTP (5 minutos)
@@ -186,31 +187,24 @@ git status --ignored
    }
    ```
 
-### Paso 6: Migrar Base de Datos (5 minutos)
+### Paso 6: ✅ Migraciones Automáticas (Ya está configurado)
 
-El backend en Render necesita que se apliquen las migraciones:
+**¡BUENAS NOTICIAS!** El backend ahora ejecuta las migraciones automáticamente al iniciar.
 
-**Opción A: Desde Render Shell (Recomendado)**
+Cuando el backend se inicie en Render por primera vez, verás en los logs:
 
-1. En Render Dashboard → tu servicio → **Shell** (tab)
-2. Ejecutar:
-   ```bash
-   dotnet ef database update
-   ```
+```
+🔍 Verificando estado de la base de datos...
+📦 Aplicando X migraciones pendientes...
+✅ Migraciones aplicadas exitosamente
+```
 
-**Opción B: Desde tu computadora (si tienes acceso directo a la BD)**
+**No necesitas hacer nada manual.** Las tablas se crearán automáticamente.
 
-1. Copiar el **External Database URL** de Render
-2. En tu computadora:
-   ```bash
-   cd Backend
-   # Reemplazar <URL> con el External Database URL
-   dotnet ef database update --connection "<URL>"
-   ```
-
-3. **Verificar que se crearon las tablas:**
-   - En Render → PostgreSQL → Connect (tab)
-   - Ejecutar: `\dt` para ver las tablas
+**Si quieres verificar manualmente:**
+1. En Render → PostgreSQL → **Connect**
+2. Ejecutar: `\dt` para ver las tablas
+3. Deberías ver: `Producto`, `ProductosVariantes`, `Usuario`, `Marca`, `Categoria`, etc.
 
 ### Paso 7: Crear Usuario Administrador (5 minutos)
 
