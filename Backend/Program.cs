@@ -153,14 +153,14 @@ try
         }
         else
         {
-            options.AddPolicy("ProductionCORS", policy =>
-            {
-                policy.WithOrigins(corsOrigins)
-                      .WithMethods("GET", "POST", "PUT", "DELETE")
-                      .WithHeaders("Accept", "Authorization", "Content-Type", "X-Requested-With", "X-API-Key")
-                      .AllowCredentials()
-                      .SetIsOriginAllowed(origin => corsOrigins.Contains(origin));
-            });
+           options.AddPolicy("ProductionCORS", policy =>
+        {
+            policy
+                .SetIsOriginAllowed(_ => true)   // acepta cualquier origen
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
         }
     });
 
