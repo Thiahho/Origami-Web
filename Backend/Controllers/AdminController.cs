@@ -109,7 +109,9 @@ namespace OrigamiBack.Controllers
                 if (_configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
                 {
                     cookieOptions.Secure = true;
-                    cookieOptions.SameSite = SameSiteMode.Strict;
+                    // IMPORTANTE: Lax permite cookies cross-site en navegación (Vercel → Render)
+                    // Strict bloquearía las cookies porque Vercel y Render son dominios diferentes
+                    cookieOptions.SameSite = SameSiteMode.Lax;
                 }
 
                 Response.Cookies.Append("AuthToken", token, cookieOptions);
