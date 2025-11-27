@@ -1,0 +1,141 @@
+<!-- Modal de Configuración de Cotización
+<div class="modal" id="cotizacionModal">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3>Configurar Cotización del Día</h3>
+      <button class="modal-close" onclick="closeCotizacionModal()">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+
+    <form id="cotizacionForm" class="admin-form">
+      <div class="form-info" style="background: rgba(33, 150, 243, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+        <i class="fa-solid fa-info-circle" style="color: #2196F3;"></i>
+        <span style="margin-left: 8px; color: #fff;">
+          Esta cotización se aplicará automáticamente al agregar o editar precios de variantes.
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="cotizacionMoneda">Moneda Base</label>
+        <select id="cotizacionMoneda" name="moneda" required>
+          <option value="USD">USD - Dólar Estadounidense</option>
+          <option value="EUR">EUR - Euro</option>
+          <option value="BRL">BRL - Real Brasileño</option>
+          <option value="OTHER">Otra</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="cotizacionValor">Cotización (1 {moneda} = X ARS)</label>
+        <input
+          type="number"
+          id="cotizacionValor"
+          name="valor"
+          step="0.01"
+          min="0.01"
+          required
+          placeholder="Ej: 1000.50"
+        />
+        <small style="color: rgba(255,255,255,0.7); display: block; margin-top: 4px;">
+          Ingrese cuántos pesos argentinos equivale 1 unidad de la moneda base
+        </small>
+      </div>
+
+      <div class="form-field" id="currentCotizacion" style="background: rgba(76, 175, 80, 0.1); padding: 12px; border-radius: 8px;">
+        <strong>Cotización Actual:</strong>
+        <p id="cotizacionActualDisplay" style="margin: 8px 0 0 0; color: #4CAF50;"></p>
+      </div>
+
+      <div class="form-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-secondary" onclick="closeCotizacionModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary">
+          <i class="fa-solid fa-save"></i>
+          Guardar Cotización
+        </button>
+      </div>
+    </form>
+
+    <div class="form-divider" style="margin: 24px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
+
+    <div class="cotizacion-ejemplo" style="background: rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 8px;">
+      <h4 style="margin: 0 0 12px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+        <i class="fa-solid fa-calculator"></i> Ejemplo de Cálculo
+      </h4>
+      <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.6;">
+        Si la cotización es <strong style="color: #fff;">USD $1000</strong>:<br>
+        • Precio en USD: $100<br>
+        • Precio final en ARS: $100,000<br><br>
+        El precio en ARS se calculará automáticamente cuando agregues variantes.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Abrir modal de cotización
+  function openCotizacionModal() {
+    const modal = document.getElementById('cotizacionModal');
+    const form = document.getElementById('cotizacionForm');
+    const display = document.getElementById('cotizacionActualDisplay');
+
+    // Mostrar cotización actual
+    if (window.cotizacionManager) {
+      const cotizacion = window.cotizacionManager.getCotizacion();
+      if (cotizacion) {
+        display.textContent = window.cotizacionManager.formatearCotizacion();
+        document.getElementById('cotizacionValor').value = cotizacion.valor;
+        document.getElementById('cotizacionMoneda').value = cotizacion.moneda;
+      } else {
+        display.textContent = 'No configurada';
+      }
+    }
+
+    modal.classList.add('active');
+  }
+
+  // Cerrar modal
+  function closeCotizacionModal() {
+    const modal = document.getElementById('cotizacionModal');
+    modal.classList.remove('active');
+  }
+
+  // Guardar cotización
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('cotizacionForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const valor = parseFloat(document.getElementById('cotizacionValor').value);
+        const moneda = document.getElementById('cotizacionMoneda').value;
+
+        if (valor && valor > 0) {
+          if (window.cotizacionManager) {
+            window.cotizacionManager.setCotizacion(valor, moneda);
+
+            // Mostrar mensaje de éxito
+            alert(`Cotización actualizada: ${moneda} $${valor.toFixed(2)}`);
+
+            closeCotizacionModal();
+          }
+        }
+      });
+    }
+  });
+
+  // Cerrar modal al hacer clic fuera
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('cotizacionModal');
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeCotizacionModal();
+        }
+      });
+    }
+  });
+</script>
+ -->

@@ -1,0 +1,13 @@
+{
+  "name": "origami-importados",
+  "version": "1.0.0",
+  "description": "E-commerce platform for Origami Importados",
+  "scripts": {
+    "build": "echo 'No build needed - static site'",
+    "vercel-build": "echo 'Static site ready for deployment'"
+  },
+  "keywords": ["ecommerce", "origami", "importados"],
+  "author": "Origami Importados",
+  "license": "UNLICENSED",
+  "private": true
+}

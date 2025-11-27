@@ -1,0 +1,229 @@
+<header class="header-bar">
+  <h1 style="display: flex; align-items: center; gap: 0.5rem; margin: 0">
+    <span
+      class="logo-circle"
+      aria-hidden="true"
+      style="
+        border-radius: 50%;
+        display: inline-block;
+        background: url(../img/LOGO+CIRCULO.webp?v=2) center/cover;
+        overflow: hidden;
+      "
+    >
+    </span>
+    <a
+      href="../Home.html"
+      style="text-decoration: none; display: flex; align-items: center"
+      ><img
+        src="../img/ORIGWHITE.webp?v=1"
+        alt="Origami"
+    /></a>
+  </h1>
+
+  <nav class="nav-bar">
+    <!-- Botón hamburguesa (solo visible en móvil) -->
+    <a href="javascript:void(0)" class="menu-toggle" id="menuToggle" aria-label="Menú">
+      <i class="fa-solid fa-bars"></i>
+    </a>
+
+    <a href="../Home.html">Inicio</a>
+    <a href="../Tienda.html">Tienda</a>
+    <a href="../Nosotros/nosotros.html">Contacto</a>
+    <a
+      class="carrito"
+      id="cartButton"
+      aria-label="Carrito"
+      href="javascript:void(0)"
+    >
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span id="cartCount" class="cart-badge" aria-live="polite">0</span>
+    </a>
+    <div class="nav-search">
+      <input
+        id="search"
+        class="nav-search__input"
+        type="search"
+        placeholder="Buscar…"
+      />
+      <label for="search" class="nav-search__btn">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </label>
+    </div>
+    <!-- Nuevo: Inicio de sesión -->
+    <a
+      href="../auth/login.html"
+      class="btn-login"
+      id="authButton"
+      aria-label="Iniciar sesión"
+    >
+      <i class="fa-regular fa-user"></i>
+      <span class="btn-login__label">Iniciar sesión</span>
+    </a>
+  </nav>
+</header>
+
+<!-- Menú móvil lateral -->
+<div class="nav-mobile-overlay" id="mobileOverlay"></div>
+<div class="nav-mobile-menu" id="mobileMenu">
+  <div class="nav-mobile-menu__header">
+    <div class="nav-mobile-menu__logo">
+      <img src="../img/ORIGWHITE.webp" alt="Origami">
+    </div>
+    <button class="nav-mobile-menu__close" id="menuClose" aria-label="Cerrar menú">
+      <i class="fa-solid fa-times"></i>
+    </button>
+  </div>
+  <div class="nav-mobile-menu__links">
+    <a href="../Home.html">
+      <i class="fa-solid fa-house"></i>
+      Inicio
+    </a>
+    <a href="../Tienda.html">
+      <i class="fa-solid fa-store"></i>
+      Tienda
+    </a>
+    <a href="../Nosotros/nosotros.html">
+      <i class="fa-solid fa-envelope"></i>
+      Contacto
+    </a>
+    <div class="nav-mobile-menu__divider"></div>
+    <a href="javascript:void(0)" class="nav-mobile-menu__cart" id="mobileCartButton">
+      <i class="fa-solid fa-cart-shopping"></i>
+      Carrito
+      <span class="nav-mobile-badge" id="mobileCartCount">0</span>
+    </a>
+    <a href="../auth/login.html" class="nav-mobile-menu__login" id="mobileAuthButton">
+      <i class="fa-regular fa-user"></i>
+      <span class="nav-mobile-menu__login-text">Iniciar sesión</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  // Script para manejar el menú móvil
+  function initMobileMenu() {
+    const menuToggle = document.getElementById('menuToggle');
+    const menuClose = document.getElementById('menuClose');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+
+    console.log('Inicializando menú móvil...', {
+      menuToggle,
+      menuClose,
+      mobileMenu,
+      mobileOverlay
+    });
+
+    function openMenu(e) {
+      e.preventDefault();
+      console.log('Abriendo menú...');
+      if (mobileMenu && mobileOverlay) {
+        mobileMenu.classList.add('is-open');
+        mobileOverlay.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeMenu(e) {
+      if (e) e.preventDefault();
+      console.log('Cerrando menú...');
+      if (mobileMenu && mobileOverlay) {
+        mobileMenu.classList.remove('is-open');
+        mobileOverlay.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (menuToggle) {
+      menuToggle.addEventListener('click', openMenu);
+      console.log('Event listener añadido al botón hamburguesa');
+    } else {
+      console.error('menuToggle no encontrado');
+    }
+
+    if (menuClose) {
+      menuClose.addEventListener('click', closeMenu);
+      console.log('Event listener añadido al botón cerrar');
+    }
+
+    if (mobileOverlay) {
+      mobileOverlay.addEventListener('click', closeMenu);
+      console.log('Event listener añadido al overlay');
+    }
+
+    // Cerrar menú al hacer clic en un enlace (excepto carrito)
+    const menuLinks = document.querySelectorAll('.nav-mobile-menu__links a:not(.nav-mobile-menu__cart)');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+    console.log('Event listeners añadidos a', menuLinks.length, 'enlaces');
+
+    // Sincronizar contador del carrito entre navbar y menú móvil
+    const cartButton = document.getElementById('cartButton');
+    const mobileCartButton = document.getElementById('mobileCartButton');
+    const cartCount = document.getElementById('cartCount');
+    const mobileCartCount = document.getElementById('mobileCartCount');
+
+    // Sincronizar clicks del carrito móvil
+    if (mobileCartButton && cartButton) {
+      mobileCartButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeMenu();
+        // Simular click en el carrito del navbar
+        setTimeout(() => {
+          cartButton.click();
+        }, 300);
+      });
+    }
+
+    // Observar cambios en el contador del carrito
+    if (cartCount && mobileCartCount) {
+      const observer = new MutationObserver(function(mutations) {
+        mobileCartCount.textContent = cartCount.textContent;
+      });
+      observer.observe(cartCount, { childList: true, characterData: true, subtree: true });
+      // Sincronización inicial
+      mobileCartCount.textContent = cartCount.textContent;
+    }
+
+    // Sincronizar estado de autenticación en menú móvil
+    const authButton = document.getElementById('authButton');
+    const mobileAuthButton = document.getElementById('mobileAuthButton');
+    const mobileAuthText = mobileAuthButton ? mobileAuthButton.querySelector('.nav-mobile-menu__login-text') : null;
+
+    if (authButton && mobileAuthButton && mobileAuthText) {
+      const syncAuthState = () => {
+        const authLabel = authButton.querySelector('.btn-login__label');
+        const authIcon = authButton.querySelector('i');
+        const mobileIcon = mobileAuthButton.querySelector('i');
+
+        if (authLabel) {
+          mobileAuthText.textContent = authLabel.textContent;
+        }
+        if (authIcon && mobileIcon) {
+          mobileIcon.className = authIcon.className;
+        }
+        mobileAuthButton.href = authButton.href;
+      };
+
+      // Sincronización inicial
+      syncAuthState();
+
+      // Observar cambios
+      const authObserver = new MutationObserver(syncAuthState);
+      authObserver.observe(authButton, { childList: true, subtree: true, attributes: true });
+    }
+  }
+
+  // Ejecutar cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+  } else {
+    initMobileMenu();
+  }
+
+  // También intentar después de un pequeño delay por si acaso
+  setTimeout(initMobileMenu, 500);
+</script>
+
+<script src="../js/navbar.js"></script>

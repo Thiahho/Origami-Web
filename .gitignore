@@ -1,0 +1,330 @@
+# ==============================================================================
+# ORIGAMI IMPORTADOS - .GITIGNORE COMPLETO
+# ==============================================================================
+# Este archivo protege archivos sensibles, credenciales, y documentación interna
+# ==============================================================================
+
+# ===== ARCHIVOS DE CONFIGURACIÓN SENSIBLES (¡MUY IMPORTANTE!) =====
+# Nunca subir estos archivos - contienen credenciales y secrets
+*.env
+*.env.*
+!*.env.example
+.env.local
+.env.development
+.env.production
+.env.test
+.env.staging
+
+# Configuraciones específicas con credenciales
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+connectionstrings.json
+secrets.json
+config.local.json
+
+# ===== CERTIFICADOS Y CLAVES (CRÍTICO) =====
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+*.cer
+*.csr
+*.jks
+*.keystore
+ssl/
+certs/
+certificates/
+
+# ===== ARCHIVOS DE DOCUMENTACIÓN INTERNA =====
+# Documentación de desarrollo que no debe ser pública
+*.md
+!README.md
+!CHANGELOG.md
+!LICENSE.md
+!CONTRIBUTING.md
+
+# Permitir archivos MD específicos para deployment
+!DEPLOYMENT_RENDER_VERCEL.md
+!CONFIGURACION_DOMINIO_PROPIO.md
+!CONFIGURACION_APIS.md
+!CONFIGURACION_CONTACTO.md
+
+# Bloquear documentación interna sensible
+BACKEND_VERIFICATION.md
+IMPLEMENTACION_*.md
+OPTIMIZACION_*.md
+VERIFICACION_*.md
+FRONTEND_BACKEND_SYNC.md
+GUIA_*.md
+SECURITY_*.md
+PRODUCTION_READINESS_CHECKLIST.md
+*_INTERNAL.md
+*_NOTAS.md
+*_TODO.md
+
+# ===== ARCHIVOS DE CREDENCIALES Y PASSWORDS =====
+passwords.txt
+credentials.txt
+pins.txt
+secrets.txt
+api-keys.txt
+tokens.txt
+*.credentials
+
+# ===== LOGS Y ARCHIVOS TEMPORALES =====
+logs/
+*.log
+*.tmp
+*.temp
+*.cache
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+
+# ===== BACKEND - .NET / C# =====
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / Rider
+.vs/
+.vscode/
+.idea/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build results específicos
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ide
+*.ide-shm
+*.ide-wal
+*.dbmdl
+*.jfm
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# ===== FRONTEND - Node.js / JavaScript =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.vuepress/dist
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# Lock files (opcional - algunos equipos los commitean)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ===== BASES DE DATOS =====
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# SQL scripts con datos sensibles
+*_dump.sql
+*_backup.sql
+restore_*.sql
+seed_prod.sql
+
+# ===== ARCHIVOS DE SISTEMA OPERATIVO =====
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ===== ARCHIVOS DE MEDIA DE DESARROLLO =====
+# Archivos de diseño y recursos no optimizados
+Figma/
+Design/
+.sketch
+*.psd
+*.ai
+*.xd
+screenshots/
+screen-recordings/
+mockups/
+
+# ===== DEPLOYMENT Y DOCKER =====
+docker-compose.override.yml
+docker-compose.local.yml
+docker-compose.dev.yml
+.dockerignore.local
+
+# Archivos de deployment con credenciales
+deploy-config.json
+.deployment
+publish/
+
+# ===== ARCHIVOS DE TESTING Y DEBUG =====
+coverage/
+.nyc_output/
+*.cover
+*.py,cover
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ===== SCRIPTS DE INSTALACIÓN LOCAL =====
+install-dependencies.ps1
+install-deps.bat
+install.ps1
+start-local.bat
+start-dev.ps1
+setup-local.sh
+
+# ===== ARCHIVOS DE CONFIGURACIÓN DE HERRAMIENTAS =====
+.eslintcache
+.prettierrc.local
+.editorconfig.local
+
+# ===== ARCHIVOS DE BACKUP AUTOMÁTICOS =====
+*.bak
+*.backup
+*.~*
+~$*
+
+# ===== DATOS DE PRUEBA SENSIBLES =====
+test-data/
+sample-data/
+fixtures/
+*_testdata.json
+*_sampledata.sql
+
+# ===== PERMITIR ARCHIVOS ESENCIALES =====
+# Asegurar que estos archivos SÍ se suban
+!.gitignore
+!.gitattributes
+!render.yaml
+!vercel.json
+!package.json
+!docker-compose.yml
+!Dockerfile
+!dockerfile
+!*.csproj
+!*.sln
+
+# Permitir archivos de configuración base (SIN credenciales)
+!appsettings.json
+!tsconfig.json
+!tailwind.config.js
+!vite.config.ts
+
+# Permitir directorios de código fuente
+!Backend/Controllers/
+!Backend/Data/
+!Backend/Services/
+!Backend/Migrations/
+!Backend/Models/
+!Backend/Middleware/
+!Backend/DTOs/
+
+# Permitir frontend
+!js/
+!css/
+!admin/
+!auth/
+!components/
+!Navbar/
+!Footer/
+!Nosotros/
+!*.html
+!*.css
+!*.js
+
+# Permitir imágenes optimizadas (excepto muy grandes)
+!img/
+!images/
+!assets/
+
+# Permitir SQL scripts de base (esquema, no datos)
+!BD/Origami.sql
+!BD/schema.sql
+!BD/migrations/
+
+# ===== NOTAS FINALES =====
+# Este .gitignore protege:
+# ✅ Credenciales y API keys (.env, appsettings.Production.json)
+# ✅ Certificados SSL y keys privadas
+# ✅ Documentación interna sensible (*.md excepto públicos)
+# ✅ Logs y archivos temporales
+# ✅ Build artifacts y dependencies
+# ✅ Archivos de sistema operativo
+# ✅ Datos de prueba y backups
+#
+# SIEMPRE VERIFICAR antes de hacer commit:
+#   git status --ignored
+#   git diff --staged

@@ -1,0 +1,99 @@
+# ============================================================================
+# RENDER.COM CONFIGURATION - Backend API
+# ============================================================================
+# Este archivo configura el deployment del backend .NET en Render.com
+# Render detecta automáticamente este archivo en la raíz del repo
+# ============================================================================
+
+services:
+  # Backend API (.NET 8.0)
+  - type: web
+    name: origami-backend-api
+    runtime: docker
+    repo: https://github.com/TU-USUARIO/origami-liquid.git  # ← Cambiar con tu repo
+    region: oregon  # Puedes cambiar a: oregon, frankfurt, singapore, etc.
+    plan: free  # free, starter ($7/mo), standard ($25/mo)
+    branch: main
+    rootDir: Backend
+    dockerfilePath: Backend/Dockerfile
+
+    # Health check endpoint
+    healthCheckPath: /health/live
+
+    # Variables de entorno (configurar en Render Dashboard)
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:10000  # Render usa puerto 10000
+
+      # Database (usar Render PostgreSQL addon o externo)
+      - key: DATABASE_CONNECTION_STRING
+        fromDatabase:
+          name: origami-db
+          property: connectionString
+
+      # JWT Configuration
+      - key: JWT_SECRET
+        generateValue: true  # Render genera automáticamente
+
+      - key: JWT_ISSUER
+        value: OrigamiImportados-API-Production
+
+      - key: JWT_AUDIENCE
+        value: OrigamiImportados-Client-Production
+
+      # CORS - Configurar con tu dominio de Vercel
+      - key: CORS_ORIGINS
+        value: https://origami-importados.vercel.app,https://www.origamiimportados.com
+
+      # Swagger (opcional, dejar vacío en producción)
+      - key: SWAGGER_PASSWORD
+        value: ""
+
+      # Logging
+      - key: LOG_LEVEL
+        value: Warning
+
+      # SMTP Configuration (Gmail)
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+
+      - key: SMTP_PORT
+        value: 587
+
+      - key: SMTP_USER
+        sync: false  # Configurar manualmente en dashboard
+
+      - key: SMTP_PASSWORD
+        sync: false  # Configurar manualmente en dashboard (contraseña de aplicación)
+
+      - key: EMAIL_DESTINO
+        value: origami.importadosok@gmail.com
+
+      # Cloudflare Turnstile
+      - key: TURNSTILE_SECRET_KEY
+        sync: false  # Configurar manualmente en dashboard
+
+  # PostgreSQL Database
+  - type: pgsql
+    name: origami-db
+    region: oregon
+    plan: free  # 90 días gratis, luego $7/mo para 256MB
+    databaseName: bdOrigami
+    user: origami_prod
+
+    # Render crea automáticamente:
+    # - DATABASE_URL (connection string completa)
+    # - Backups automáticos (planes pagos)
+
+# ============================================================================
+# NOTAS:
+# ============================================================================
+# 1. Render detecta automáticamente este archivo al conectar tu repo
+# 2. Las variables marcadas con "sync: false" deben configurarse en el dashboard
+# 3. La base de datos se crea automáticamente y se vincula al backend
+# 4. El puerto 10000 es estándar en Render (no cambiar)
+# 5. Health checks en /health/live (ya implementado en tu API)
+# ============================================================================

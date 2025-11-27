@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Origami - Detalle de Producto</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="navbar">
+    <div class="navbar__brand">
+      <!-- Logo: cambiar href del src -->
+      <img src="logo.png" alt="Logo" class="navbar__logo" id="navLogo">
+      <!-- Nombre de la marca -->
+      <span class="navbar__name" id="navBrandName">Origami</span>
+    </div>
+    
+    <ul class="navbar__links">
+      <li><a href="index.html" id="linkInicio">Inicio</a></li>
+      <li><a href="tienda.html" id="linkTienda">Tienda</a></li>
+      <li><a href="contacto.html" id="linkContacto">Contacto</a></li>
+    </ul>
+    
+    <div class="navbar__actions">
+      <!-- Carrito -->
+      <button class="navbar__icon" id="cartButton" aria-label="Carrito">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="navbar__badge" id="cartCount">0</span>
+      </button>
+      <!-- Búsqueda -->
+      <button class="navbar__icon" id="searchButton" aria-label="Buscar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+      <!-- Login -->
+      <a href="login.html" class="btn-login" id="authButton">
+        <i class="fa-regular fa-user"></i>
+        <span class="btn-login__label">Iniciar Sesión</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ==================== PRODUCTO DETALLE ==================== -->
+  <main class="product-detail">
+    <div class="product-detail__container">
+      <!-- Imagen del producto -->
+      <div class="product-detail__image-box">
+        <img src="producto.png" alt="Producto" class="product-detail__img" id="detalleImg">
+      </div>
+      
+      <!-- Información del producto -->
+      <div class="product-detail__info">
+        <!-- Nombre/Modelo -->
+        <h1 class="product-detail__title" id="detalleModel">Apple iPhone 13</h1>
+        
+        <div class="product-detail__options">
+          <!-- RAM -->
+          <div class="option-card option-card--half">
+            <span class="option-card__label">Ram</span>
+            <div class="option-card__buttons" id="ramRow">
+              <button class="detalle-opt is-active" data-ram="4gb">4gb</button>
+            </div>
+          </div>
+          
+          <!-- Almacenamiento -->
+          <div class="option-card option-card--half">
+            <span class="option-card__label">Almacenamiento</span>
+            <div class="option-card__buttons" id="capRow">
+              <button class="detalle-opt is-active" data-cap="128">128</button>
+              <button class="detalle-opt" data-cap="256">256</button>
+            </div>
+          </div>
+          
+          <!-- Color -->
+          <div class="option-card option-card--full">
+            <span class="option-card__label">Color</span>
+            <div class="option-card__swatches" id="colorRow">
+              <button class="detalle-swatch" data-color="Graphite" style="--c: #7A7A73;"></button>
+              <button class="detalle-swatch is-active" data-color="Star" style="--c: #F6F6F6;"></button>
+            </div>
+          </div>
+          
+          <!-- Cantidad y Acciones -->
+          <div class="option-card option-card--actions">
+            <div class="qty-section">
+              <span class="option-card__label">Cantidad</span>
+              <div class="qty-controls" id="qtyRow">
+                <button class="detalle-opt" data-q="-1">−</button>
+                <span class="qty-value" id="qty">1</span>
+                <button class="detalle-opt" data-q="+1">+</button>
+              </div>
+              <div class="detalle-help">
+                <span id="stockInfo">Stock disponible: 1</span><br>
+                <span>Condición: <span id="condicionValue">Usado</span></span>
+              </div>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="btn-action btn-action--text" id="addToCartBtn">
+                Agregar<br>al carrito
+              </button>
+              <button class="btn-action btn-action--outline" id="buyBtn">
+                Consultar
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Precio y Resumen -->
+        <div class="product-detail__footer">
+          <span class="product-detail__price" id="price">$540</span>
+          <span class="product-detail__summary" id="summary">
+            <span id="sumModel">Apple iPhone 13</span> - 
+            <span id="sumRam">4gb</span> - 
+            <span id="sumCap">128</span> - 
+            <span id="sumColor">Star</span> - 
+            <span id="sumCondicion">Usado</span> x<span id="sumQty">1</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== CART MODAL ==================== -->
+  <div class="cart-modal" id="cartModal" aria-hidden="true">
+    <div class="cart-modal__overlay" data-cart-close></div>
+    <div class="cart-modal__content">
+      <div class="cart-modal__header">
+        <h2>Tu Carrito</h2>
+        <button class="cart-modal__close" data-cart-close>
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="cart-modal__list" id="cartList">
+        <!-- Items del carrito se renderizan aquí -->
+      </div>
+      <div class="cart-modal__footer">
+        <div class="cart-modal__total">
+          <span>Total:</span>
+          <span id="cartTotal">$0</span>
+        </div>
+        <button class="btn-whatsapp" id="sendWhatsAppBtn">
+          <i class="fa-brands fa-whatsapp"></i> Cotizar por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="cart.js"></script>
+  <script src="navbar.js"></script>
+  <script src="detalleproducto.js"></script>
+</body>
+</html>

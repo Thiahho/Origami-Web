@@ -1,0 +1,82 @@
+{
+  "version": 2,
+  "name": "origami-importados",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "."
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*\\.(?:html|css|js|jpg|jpeg|png|webp|gif|svg|ico|woff|woff2|ttf|eot|json))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "/admin/$1"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "/auth/$1"
+    },
+    {
+      "src": "/Nosotros/(.*)",
+      "dest": "/Nosotros/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(?:js|css|woff|woff2|ttf|eot))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(?:jpg|jpeg|png|webp|gif|svg|ico))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/Home.html"
+    }
+  ]
+}

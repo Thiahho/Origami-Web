@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Administración - Origami</title>
+    <link rel="stylesheet" href="../Home.css" />
+    <link rel="stylesheet" href="../admin/css/admin.css" />
+    <link rel="icon" type="image/webp" href="../img/LOGO+CIRCULO.webp" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      .back-link {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        color: var(--text-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: var(--nav-item-radius);
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .back-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .admin-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--active-text-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: var(--large-radius);
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-group input {
+        padding-right: 3rem;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 2.5rem;
+        top: 40%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: var(--text-muted-color);
+        cursor: pointer;
+        padding: 0.5rem;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+        z-index: 10;
+      }
+
+      .toggle-password:hover {
+        color: var(--active-text-color);
+      }
+
+      .logo-img {
+        width: 120px;
+        height: auto;
+        margin-bottom: 1rem;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="../Home.html" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i>
+      Volver a la tienda
+    </a>
+
+    <div class="login-container">
+      <div class="login-card glass-effect">
+        <div class="login-header">
+          <div class="logo">
+            <img
+              src="../img/LOGO+CIRCULO.webp"
+              alt="Origami"
+              class="logo-img"
+            />
+            <h1>Panel de Administración</h1>
+            <div class="admin-badge">
+              <i class="fa-solid fa-user-shield"></i>
+              Administradores y Empleados
+            </div>
+          </div>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="email">Usuario</label>
+            <div class="input-group">
+              <i class="fa-solid fa-user"></i>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                placeholder="Ingresa tu email"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <div class="input-group">
+              <i class="fa-solid fa-lock"></i>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                placeholder="Ingresa tu contraseña"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                onclick="togglePassword()"
+              >
+                <i class="fa-solid fa-eye" id="toggleIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="login-btn">
+            <i class="fa-solid fa-sign-in-alt"></i>
+            Acceder al Panel
+          </button>
+        </form>
+
+        <div
+          id="errorMessage"
+          class="error-message"
+          style="display: none"
+        ></div>
+
+        <div
+          style="
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+          "
+        >
+          <p style="color: var(--text-muted-color); font-size: 0.85rem">
+            <i class="fa-solid fa-shield-halved"></i>
+            Acceso restringido solo para personal autorizado
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- API deps -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../admin/js/config.js"></script>
+    <script src="../admin/js/api-service.js"></script>
+    <script src="../admin/js/auth.js"></script>
+    <script src="js/user-login.js"></script>
+  </body>
+</html>

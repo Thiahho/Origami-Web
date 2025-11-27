@@ -1,0 +1,88 @@
+<nav class="admin-sidebar">
+  <div class="sidebar-header">
+    <img src="../img/origamiglass.jpeg" alt="Origami" class="sidebar-logo" />
+    <h2>Origami Admin</h2>
+    <button
+      class="sidebar-toggle"
+      aria-label="Colapsar barra"
+      title="Colapsar barra"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+
+  <ul class="sidebar-nav">
+    <li>
+      <a href="dashboard.html"
+        ><i class="fa-solid fa-chart-line"></i> <span>Dashboard</span></a
+      >
+    </li>
+    <li>
+      <a href="products.html"
+        ><i class="fa-solid fa-box"></i> <span>Productos</span></a
+      >
+    </li>
+    <li>
+      <a href="variants.html"
+        ><i class="fa-solid fa-palette"></i> <span>Variantes</span></a
+      >
+    </li>
+    <li>
+      <a href="categories.html"
+        ><i class="fa-solid fa-tags"></i> <span>Categorías</span></a
+      >
+    </li>
+    <li>
+      <a href="marcas.html"
+        ><i class="fa-solid fa-tags"></i> <span>Marcas</span></a
+      >
+    </li>
+    <li>
+      <a href="condiciones.html"
+        ><i class="fa-solid fa-tags"></i> <span>Condiciones</span></a
+      >
+    </li>
+    <!--<li><a href="orders.html"><i class="fa-solid fa-shopping-cart"></i> <span>Pedidos</span></a></li>-->
+    <li>
+      <a href="#" onclick="logout()"
+        ><i class="fa-solid fa-sign-out-alt"></i> <span>Cerrar Sesión</span></a
+      >
+    </li>
+  </ul>
+
+  <!-- Cotización Widget -->
+</nav>
+
+<script>
+  // Actualizar cotización en sidebar cuando se carga la página
+  document.addEventListener("DOMContentLoaded", function () {
+    updateSidebarCotizacion();
+
+    // Escuchar cambios en la cotización
+    window.addEventListener("cotizacionUpdated", updateSidebarCotizacion);
+  });
+
+  function updateSidebarCotizacion() {
+    const display = document.getElementById("sidebarCotizacionDisplay");
+    if (display && window.cotizacionManager) {
+      const cotizacion = window.cotizacionManager.getCotizacion();
+      if (cotizacion) {
+        const fechaFormateada = new Date(cotizacion.fecha).toLocaleDateString(
+          "es-AR",
+          {
+            day: "2-digit",
+            month: "2-digit",
+          }
+        );
+        display.innerHTML = `<strong>${
+          cotizacion.moneda
+        }</strong> $${cotizacion.valor.toFixed(
+          2
+        )}<br><small style="opacity: 0.7; font-size: 0.75rem;">${fechaFormateada}</small>`;
+      } else {
+        display.innerHTML =
+          '<small style="color: #FF9800;">No configurada</small>';
+      }
+    }
+  }
+</script>
