@@ -10,8 +10,8 @@ class ApiService {
       timeout: this.config.apiTimeout,
       withCredentials: true, // Incluir cookies
       headers: {
-        'Content-Type': 'application/json',
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     this.setupInterceptors();
@@ -23,11 +23,13 @@ class ApiService {
     // Request interceptor
     this.axios.interceptors.request.use(
       (config) => {
-        this.config.log(`Request: ${config.method.toUpperCase()} ${config.url}`);
+        this.config.log(
+          `Request: ${config.method.toUpperCase()} ${config.url}`
+        );
         return config;
       },
       (error) => {
-        this.config.error('Request error:', error);
+        this.config.error("Request error:", error);
         return Promise.reject(error);
       }
     );
@@ -39,25 +41,29 @@ class ApiService {
         return response;
       },
       (error) => {
-        this.config.error('Response error:', error);
+        this.config.error("Response error:", error);
 
         if (error.response) {
           // Error con respuesta del servidor
           const apiError = new ApiError(
-            error.response.data?.message || `HTTP Error ${error.response.status}`,
+            error.response.data?.message ||
+              `HTTP Error ${error.response.status}`,
             error.response.status,
             error.response.data
           );
 
           // Si es error de autenticación, redirigir al login
-          if (apiError.isAuthError() && !window.location.pathname.includes('login.html')) {
+          if (
+            apiError.isAuthError() &&
+            !window.location.pathname.includes("login.html")
+          ) {
             this.handleAuthError();
           }
 
           return Promise.reject(apiError);
         } else if (error.request) {
           // Request enviado pero sin respuesta
-          return Promise.reject(new ApiError('No response from server', 0));
+          return Promise.reject(new ApiError("No response from server", 0));
         } else {
           // Error al configurar el request
           return Promise.reject(new ApiError(error.message, 0));
@@ -67,37 +73,37 @@ class ApiService {
   }
 
   handleAuthError() {
-    sessionStorage.removeItem('adminSession');
-    window.location.href = '../auth/login.html';
+    sessionStorage.removeItem("adminSession");
+    window.location.href = "../auth/login.html";
   }
 
   // ==================== AUTHENTICATION ====================
 
   async login(email, password) {
-    const response = await this.axios.post('/Admin/login', { email, password });
+    const response = await this.axios.post("/Admin/login", { email, password });
     return response.data;
   }
 
   async logout() {
-    const response = await this.axios.post('/Admin/logout');
+    const response = await this.axios.post("/Admin/logout");
     return response.data;
   }
 
   async verifySession() {
-    const response = await this.axios.get('/Admin/verify');
+    const response = await this.axios.get("/Admin/verify");
     return response.data;
   }
 
   // ==================== PRODUCTS ====================
 
   async getProducts() {
-    const response = await this.axios.get('/api/Producto');
+    const response = await this.axios.get("/api/Producto");
     return response.data;
   }
 
   // ==================== MARCAS ====================
   async getBrands() {
-    const response = await this.axios.get('/api/Marca');
+    const response = await this.axios.get("/api/Marca");
     return response.data;
   }
 
@@ -107,7 +113,7 @@ class ApiService {
   }
 
   async createBrand(data) {
-    const response = await this.axios.post('/api/Marca', data);
+    const response = await this.axios.post("/api/Marca", data);
     return response.data;
   }
 
@@ -127,7 +133,7 @@ class ApiService {
   }
 
   async createProduct(productData) {
-    const response = await this.axios.post('/api/Producto', productData);
+    const response = await this.axios.post("/api/Producto", productData);
     return response.data;
   }
 
@@ -144,61 +150,84 @@ class ApiService {
   // ==================== VARIANTS ====================
 
   async getVariants(productId) {
-    const response = await this.axios.get(`/api/Producto/${productId}/variantes`);
+    const response = await this.axios.get(
+      `/api/Producto/${productId}/variantes`
+    );
     return response.data;
   }
 
   async getVariant(variantId) {
-    const response = await this.axios.get(`/api/Producto/variante/${variantId}`);
+    const response = await this.axios.get(
+      `/api/Producto/variante/${variantId}`
+    );
     return response.data;
   }
 
   async createVariant(variantData) {
-    const response = await this.axios.post('/api/Producto/variante', variantData);
+    const response = await this.axios.post(
+      "/api/Producto/variante",
+      variantData
+    );
     return response.data;
   }
 
   async updateVariant(variantId, variantData) {
-    const response = await this.axios.put(`/api/Producto/variante/${variantId}`, variantData);
+    const response = await this.axios.put(
+      `/api/Producto/variante/${variantId}`,
+      variantData
+    );
     return response.data;
   }
 
   async deleteVariant(variantId) {
-    const response = await this.axios.delete(`/api/Producto/variante/${variantId}`);
+    const response = await this.axios.delete(
+      `/api/Producto/variante/${variantId}`
+    );
     return response.data;
   }
 
   // ==================== VARIANT OPTIONS ====================
 
   async getRamOptions(productId) {
-    const response = await this.axios.get(`/api/Producto/${productId}/Ram-Opciones`);
+    const response = await this.axios.get(
+      `/api/Producto/${productId}/Ram-Opciones`
+    );
     return response.data;
   }
 
   async getStorageOptions(productId, ram) {
-    const response = await this.axios.get(`/api/Producto/${productId}/Almacenamiento-Opciones`, {
-      params: { ram }
-    });
+    const response = await this.axios.get(
+      `/api/Producto/${productId}/Almacenamiento-Opciones`,
+      {
+        params: { ram },
+      }
+    );
     return response.data;
   }
 
   async getColorOptions(productId, ram, storage) {
-    const response = await this.axios.get(`/api/Producto/${productId}/Color-Opciones`, {
-      params: { ram, almacenamiento: storage }
-    });
+    const response = await this.axios.get(
+      `/api/Producto/${productId}/Color-Opciones`,
+      {
+        params: { ram, almacenamiento: storage },
+      }
+    );
     return response.data;
   }
 
   async getVariantBySpec(productId, ram, storage, color) {
-    const response = await this.axios.get(`/api/Producto/${productId}/variante`, {
-      params: { ram, storage, color }
-    });
+    const response = await this.axios.get(
+      `/api/Producto/${productId}/variante`,
+      {
+        params: { ram, storage, color },
+      }
+    );
     return response.data;
   }
 
   // ==================== CATEGORIES ====================
   async getCategories() {
-    const response = await this.axios.get('/api/Categoria');
+    const response = await this.axios.get("/api/Categoria");
     return response.data;
   }
 
@@ -208,7 +237,7 @@ class ApiService {
   }
 
   async createCategory(data) {
-    const response = await this.axios.post('/api/Categoria', data);
+    const response = await this.axios.post("/api/Categoria", data);
     return response.data;
   }
 
@@ -224,7 +253,7 @@ class ApiService {
 
   // ==================== CONDICIONES ====================
   async getCondiciones() {
-    const response = await this.axios.get('/api/Condiciones');
+    const response = await this.axios.get("/api/Condiciones");
     return response.data;
   }
 
@@ -234,7 +263,7 @@ class ApiService {
   }
 
   async createCondicion(data) {
-    const response = await this.axios.post('/api/Condiciones', data);
+    const response = await this.axios.post("/api/Condiciones", data);
     return response.data;
   }
 
@@ -249,12 +278,14 @@ class ApiService {
   }
 
   async getCondicionesActivas() {
-    const response = await this.axios.get('/api/Condiciones/activas');
+    const response = await this.axios.get("/api/Condiciones/activas");
     return response.data;
   }
 
   async toggleCondicionActivo(id) {
-    const response = await this.axios.patch(`/api/Condiciones/${id}/toggle-activo`);
+    const response = await this.axios.patch(
+      `/api/Condiciones/${id}/toggle-activo`
+    );
     return response.data;
   }
 }
@@ -264,7 +295,7 @@ class ApiService {
 class ApiError extends Error {
   constructor(message, status, data = null) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.status = status;
     this.data = data;
   }
