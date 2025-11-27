@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using OrigamiBack.Middleware;
 namespace OrigamiBack.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "ADMIN")]
     // [EnableRateLimiting("AuthPolicy")] // Deshabilitado para permitir intentos ilimitados
