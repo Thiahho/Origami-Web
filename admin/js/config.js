@@ -20,7 +20,7 @@ class ApiConfig {
   getConfig() {
     const configs = {
       development: {
-        apiUrl: "http://localhost:5015", // Backend API URL
+        apiUrl: "", // Backend API URL
         apiTimeout: 30000, // 30 segundos
         enableLogging: true,
       },

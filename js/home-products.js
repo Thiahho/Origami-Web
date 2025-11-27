@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       let products = [];
       try {
-        const res = await axios.get("/api/Producto/paged", {
+        const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/paged") : "/api/Producto/paged";
+        const res = await axios.get(apiUrl, {
           params: { page: 1, pageSize: 30 },
         });
         const data = res.data || {};
@@ -58,7 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
           : [];
       } catch (e) {
         console.warn("Paged endpoint falló, usando /api/Producto clásico:", e);
-        const fallback = await axios.get("/api/Producto");
+        const fallbackUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto") : "/api/Producto";
+        const fallback = await axios.get(fallbackUrl);
         products = Array.isArray(fallback.data)
           ? fallback.data
           : fallback.data?.items || [];

@@ -295,7 +295,8 @@ async function loadProductsFromApi() {
     // Paginado inicial: 1ra página grande para no romper filtros locales; si falla, fallback al endpoint antiguo
     let products = [];
     try {
-      const res = await axios.get("/api/Producto/paged", {
+      const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/paged") : "/api/Producto/paged";
+      const res = await axios.get(apiUrl, {
         params: { page: 1, pageSize: 100 },
       });
       const data = res.data || {};
@@ -306,7 +307,8 @@ async function loadProductsFromApi() {
         : [];
     } catch (e) {
       console.warn("Paged endpoint falló, usando /api/Producto clásico:", e);
-      const fallback = await axios.get("/api/Producto");
+      const fallbackUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto") : "/api/Producto";
+      const fallback = await axios.get(fallbackUrl);
       products = Array.isArray(fallback.data)
         ? fallback.data
         : fallback.data?.items || [];

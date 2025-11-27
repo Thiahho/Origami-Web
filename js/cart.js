@@ -254,9 +254,8 @@
         missing.map(async ({ it, idx }) => {
           try {
             //   //console.log(`🔎 Fetching condition for variant ${it.variantId}...`);
-            const res = await axios.get(
-              `/api/Producto/variante/${it.variantId}`
-            );
+            const variantUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/variante/${it.variantId}`) : `/api/Producto/variante/${it.variantId}`;
+            const res = await axios.get(variantUrl);
             const data = res.data || {};
             // //console.log(`✅ API response for variant ${it.variantId}:`, data);
 

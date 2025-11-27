@@ -415,7 +415,8 @@ async function loadProductData() {
 
     // Obtener producto
     //console.log("Fetching product with ID:", productId);
-    const res = await axios.get(`/api/Producto/${productId}`);
+    const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}`) : `/api/Producto/${productId}`;
+    const res = await axios.get(apiUrl);
     const product = res.data;
 
     if (!product) {
@@ -442,9 +443,8 @@ async function loadProductData() {
 
     // Obtener variantes
     //console.log("Fetching variants for product ID:", productId);
-    const variantesRes = await axios.get(
-      `/api/Producto/${productId}/variantes`
-    );
+    const variantesUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}/variantes`) : `/api/Producto/${productId}/variantes`;
+    const variantesRes = await axios.get(variantesUrl);
     //console.log("Variants API response:", variantesRes);
     const variantes = Array.isArray(variantesRes.data) ? variantesRes.data : [];
 
