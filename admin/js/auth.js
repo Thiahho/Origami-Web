@@ -5,8 +5,8 @@ class AuthManager {
     this.isNavigating = false;
     this.tabId = `tab-${Date.now()}-${Math.random()}`;
     this.setupTabTracking();
-    this.setupSessionDetection();
     this.setupBeforeUnloadHandler();
+    // NO ejecutar setupSessionDetection() aquí - se ejecutará después de verificar auth
     this.init();
   }
 
@@ -108,10 +108,26 @@ class AuthManager {
 
     console.log(`[Auth] Tabs activos: ${activeTabs.length}, Había sesión: ${hadSessionBefore}`);
 
-    // Si no hay pestañas activas pero había sesión, cerrar sesión
+    // IMPORTANTE: Solo cerrar sesión si no hay tabs Y no estamos en proceso de login
+    // El tab actual ya se registró en setupTabTracking(), así que si activeTabs.length === 0
+    // es porque realmente no hay tabs (no porque estemos en medio del login)
+
+    // Dar 1 segundo de gracia para que el tab actual se registre completamente
     if (activeTabs.length === 0 && hadSessionBefore) {
-      console.log("[Auth] No hay pestañas activas - limpiando sesión");
-      this.performTabCloseLogout();
+      // Verificar una vez más después de un pequeño delay
+      setTimeout(() => {
+        const recheckTabs = JSON.parse(localStorage.getItem("openAdminTabs") || "[]");
+        const recheckActive = recheckTabs.filter(tab => {
+          if (typeof tab === 'string') return true;
+          if (tab.lastSeen === 0) return false;
+          return (Date.now() - tab.lastSeen) < 10000;
+        });
+
+        if (recheckActive.length === 0) {
+          console.log("[Auth] No hay pestañas activas - limpiando sesión");
+          this.performTabCloseLogout();
+        }
+      }, 1000);
     } else if (activeTabs.length < openTabs.length) {
       // Actualizar la lista eliminando tabs inactivos
       localStorage.setItem("openAdminTabs", JSON.stringify(activeTabs));
@@ -327,6 +343,8 @@ class AuthManager {
       } catch (error) {
         // Not authenticated, stay on login page
       }
+      // Ejecutar session detection DESPUÉS de verificar
+      this.setupSessionDetection();
       return;
     }
 
@@ -357,12 +375,23 @@ class AuthManager {
         localStorage.setItem("hadAdminSession", "true");
 
         // //console.log("[Auth] Sesión válida:", sessionData);
+
+        // Ejecutar session detection DESPUÉS de verificar y guardar sesión
+        this.setupSessionDetection();
+
         return sessionData;
       } catch (error) {
         // Not authenticated, redirect to login
         console.error("[Auth] Error verificando sesión:", error);
+
+        // Ejecutar session detection antes de logout
+        this.setupSessionDetection();
+
         this.logout();
       }
+    } else {
+      // No estamos en página de admin, ejecutar session detection de todas formas
+      this.setupSessionDetection();
     }
   }
 
