@@ -88,12 +88,12 @@ class ApiService {
   }
 
   async logout() {
-    const response = await this.axios.post("/Admin/logout");
+    const response = await this.axios.post("/api/Admin/logout");
     return response.data;
   }
 
   async verifySession() {
-    const response = await this.axios.get("/Admin/verify");
+    const response = await this.axios.get("/api/Admin/verify");
     return response.data;
   }
 
