@@ -26,7 +26,7 @@ async function initNavbarAuth() {
     }
 
     // Verificar autenticación usando el endpoint del backend
-    const res = await axios.get("/Admin/verify", { withCredentials: true });
+    const res = await axios.get("/api/Admin/verify", { withCredentials: true });
 
     if (res?.data?.isAuthenticated) {
       // Usuario logueado - cambiar a "Volver al Panel"
@@ -68,7 +68,7 @@ async function isUserAuthenticated() {
       });
     }
 
-    const res = await axios.get("/Admin/verify", { withCredentials: true });
+    const res = await axios.get("/api/Admin/verify", { withCredentials: true });
     return res?.data?.isAuthenticated || false;
   } catch (error) {
     //console.log("Error verificando autenticación:", error.message);
