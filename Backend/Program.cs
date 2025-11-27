@@ -385,12 +385,12 @@ try
 
             Log.Information("🔍 Verificando estado de la base de datos...");
 
-            // Aplicar migraciones pendientes
-            var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+            // Aplicar migraciones pendientes (sincrónico para evitar problemas con using)
+            var pendingMigrations = context.Database.GetPendingMigrations().ToList();
             if (pendingMigrations.Any())
             {
-                Log.Information($"📦 Aplicando {pendingMigrations.Count()} migraciones pendientes...");
-                await context.Database.MigrateAsync();
+                Log.Information($"📦 Aplicando {pendingMigrations.Count} migraciones pendientes...");
+                context.Database.Migrate();
                 Log.Information("✅ Migraciones aplicadas exitosamente");
             }
             else
