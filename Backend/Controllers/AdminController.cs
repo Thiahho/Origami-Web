@@ -117,11 +117,12 @@ namespace OrigamiBack.Controllers
                 Response.Cookies.Append("AuthToken", token, cookieOptions);
 
                 // Log para debug
-            /*     Console.WriteLine($"\n========== LOGIN ==========");
+                Console.WriteLine($"\n========== LOGIN ==========");
                 Console.WriteLine($"✅ Usuario: {usuario.Email}");
-                Console.WriteLine($"✅ Cookie de sesión configurada: HttpOnly={cookieOptions.HttpOnly}, SameSite={cookieOptions.SameSite}");
-                Console.WriteLine($"✅ Se eliminará al cerrar el navegador");
-                Console.WriteLine($"===========================\n"); */
+                Console.WriteLine($"✅ Token generado (primeros 20 chars): {token.Substring(0, Math.Min(20, token.Length))}...");
+                Console.WriteLine($"✅ Cookie configurada: HttpOnly={cookieOptions.HttpOnly}, Secure={cookieOptions.Secure}, SameSite={cookieOptions.SameSite}");
+                Console.WriteLine($"✅ Environment: {_configuration["ASPNETCORE_ENVIRONMENT"]}");
+                Console.WriteLine($"===========================\n");
 
                 return Ok(new
                 {
@@ -169,26 +170,27 @@ namespace OrigamiBack.Controllers
         {
             try
             {
-                // Console.WriteLine("\n========== VERIFY SESSION ==========");
-                //Console.WriteLine($"Cookies recibidas: {Request.Cookies.Count}");
+                Console.WriteLine("\n========== VERIFY SESSION ==========");
+                Console.WriteLine($"Cookies recibidas: {Request.Cookies.Count}");
 
                 foreach (var cookie in Request.Cookies)
                 {
-                 //   Console.WriteLine($"  - {cookie.Key}");
+                    Console.WriteLine($"  - {cookie.Key}: {cookie.Value?.Substring(0, Math.Min(20, cookie.Value.Length))}...");
                 }
 
                 // Verificar si hay token en cookies
                 if (Request.Cookies.TryGetValue("AuthToken", out var token))
                 {
-               //     Console.WriteLine($"✅ AuthToken ENCONTRADO");
-              //      Console.WriteLine($"Usuario autenticado: {User.Identity?.IsAuthenticated}");
+                    Console.WriteLine($"✅ AuthToken ENCONTRADO");
+                    Console.WriteLine($"Usuario autenticado: {User.Identity?.IsAuthenticated}");
+                    Console.WriteLine($"Claims count: {User.Claims?.Count() ?? 0}");
 
                     // El middleware JwtCookieMiddleware ya habrá validado el token
                     if (User.Identity?.IsAuthenticated == true)
                     {
                         var email = User.FindFirst(ClaimTypes.Email)?.Value;
-                   //     Console.WriteLine($"✅ SESIÓN VÁLIDA para: {email}");
-                     //   Console.WriteLine($"====================================\n");
+                        Console.WriteLine($"✅ SESIÓN VÁLIDA para: {email}");
+                        Console.WriteLine($"====================================\n");
 
                         return Ok(new
                         {
@@ -203,22 +205,22 @@ namespace OrigamiBack.Controllers
                     }
                     else
                     {
-                       // Console.WriteLine("❌ Token presente pero NO autenticado (middleware falló)");
-                    //    Console.WriteLine($"====================================\n");
+                        Console.WriteLine("❌ Token presente pero NO autenticado (middleware falló)");
+                        Console.WriteLine($"====================================\n");
                     }
                 }
                 else
                 {
-                  //  Console.WriteLine("❌ AuthToken NO encontrado");
-                  //  Console.WriteLine($"====================================\n");
+                    Console.WriteLine("❌ AuthToken NO encontrado");
+                    Console.WriteLine($"====================================\n");
                 }
 
                 return Ok(new { isAuthenticated = false });
             }
             catch (Exception ex)
             {
-              //  Console.WriteLine($"❌ Exception: {ex.Message}");
-              //  Console.WriteLine($"====================================\n");
+                Console.WriteLine($"❌ Exception: {ex.Message}");
+                Console.WriteLine($"====================================\n");
                 return StatusCode(500, new { message = "Error al verificar sesión", error = ex.Message });
             }
         }
