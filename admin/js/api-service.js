@@ -80,7 +80,7 @@ class ApiService {
   // ==================== AUTHENTICATION ====================
 
   async login(email, password) {
-    const response = await this.axios.post("/Admin/login", {
+    const response = await this.axios.post("/api/Admin/login", {
       email,
       password,
     });
