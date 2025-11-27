@@ -10,48 +10,14 @@
       }
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*\\.(?:html|css|js|jpg|jpeg|png|webp|gif|svg|ico|woff|woff2|ttf|eot|json))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/admin/(.*)",
-      "dest": "/admin/$1"
-    },
-    {
-      "src": "/auth/(.*)",
-      "dest": "/auth/$1"
-    },
-    {
-      "src": "/Nosotros/(.*)",
-      "dest": "/Nosotros/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     },
     {
@@ -74,9 +40,7 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/Home.html"
-    }
+    { "source": "/", "destination": "/Home.html" },
+    { "source": "/(.*)", "destination": "/$1" }
   ]
 }
