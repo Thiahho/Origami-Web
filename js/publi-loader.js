@@ -34,7 +34,10 @@ fetch("Footer/footer.html")
       });
     }
 
-    const res = await axios.get("/api/Admin/verify", { withCredentials: true });
+    const apiBase = window.apiConfig?.apiUrl || "";
+    const res = await axios.get(`${apiBase}/api/Admin/verify`, {
+      withCredentials: true,
+    });
     if (res?.data?.isAuthenticated) {
       const btn = document.createElement("a");
       btn.href = "/admin/dashboard.html";

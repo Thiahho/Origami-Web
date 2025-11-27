@@ -25,9 +25,11 @@ async function initNavbarAuth() {
       });
     }
 
+    const apiBase = window.apiConfig?.apiUrl || "";
     // Verificar autenticación usando el endpoint del backend
-    const res = await axios.get("/api/Admin/verify", { withCredentials: true });
-
+    const res = await axios.get(`${apiBase}/api/Admin/verify`, {
+      withCredentials: true,
+    });
     if (res?.data?.isAuthenticated) {
       // Usuario logueado - cambiar a "Volver al Panel"
       authButton.href = "admin/dashboard.html";
@@ -68,7 +70,10 @@ async function isUserAuthenticated() {
       });
     }
 
-    const res = await axios.get("/api/Admin/verify", { withCredentials: true });
+    const apiBase = window.apiConfig?.apiUrl || "";
+    const res = await axios.get(`${apiBase}/api/Admin/verify`, {
+      withCredentials: true,
+    });
     return res?.data?.isAuthenticated || false;
   } catch (error) {
     //console.log("Error verificando autenticación:", error.message);

@@ -1,4 +1,10 @@
 // ==================== API SERVICE WITH AXIOS ====================
+window.apiConfig = {
+  apiUrl: "https://origami-web.onrender.com", // backend Render
+  apiTimeout: 10000,
+  log: console.log,
+  error: console.error,
+};
 
 class ApiService {
   constructor() {
