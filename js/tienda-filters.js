@@ -373,7 +373,7 @@ async function loadProductsFromApi() {
         const imgBase64 = p.img || p.Img;
         const img = imgBase64
           ? `data:image/webp;base64,${imgBase64}`
-          : "img/CanvaLogoWeb.webp";
+          : "/img/LOGO+CIRCULO.webp";
         const catLabel = (p.Categoria || p.categoria || "Otros").toString();
 
         const article = document.createElement("article");

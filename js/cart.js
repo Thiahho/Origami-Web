@@ -62,7 +62,7 @@
         }); */
         row.innerHTML = `
           <img class="cart-item__img" src="${
-            it.img || "img/CanvaLogoWeb.webp"
+            it.img || "/img/LOGO+CIRCULO.webp"
           }" alt="${it.model}">
           <div class="cart-item__info">
             <div class="cart-item__title">${it.model}</div>

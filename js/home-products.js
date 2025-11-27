@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const backgroundImages = ["img/PLANTILLA 1.webp"];
+  const backgroundImages = ["/img/PLANTILLA 1.webp"];
 
   let currentImageIndex = 0;
   const body = document.body;
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const imgBase64 = p.img || p.Img;
         const img = imgBase64
           ? `data:image/webp;base64,${imgBase64}`
-          : "img/CanvaLogoWeb.webp";
+          : "/img/LOGO+CIRCULO.webp";
         const productId = p.id ?? p.Id;
 
         const a = document.createElement("a");
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const imgBase64 = p.img || p.Img;
           const img = imgBase64
             ? `data:image/webp;base64,${imgBase64}`
-            : "img/CanvaLogoWeb.webp";
+            : "/img/LOGO+CIRCULO.webp";
           const productId = p.id ?? p.Id;
 
           const a = document.createElement("a");
