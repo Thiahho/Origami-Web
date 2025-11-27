@@ -122,47 +122,54 @@ try
     });
 
     // 2. Configuración de CORS dinámica
-    builder.Services.AddCors(options =>
+   builder.Services.AddCors(options =>
+{
+    var environment = builder.Environment.EnvironmentName;
+
+    // Validar que existan orígenes configurados
+    if (corsOrigins == null || corsOrigins.Length == 0)
     {
-        var environment = builder.Environment.EnvironmentName;
+        throw new InvalidOperationException("🔴 CORS:AllowedOrigins debe estar configurado");
+    }
 
-        // Validar que existan orígenes configurados
-        if (corsOrigins == null || corsOrigins.Length == 0)
-        {
-            throw new InvalidOperationException("🔴 CORS:AllowedOrigins debe estar configurado");
-        }
+    // Normalizar orígenes
+    corsOrigins = corsOrigins
+        .Select(o => o.Trim())
+        .Where(o => !string.IsNullOrWhiteSpace(o))
+        .ToArray();
 
-        // Validar que los orígenes sean URLs válidas
-        foreach (var origin in corsOrigins)
+    // Validar que los orígenes sean URLs válidas
+    foreach (var origin in corsOrigins)
+    {
+        if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
         {
-            if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
-            {
-                throw new InvalidOperationException($"🔴 URL de origen inválida: {origin}");
-            }
+            throw new InvalidOperationException($"🔴 URL de origen inválida: {origin}");
         }
+    }
 
-        if (environment == "Development")
+    if (environment == "Development")
+    {
+        options.AddPolicy("DevCORS", policy =>
         {
-            options.AddPolicy("DevCORS", policy =>
-            {
-                policy.WithOrigins(corsOrigins)
-                      .AllowAnyMethod()
-                      .AllowAnyHeader()
-                      .AllowCredentials();
-            });
-        }
-        else
-        {
-           options.AddPolicy("ProductionCORS", policy =>
+            policy.WithOrigins(corsOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    }
+    else
+    {
+        // 🔓 Producción (modo debug): permitir cualquier origin
+        options.AddPolicy("ProductionCORS", policy =>
         {
             policy
-                .SetIsOriginAllowed(_ => true)   // acepta cualquier origen
+                .SetIsOriginAllowed(_ => true) // acepta cualquier Origin
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
         });
-        }
-    });
+    }
+});
 
     var corsPolicy = builder.Environment.IsDevelopment() ? "DevCORS" : "ProductionCORS";
 
