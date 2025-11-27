@@ -27,7 +27,7 @@ class ApiConfig {
       production: {
         // ⚠️ IMPORTANTE: Actualizar con tu URL de Render después del deployment
         // Formato: https://origami-backend-api.onrender.com
-        apiUrl: "https://origami-backend-api.onrender.com",
+        apiUrl: "https://origamiimportados.com",
         apiTimeout: 30000,
         enableLogging: false,
       },
