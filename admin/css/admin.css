@@ -174,7 +174,7 @@ body {
   position: fixed;
   height: 100vh;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 1001;
   left: 0;
   top: 0;
 }
@@ -902,7 +902,7 @@ body {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 1002;
   }
 
   .sidebar-overlay.is-open {
