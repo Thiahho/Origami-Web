@@ -8,7 +8,21 @@ document.addEventListener("DOMContentLoaded", function () {
       return res.text();
     })
     .then((html) => {
-      document.getElementById("navbar-placeholder").innerHTML = html;
+      const placeholder = document.getElementById("navbar-placeholder");
+      placeholder.innerHTML = html;
+
+      // Extraer y ejecutar los scripts del navbar
+      const scripts = placeholder.querySelectorAll("script");
+      scripts.forEach((oldScript) => {
+        const newScript = document.createElement("script");
+        Array.from(oldScript.attributes).forEach((attr) =>
+          newScript.setAttribute(attr.name, attr.value)
+        );
+        newScript.textContent = oldScript.textContent;
+        document.body.appendChild(newScript);
+        oldScript.remove();
+      });
+
       // Ejecutar el script del navbar después de insertarlo
       setTimeout(async () => {
         if (typeof initNavbarAuth === "function") {
