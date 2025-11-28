@@ -664,7 +664,10 @@ section h2 {
 
 @media (max-width: 768px) {
   .menu-toggle {
-    display: flex !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
   }
 }
 .nav-bar a {
@@ -1155,8 +1158,10 @@ main.store {
   }
 
   /* Ocultar links del navbar en móvil, mantener solo iconos */
-  .nav-bar > a:not(.carrito):not(.btn-login):not(.menu-toggle) {
-    display: none !important;
+  .nav-bar > a:not(.menu-toggle):not(.carrito),
+  .nav-bar .nav-search,
+  .nav-bar .btn-login {
+    display: none;
   }
 
   /* Ocultar la búsqueda en móvil */
