@@ -1109,6 +1109,8 @@ main.store {
     gap: 6px !important;
     flex-wrap: nowrap;
     width: min(96%, 100%) !important;
+    justify-content: space-between;
+    overflow: hidden;
   }
 
   .header-bar h1 {
@@ -1116,6 +1118,13 @@ main.store {
     flex-shrink: 1;
     min-width: 0;
     gap: 4px;
+  }
+
+  .header-bar h1 {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    margin: 0 auto 0 8px !important;
   }
 
   .header-bar h1 .logo-circle {
@@ -1141,7 +1150,7 @@ main.store {
     display: none !important;
   }
 
-  /* Botón hamburguesa */
+  /* Botón hamburguesa al final */
   .menu-toggle {
     display: flex !important;
     align-items: center;
@@ -1154,7 +1163,7 @@ main.store {
     border-radius: 8px;
     cursor: pointer;
     flex-shrink: 0;
-    order: -1;
+    order: 3;
     color: white;
     text-decoration: none;
   }
@@ -1169,9 +1178,10 @@ main.store {
     flex-shrink: 0;
     display: flex !important;
     align-items: center;
-    padding-right: 2px;
-    overflow: visible !important;
+    padding-right: 0;
+    overflow: hidden;
     position: relative;
+    flex-wrap: nowrap;
   }
 
   /* Menú lateral (sidebar) */
@@ -1316,15 +1326,17 @@ main.store {
     visibility: visible;
   }
 
-  /* Carrito primero */
+  /* Carrito primero después del logo */
   .carrito {
+    order: 1;
+  }
+
+  /* Login en el medio */
+  .btn-login {
     order: 2;
   }
 
-  /* Login al final */
-  .btn-login {
-    order: 3;
-  }
+  /* Hamburger al final (ya definido arriba con order: 3) */
 
   /* Carrito más pequeño */
   .carrito {
@@ -1392,6 +1404,8 @@ main.store {
     padding: 0 10px !important;
     gap: 4px !important;
     width: min(98%, 100%) !important;
+    justify-content: space-between;
+    overflow: hidden;
   }
 
   .header-bar h1 {
