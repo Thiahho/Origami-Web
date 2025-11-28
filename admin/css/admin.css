@@ -910,6 +910,7 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .admin-sidebar,
   .sidebar {
     position: fixed;
     left: -280px;
@@ -921,6 +922,7 @@ body {
     overflow-y: auto;
   }
 
+  .admin-sidebar.is-open,
   .sidebar.is-open {
     left: 0;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
@@ -1032,6 +1034,7 @@ body {
 
 /* Móviles (480px - 600px) */
 @media (max-width: 600px) {
+  .admin-sidebar,
   .sidebar {
     width: 260px;
     left: -260px;
@@ -1133,6 +1136,7 @@ body {
 
 /* Móviles pequeños (< 480px) */
 @media (max-width: 480px) {
+  .admin-sidebar,
   .sidebar {
     width: 240px;
     left: -240px;
