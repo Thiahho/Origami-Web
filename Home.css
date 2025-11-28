@@ -630,9 +630,18 @@ section h2 {
 }
 
 /* Menú móvil y overlay siempre en el DOM pero oculto por defecto */
-.nav-mobile-menu,
+.nav-mobile-menu {
+  display: block;
+  left: -280px;
+  transition: left 0.3s ease;
+}
+
 .nav-mobile-overlay {
   display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s, visibility 0.3s;
 }
 
 /* En desktop, ocultar completamente el menú móvil y el botón hamburguesa */
