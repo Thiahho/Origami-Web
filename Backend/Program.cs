@@ -286,7 +286,11 @@ try
     builder.Services.Configure<CookiePolicyOptions>(options =>
     {
         options.CheckConsentNeeded = context => true;
-        options.MinimumSameSitePolicy = SameSiteMode.Lax; // Lax para permitir cookies en mismo sitio
+        // IMPORTANTE: En producción usar Unspecified para permitir que cada cookie defina su SameSite
+        // Esto permite SameSite=None en cookies de autenticación para cross-site (Vercel → Render)
+        options.MinimumSameSitePolicy = builder.Environment.IsDevelopment()
+            ? SameSiteMode.Lax
+            : SameSiteMode.Unspecified;
         options.HttpOnly = HttpOnlyPolicy.Always;
         options.Secure = builder.Environment.IsDevelopment()
             ? CookieSecurePolicy.SameAsRequest
@@ -300,8 +304,13 @@ try
         options.IdleTimeout = TimeSpan.FromMinutes(30);
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
+        // IMPORTANTE: Usar None en producción para permitir cookies cross-site (Vercel → Render)
+        options.Cookie.SameSite = builder.Environment.IsDevelopment()
+            ? SameSiteMode.Lax
+            : SameSiteMode.None; // None + Secure permite cross-site en producción
     });
 
     builder.Services.AddMemoryCache();

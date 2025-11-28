@@ -109,9 +109,9 @@ namespace OrigamiBack.Controllers
                 if (_configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
                 {
                     cookieOptions.Secure = true;
-                    // IMPORTANTE: Lax permite cookies cross-site en navegación (Vercel → Render)
-                    // Strict bloquearía las cookies porque Vercel y Render son dominios diferentes
-                    cookieOptions.SameSite = SameSiteMode.Lax;
+                    // IMPORTANTE: None + Secure permite cookies cross-site (Vercel → Render)
+                    // Lax NO funciona correctamente entre dominios diferentes
+                    cookieOptions.SameSite = SameSiteMode.None;
                 }
 
                 Response.Cookies.Append("AuthToken", token, cookieOptions);
@@ -149,13 +149,14 @@ namespace OrigamiBack.Controllers
             {
                 // Eliminar cookie de autenticación
                 // Coincidir Path y atributos clave para garantizar borrado en todos los navegadores
+                var isProduction = _configuration["ASPNETCORE_ENVIRONMENT"] == "Production";
                 Response.Cookies.Delete("AuthToken", new CookieOptions
                 {
                     Path = "/",
-                    SameSite = SameSiteMode.Lax,
-                    Secure = _configuration["ASPNETCORE_ENVIRONMENT"] == "Production"
+                    SameSite = isProduction ? SameSiteMode.None : SameSiteMode.Lax,
+                    Secure = isProduction
                 });
-                
+
                 return Ok(new { message = "Sesión cerrada exitosamente" });
             }
             catch (Exception ex)
