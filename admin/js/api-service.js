@@ -2,8 +2,8 @@
 window.apiConfig = {
   apiUrl: "https://origami-web.onrender.com", // backend Render
   apiTimeout: 30000, // 30 segundos - Render puede tardar en despertar
-  log: console.log,
-  error: console.error,
+  log: () => {}, // Desactivar logs de request/response
+  error: console.error, // Mantener solo errores
 };
 
 class ApiService {
