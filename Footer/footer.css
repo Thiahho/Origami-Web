@@ -9,6 +9,13 @@
   scroll-behavior: smooth;
 }
 
+/* Asegurar que el footer sea responsive */
+footer,
+#footer {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 h2 {
   font-weight: 500;
   text-align: center;
@@ -54,6 +61,7 @@ button {
 footer {
   margin-top: auto; /* empuja el footer al fondo */
   width: 100%;
+  max-width: 100vw;
   height: auto; /* no ocupa toda la pantalla */
   display: flex;
   flex-direction: row;
@@ -61,6 +69,7 @@ footer {
   align-items: flex-end;
   padding: 5rem 2vw;
   position: relative;
+  box-sizing: border-box;
 }
 
 footer::before {
@@ -141,6 +150,12 @@ a {
   :root {
     --m: 3rem;
   }
+
+  #footer {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.8rem;
+    padding: 1rem 4vw;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -158,11 +173,18 @@ a {
     grid-template-columns: 1fr;
     gap: 1rem;
     padding: 1.5rem 4vw;
+    width: 100%;
+    max-width: 100%;
   }
 
-  .col {
+  .col,
+  .col1,
+  .col2,
+  .col3 {
     width: 100%;
+    max-width: 100%;
     padding: 0.8rem;
+    box-sizing: border-box;
   }
 
   .logo-origami {
@@ -318,6 +340,9 @@ a {
   align-items: start;
   height: auto; /* antes era 100vh */
   padding: 1.25rem 5vw;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 /* aseguro glass consistente aun si faltan variables */
