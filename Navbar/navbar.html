@@ -110,12 +110,12 @@
 
     <a
       href="../auth/login.html"
-      class="btn-login"
-      id="authButton"
+      class="nav-mobile-menu__login"
+      id="mobileAuthButton"
       aria-label="Iniciar sesión"
     >
       <i class="fa-regular fa-user"></i>
-      <span class="btn-login__label">Iniciar sesión</span>
+      <span class="nav-mobile-menu__login-text">Iniciar sesión</span>
     </a>
   </div>
 </div>
@@ -177,7 +177,12 @@
       ".nav-mobile-menu__links a:not(.nav-mobile-menu__cart)"
     );
     menuLinks.forEach((link) => {
-      link.addEventListener("click", closeMenu);
+      link.addEventListener("click", function(e) {
+        // Si no es javascript:void(0), cerrar el menú
+        if (!link.getAttribute('href').includes('javascript:void(0)')) {
+          closeMenu();
+        }
+      });
     });
     console.log("Event listeners añadidos a", menuLinks.length, "enlaces");
 

@@ -1340,6 +1340,13 @@ main.store {
     border-color: rgba(0, 168, 255, 0.5);
   }
 
+  .nav-mobile-menu__login:active,
+  .nav-mobile-menu__login:focus {
+    background: rgba(0, 168, 255, 0.15);
+    border-color: rgba(0, 168, 255, 0.3);
+    outline: none;
+  }
+
   /* Overlay para cerrar el menú */
   .nav-mobile-overlay {
     display: none;
