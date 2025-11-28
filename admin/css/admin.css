@@ -177,9 +177,11 @@ body {
   z-index: 1000;
   left: 0;
   top: 0;
+  transition: width 0.3s ease, min-width 0.3s ease;
 }
 
 .admin-main {
+  transition: margin-left 0.3s ease, width 0.3s ease;
   flex: 1;
   margin-left: 280px;
   padding: 2rem;
@@ -207,6 +209,7 @@ body {
 }
 
 .sidebar-toggle {
+  transition: transform 0.3s ease;
   position: static;
   margin-left: auto;
   background: rgba(255, 255, 255, 0.1);
@@ -738,6 +741,7 @@ body {
 
 /* Collapsed sidebar state */
 .sidebar-collapsed .admin-sidebar {
+  overflow-x: hidden;
   width: 80px;
   min-width: 80px;
 }
@@ -749,7 +753,7 @@ body {
 
 .sidebar-collapsed .sidebar-header h2,
 .sidebar-collapsed .sidebar-nav a span {
-  display: none;
+  display: none !important;
 }
 
 .sidebar-collapsed .sidebar-header {
@@ -779,6 +783,7 @@ body {
 }
 
 .sidebar-collapsed .sidebar-toggle {
+  transform: rotate(180deg);  
   margin-left: 0;
   align-self: center;
 }
