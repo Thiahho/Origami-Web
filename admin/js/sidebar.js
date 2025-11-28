@@ -211,11 +211,14 @@
     const toggleBtn = sidebar.querySelector(".sidebar-toggle");
     if (toggleBtn) {
       toggleBtn.addEventListener("click", () => {
-        layout.classList.toggle("sidebar-collapsed");
-        localStorage.setItem(
-          "admin_sidebar_collapsed",
-          layout.classList.contains("sidebar-collapsed") ? "1" : "0"
-        );
+        // Solo permitir collapse en desktop
+        if (window.innerWidth > 768) {
+          layout.classList.toggle("sidebar-collapsed");
+          localStorage.setItem(
+            "admin_sidebar_collapsed",
+            layout.classList.contains("sidebar-collapsed") ? "1" : "0"
+          );
+        }
       });
     }
 
