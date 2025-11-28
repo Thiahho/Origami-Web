@@ -274,7 +274,17 @@
         console.log("Sidebar classes before:", sidebar.className); // Debug
         sidebar.classList.toggle("is-open");
         console.log("Sidebar classes after:", sidebar.className); // Debug
-        console.log("Sidebar left position:", window.getComputedStyle(sidebar).left); // Debug
+
+        const styles = window.getComputedStyle(sidebar);
+        console.log("Sidebar left position:", styles.left);
+        console.log("Sidebar display:", styles.display);
+        console.log("Sidebar visibility:", styles.visibility);
+        console.log("Sidebar opacity:", styles.opacity);
+        console.log("Sidebar z-index:", styles.zIndex);
+        console.log("Sidebar background:", styles.background);
+        console.log("Sidebar width:", styles.width);
+        console.log("Sidebar height:", styles.height);
+
         overlay.classList.toggle("is-open");
         document.body.style.overflow = sidebar.classList.contains("is-open")
           ? "hidden"

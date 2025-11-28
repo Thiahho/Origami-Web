@@ -888,7 +888,7 @@ body {
     z-index: 1000;
     transition: left 0.3s ease;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(30, 30, 30, 0.95) !important;
     backdrop-filter: blur(20px) saturate(150%) !important;
     border-right: 2px solid rgba(255, 255, 255, 0.3) !important;
   }
@@ -898,6 +898,28 @@ body {
     left: 0;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.8);
     z-index: 1001 !important;
+  }
+
+  /* Asegurar que el contenido del sidebar sea visible */
+  .admin-sidebar *,
+  .sidebar * {
+    color: white !important;
+  }
+
+  .admin-sidebar .sidebar-header h2,
+  .sidebar .sidebar-header h2 {
+    color: white !important;
+  }
+
+  .admin-sidebar .sidebar-nav a,
+  .sidebar .sidebar-nav a {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .admin-sidebar .sidebar-nav a:hover,
+  .sidebar .sidebar-nav a:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
   }
 
   /* Overlay para cerrar sidebar */
