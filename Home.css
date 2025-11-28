@@ -626,23 +626,31 @@ section h2 {
 
 /* Ocultar menú hamburguesa en desktop */
 .menu-toggle {
-  display: none !important;
+  display: none;
 }
 
-/* Ocultar menú móvil y overlay en desktop */
+/* Menú móvil y overlay siempre en el DOM pero oculto por defecto */
 .nav-mobile-menu,
 .nav-mobile-overlay {
-  display: none;
+  display: block;
+}
+
+/* En desktop, mover el menú fuera de la vista */
+@media (min-width: 769px) {
+  .nav-mobile-menu {
+    left: -280px !important;
+  }
+
+  .nav-mobile-overlay {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
 }
 
 @media (max-width: 768px) {
   .menu-toggle {
     display: flex !important;
-  }
-
-  .nav-mobile-menu,
-  .nav-mobile-overlay {
-    display: block;
   }
 }
 .nav-bar a {
@@ -1124,8 +1132,13 @@ main.store {
   }
 
   /* Ocultar links del navbar en móvil, mantener solo iconos */
-  .nav-bar a:not(.carrito):not(.btn-login):not(.menu-toggle) {
-    display: none;
+  .nav-bar > a:not(.carrito):not(.btn-login):not(.menu-toggle) {
+    display: none !important;
+  }
+
+  /* Ocultar la búsqueda en móvil */
+  .nav-search {
+    display: none !important;
   }
 
   /* Botón hamburguesa */
@@ -1141,7 +1154,9 @@ main.store {
     border-radius: 8px;
     cursor: pointer;
     flex-shrink: 0;
-    order: 0;
+    order: -1;
+    color: white;
+    text-decoration: none;
   }
 
   .menu-toggle i {
@@ -1301,15 +1316,7 @@ main.store {
     visibility: visible;
   }
 
-  /* Búsqueda más pequeña */
-  .nav-search {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    order: 1;
-  }
-
-  /* Carrito después de búsqueda */
+  /* Carrito primero */
   .carrito {
     order: 2;
   }
@@ -1317,25 +1324,6 @@ main.store {
   /* Login al final */
   .btn-login {
     order: 3;
-  }
-
-  /* Expandir búsqueda solo con position absolute para no afectar layout */
-  .nav-search:hover,
-  .nav-search:focus-within {
-    width: 130px;
-    position: relative;
-    z-index: 10;
-  }
-
-  .nav-search__btn {
-    width: 30px;
-    height: 30px;
-    font-size: 0.85rem;
-  }
-
-  .nav-search__input {
-    font-size: 0.75rem;
-    padding: 0 6px 0 30px;
   }
 
   /* Carrito más pequeño */
@@ -1426,25 +1414,15 @@ main.store {
     padding-right: 2px;
   }
 
-  .nav-search {
-    width: 28px;
-    height: 28px;
+  /* Botón hamburguesa más pequeño */
+  .menu-toggle {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 4px !important;
   }
 
-  .nav-search:hover,
-  .nav-search:focus-within {
-    width: 120px;
-  }
-
-  .nav-search__btn {
-    width: 28px;
-    height: 28px;
-    font-size: 0.8rem;
-  }
-
-  .nav-search__input {
-    font-size: 0.7rem;
-    padding: 0 4px 0 28px;
+  .menu-toggle i {
+    font-size: 0.85rem !important;
   }
 
   .carrito {
