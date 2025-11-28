@@ -270,7 +270,11 @@
       // Event listeners
       mobileToggle.addEventListener("click", function () {
         console.log("Toggle clicked"); // Debug
+        console.log("Sidebar:", sidebar); // Debug
+        console.log("Sidebar classes before:", sidebar.className); // Debug
         sidebar.classList.toggle("is-open");
+        console.log("Sidebar classes after:", sidebar.className); // Debug
+        console.log("Sidebar left position:", window.getComputedStyle(sidebar).left); // Debug
         overlay.classList.toggle("is-open");
         document.body.style.overflow = sidebar.classList.contains("is-open")
           ? "hidden"
