@@ -210,14 +210,24 @@
     // Toggle button (desktop collapse)
     const toggleBtn = sidebar.querySelector(".sidebar-toggle");
     if (toggleBtn) {
-      toggleBtn.addEventListener("click", () => {
+      toggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log("Desktop toggle clicked, window width:", window.innerWidth);
+
         // Solo permitir collapse en desktop
         if (window.innerWidth > 768) {
+          console.log("Toggling sidebar collapse");
           layout.classList.toggle("sidebar-collapsed");
+          const isCollapsed = layout.classList.contains("sidebar-collapsed");
+          console.log("Sidebar collapsed:", isCollapsed);
           localStorage.setItem(
             "admin_sidebar_collapsed",
-            layout.classList.contains("sidebar-collapsed") ? "1" : "0"
+            isCollapsed ? "1" : "0"
           );
+        } else {
+          console.log("Desktop toggle ignored in mobile view");
         }
       });
     }
