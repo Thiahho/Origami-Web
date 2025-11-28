@@ -305,10 +305,11 @@ class AuthManager {
       // Success feedback
       this.showMessage("¡Inicio de sesión exitoso!", "success");
 
-      // Redirect to dashboard
+      // Esperar un poco más para asegurar que la cookie se establezca
+      // antes de redirigir (importante en producción con Render/Vercel)
       setTimeout(() => {
         window.location.href = "/admin/dashboard.html";
-      }, 1000);
+      }, 1500);
     } catch (error) {
       let errorMessage = "Error al iniciar sesión";
 
@@ -353,6 +354,9 @@ class AuthManager {
       window.location.pathname.includes("/admin/") &&
       !window.location.pathname.includes("login.html")
     ) {
+      // Verificar si hay sesión local antes de llamar al servidor
+      const localSession = sessionStorage.getItem("adminSession");
+
       try {
         //  //console.log("[Auth] Verificando sesión...");
         const response = await window.apiService.verifySession();
@@ -381,17 +385,48 @@ class AuthManager {
 
         return sessionData;
       } catch (error) {
-        // Not authenticated, redirect to login
-        console.error("[Auth] Error verificando sesión:", error);
+        // Si hay error de red PERO tenemos sesión local reciente, NO cerrar sesión
+        if (localSession && error.status === 0) {
+          console.warn("[Auth] Error de red, pero hay sesión local válida. Manteniendo sesión.");
 
-        // Ejecutar session detection antes de logout
-        this.setupSessionDetection();
+          // Ejecutar session detection de todas formas
+          this.setupSessionDetection();
 
-        this.logout();
+          // Reintentar verificación después de 5 segundos
+          setTimeout(() => this.retryVerifySession(), 5000);
+          return;
+        }
+
+        // Solo hacer logout si es error de autenticación (401/403) no error de red
+        if (error.status === 401 || error.status === 403) {
+          console.error("[Auth] Error de autenticación:", error);
+          this.logout();
+        } else {
+          // Error de red/servidor - mantener sesión local
+          console.warn("[Auth] Error de servidor/red. Manteniendo sesión local.");
+          this.setupSessionDetection();
+        }
       }
     } else {
       // No estamos en página de admin, ejecutar session detection de todas formas
       this.setupSessionDetection();
+    }
+  }
+
+  async retryVerifySession() {
+    try {
+      const response = await window.apiService.verifySession();
+      if (response.isAuthenticated) {
+        console.log("[Auth] Reconexión exitosa");
+        const sessionData = {
+          email: response.usuario.email,
+          rol: response.usuario.rol,
+          loginTime: new Date().toISOString(),
+        };
+        sessionStorage.setItem("adminSession", JSON.stringify(sessionData));
+      }
+    } catch (error) {
+      console.warn("[Auth] Reintento de verificación falló, se reintentará en próxima interacción");
     }
   }
 
