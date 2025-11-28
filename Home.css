@@ -626,7 +626,7 @@ section h2 {
 
 /* Ocultar menú hamburguesa en desktop */
 .menu-toggle {
-  display: none;
+  display: none !important;
 }
 
 /* Menú móvil y overlay siempre en el DOM pero oculto por defecto */
@@ -635,10 +635,15 @@ section h2 {
   display: block;
 }
 
-/* En desktop, mover el menú fuera de la vista */
+/* En desktop, ocultar completamente el menú móvil y el botón hamburguesa */
 @media (min-width: 769px) {
+  .menu-toggle {
+    display: none !important;
+  }
+
   .nav-mobile-menu {
     left: -280px !important;
+    pointer-events: none !important;
   }
 
   .nav-mobile-overlay {
