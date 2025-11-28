@@ -631,9 +631,14 @@ section h2 {
 
 /* Menú móvil y overlay siempre en el DOM pero oculto por defecto */
 .nav-mobile-menu {
-  display: block;
+  display: none;
+  position: fixed;
+  top: 0;
   left: -280px;
+  width: 280px;
+  height: 100vh;
   transition: left 0.3s ease;
+  z-index: 9999;
 }
 
 .nav-mobile-overlay {
@@ -1331,18 +1336,22 @@ main.store {
 
   /* Overlay para cerrar el menú */
   .nav-mobile-overlay {
+    display: none;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 9998;
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
     transition: opacity 0.3s, visibility 0.3s;
+    z-index: 9998;
   }
 
   .nav-mobile-overlay.is-open {
+    display: block;
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
   }
 
   /* Carrito primero después del logo */
