@@ -79,8 +79,15 @@ body {
   padding: 0;
 }
 
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   min-height: 200vh;
+  width: 100%;
+  max-width: 100vw;
   background: url("img/PLANTILLA 1.webp") no-repeat center center fixed;
   background-size: cover;
   transition: background 1s ease-in-out;
@@ -453,8 +460,9 @@ section h2 {
 /* contenedor de cards: columnas parejas */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 1.5rem;
+  width: 100%;
 }
 
 /* card: ancho/alto consistentes con glassmorphism */
@@ -465,7 +473,7 @@ section h2 {
   padding: 1rem;
   border-radius: 20px;
   box-sizing: border-box;
-  width: 300px;
+  width: 100%;
   max-width: 300px;
   margin: 0 auto;
 
@@ -1163,10 +1171,8 @@ main.store {
   }
 
   /* Ocultar links del navbar en móvil, mantener solo iconos */
-  .nav-bar > a:not(.menu-toggle):not(.carrito),
-  .nav-bar .nav-search,
-  .nav-bar .btn-login {
-    display: none;
+  .nav-bar > a:not(.carrito):not(.btn-login):not(.menu-toggle) {
+    display: none !important;
   }
 
   /* Ocultar la búsqueda en móvil */
