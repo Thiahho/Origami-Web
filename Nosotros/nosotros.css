@@ -242,24 +242,302 @@ p {
   }
 }
 
-/* ====== Responsive ====== */
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Asegurar overflow */
+body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.page,
+.glass,
+.team,
+.contact-grid {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tablets grandes (900px - 1100px) */
+@media (max-width: 1100px) {
+  .page {
+    width: min(1000px, 94%);
+    margin-top: 85px;
+  }
+
+  .glass {
+    padding: 18px;
+  }
+}
+
+/* Tablets (768px - 900px) */
 @media (max-width: 900px) {
+  .page {
+    width: min(900px, 95%);
+    margin-top: 80px;
+  }
+
+  .glass {
+    padding: 16px;
+  }
+
   .team,
   .contact-grid {
     grid-template-columns: 1fr 1fr;
+    gap: 14px;
   }
+
   .avatar {
     width: 140px;
     height: 140px;
   }
+
+  .member {
+    padding: 12px 8px 16px;
+  }
+
+  .contact-card {
+    padding: 14px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
 }
+
+/* Móviles landscape y tablets pequeñas (600px - 768px) */
+@media (max-width: 768px) {
+  .page {
+    width: min(100%, 96%);
+    margin-top: 75px;
+    margin-bottom: 40px;
+  }
+
+  .glass {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .card-section {
+    margin-bottom: 18px;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .team,
+  .contact-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .member {
+    padding: 10px 6px 14px;
+  }
+
+  .role {
+    font-size: 0.95rem;
+  }
+
+  .name {
+    font-size: 0.9rem;
+  }
+
+  .contact-card {
+    padding: 12px;
+    gap: 0.5rem;
+  }
+
+  .icon {
+    font-size: 1.6rem;
+  }
+
+  .btn {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9rem;
+  }
+
+  .email-form input,
+  .email-form textarea {
+    padding: 0.55rem 0.65rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Móviles (480px - 600px) */
 @media (max-width: 600px) {
+  .page {
+    width: min(100%, 98%);
+    margin-top: 70px;
+    margin-bottom: 30px;
+  }
+
+  .glass {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .card-section {
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.7rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
   .team,
   .contact-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .member {
+    padding: 10px 8px 12px;
+  }
+
+  .role {
+    font-size: 0.9rem;
+  }
+
+  .name {
+    font-size: 0.85rem;
+  }
+
+  .contact-card {
+    padding: 12px;
+    gap: 0.5rem;
+  }
+
+  .icon {
+    font-size: 1.5rem;
+  }
+
+  .btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .email-form {
+    gap: 0.5rem;
+  }
+
+  .email-form label {
+    gap: 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  .email-form input,
+  .email-form textarea {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .alert-content {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .alert-text {
+    font-size: 13px;
+  }
+}
+
+/* Móviles pequeños (< 480px) */
+@media (max-width: 480px) {
   .page {
-    margin-top: 80px;
+    width: 100%;
+    margin-top: 65px;
+    margin-bottom: 25px;
+  }
+
+  .glass {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .card-section {
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.6rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .avatar {
+    width: 90px;
+    height: 90px;
+  }
+
+  .member {
+    padding: 8px 6px 10px;
+  }
+
+  .role {
+    font-size: 0.85rem;
+  }
+
+  .name {
+    font-size: 0.8rem;
+  }
+
+  .contact-card {
+    padding: 10px;
+    gap: 0.4rem;
+  }
+
+  .icon {
+    font-size: 1.3rem;
+  }
+
+  .btn {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.8rem;
+    gap: 0.4rem;
+  }
+
+  .email-form input,
+  .email-form textarea {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.85rem;
+  }
+
+  .alert-content {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .alert-icon {
+    font-size: 18px;
+    width: 20px;
+  }
+
+  .alert-text {
+    font-size: 12px;
   }
 }
 
