@@ -181,7 +181,6 @@ body {
 }
 
 .admin-main {
-  transition: margin-left 0.3s ease, width 0.3s ease;
   flex: 1;
   margin-left: 280px;
   padding: 2rem;
@@ -189,6 +188,7 @@ body {
   width: calc(100vw - 280px);
   max-width: none;
   box-sizing: border-box;
+  transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 .sidebar-header {
@@ -209,7 +209,6 @@ body {
 }
 
 .sidebar-toggle {
-  transition: transform 0.3s ease;
   position: static;
   margin-left: auto;
   background: rgba(255, 255, 255, 0.1);
@@ -222,6 +221,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
 .sidebar-nav {
@@ -739,53 +739,55 @@ body {
 /* Responsive - DEPRECATED (reemplazado por responsive completo abajo) */
 }
 
-/* Collapsed sidebar state */
-.sidebar-collapsed .admin-sidebar {
-  overflow-x: hidden;
-  width: 80px;
-  min-width: 80px;
-}
+/* Collapsed sidebar state - SOLO EN DESKTOP */
+@media (min-width: 769px) {
+  .sidebar-collapsed .admin-sidebar {
+    overflow-x: hidden !important;
+    width: 80px !important;
+    min-width: 80px !important;
+  }
 
-.sidebar-collapsed .admin-main {
-  margin-left: 80px;
-  width: calc(100vw - 80px);
-}
+  .sidebar-collapsed .admin-main {
+    margin-left: 80px;
+    width: calc(100vw - 80px);
+  }
 
-.sidebar-collapsed .sidebar-header h2,
-.sidebar-collapsed .sidebar-nav a span {
-  display: none !important;
-}
+  .sidebar-collapsed .sidebar-header h2,
+  .sidebar-collapsed .sidebar-nav a span {
+    display: none !important;
+  }
 
-.sidebar-collapsed .sidebar-header {
-  padding: 0 0.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
+  .sidebar-collapsed .sidebar-header {
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-.sidebar-collapsed .sidebar-logo {
-  width: 40px;
-  height: 40px;
-}
+  .sidebar-collapsed .sidebar-logo {
+    width: 40px;
+    height: 40px;
+  }
 
-/* Better compact nav when collapsed */
-.sidebar-collapsed .sidebar-nav a {
-  padding: 0.75rem;
-  justify-content: center;
-  gap: 0;
-}
+  /* Better compact nav when collapsed */
+  .sidebar-collapsed .sidebar-nav a {
+    padding: 0.75rem;
+    justify-content: center;
+    gap: 0;
+  }
 
-.sidebar-collapsed .sidebar-nav i {
-  width: auto;
-  text-align: center;
-  font-size: 1.1rem;
-}
+  .sidebar-collapsed .sidebar-nav i {
+    width: auto;
+    text-align: center;
+    font-size: 1.1rem;
+  }
 
-.sidebar-collapsed .sidebar-toggle {
-  transform: rotate(180deg);  
-  margin-left: 0;
-  align-self: center;
+  .sidebar-collapsed .sidebar-toggle {
+    margin-left: 0;
+    align-self: center;
+    transform: rotate(180deg);
+  }
 }
 
 /* Image upload */
@@ -1059,8 +1061,8 @@ body {
 @media (max-width: 600px) {
   .admin-sidebar,
   .sidebar {
-    width: 260px;
-    left: -260px;
+    width: 280px;
+    left: -280px;
   }
 
   .sidebar-toggle-mobile {
@@ -1161,8 +1163,8 @@ body {
 @media (max-width: 480px) {
   .admin-sidebar,
   .sidebar {
-    width: 240px;
-    left: -240px;
+    width: 280px;
+    left: -280px;
   }
 
   .sidebar-toggle-mobile {
