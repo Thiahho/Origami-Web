@@ -174,74 +174,66 @@ try
     var corsPolicy = builder.Environment.IsDevelopment() ? "DevCORS" : "ProductionCORS";
 
     // 3. RATE LIMITING
-    builder.Services.AddRateLimiter(options =>
+    // 3. RATE LIMITING
+builder.Services.AddRateLimiter(options =>
+{
+    // 🔹 Sin GlobalLimiter: no se limita todo /api por defecto
+
+    options.AddFixedWindowLimiter("AuthPolicy", opt =>
     {
-        options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-        {
-            return RateLimitPartition.GetFixedWindowLimiter(
-                partitionKey: context.User.Identity?.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "default",
-                factory: _ => new FixedWindowRateLimiterOptions
-                {
-                    AutoReplenishment = true,
-                    PermitLimit = builder.Environment.IsDevelopment() ? 100 : 10,
-                    Window = TimeSpan.FromMinutes(1)
-                });
-        });
-
-        options.AddFixedWindowLimiter("AuthPolicy", options =>
-        {
-            options.PermitLimit = builder.Environment.IsDevelopment() ? 100000 : 10000;
-            options.Window = TimeSpan.FromMinutes(1);
-            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            options.QueueLimit = 1000;
-        });
-
-        options.AddFixedWindowLimiter("ApiPolicy", options =>
-        {
-            options.PermitLimit = builder.Environment.IsDevelopment() ? 100000 : 10000;
-            options.Window = TimeSpan.FromMinutes(1);
-            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            options.QueueLimit = 1000;
-        });
-
-        options.AddFixedWindowLimiter("CriticalPolicy", options =>
-        {
-            options.PermitLimit = builder.Environment.IsDevelopment() ? 100000 : 10000;
-            options.Window = TimeSpan.FromMinutes(1);
-            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            options.QueueLimit = 1000;
-        });
-
-        // Rate limiting para formulario de contacto (5 req/min por IP)
-        options.AddFixedWindowLimiter("ContactPolicy", options =>
-        {
-            options.PermitLimit = builder.Environment.IsDevelopment() ? 100 : 5;
-            options.Window = TimeSpan.FromMinutes(1);
-            options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-            options.QueueLimit = 10;
-        });
-
-        options.OnRejected = async (context, token) =>
-        {
-            context.HttpContext.Response.StatusCode = 429;
-
-            context.HttpContext.Response.Headers["Retry-After"] = "60";
-            context.HttpContext.Response.Headers["X-RateLimit-Limit"] = "100";
-            context.HttpContext.Response.Headers["X-RateLimit-Remaining"] = "0";
-            context.HttpContext.Response.Headers["X-RateLimit-Reset"] = DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeSeconds().ToString();
-
-            var response = new
-            {
-                error = "Rate limit exceeded",
-                message = "Too many requests. Please try again later.",
-                retryAfter = 60
-            };
-
-            await context.HttpContext.Response.WriteAsync(
-                System.Text.Json.JsonSerializer.Serialize(response),
-                cancellationToken: token);
-        };
+        opt.PermitLimit = builder.Environment.IsDevelopment() ? 100000 : 10000;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 1000;
     });
+
+    options.AddFixedWindowLimiter("ApiPolicy", opt =>
+    {
+        opt.PermitLimit = builder.Environment.IsDevelopment() ? 100000 : 10000;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 1000;
+    });
+
+    options.AddFixedWindowLimiter("CriticalPolicy", opt =>
+    {
+        opt.PermitLimit = builder.Environment.IsDevelopment() ? 100000 : 10000;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 1000;
+    });
+
+    // Rate limiting solo para el formulario de contacto (cuando lo uses explícitamente)
+    options.AddFixedWindowLimiter("ContactPolicy", opt =>
+    {
+        opt.PermitLimit = builder.Environment.IsDevelopment() ? 100 : 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 10;
+    });
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        context.HttpContext.Response.Headers["Retry-After"] = "60";
+        context.HttpContext.Response.Headers["X-RateLimit-Limit"] = "100";
+        context.HttpContext.Response.Headers["X-RateLimit-Remaining"] = "0";
+        context.HttpContext.Response.Headers["X-RateLimit-Reset"] =
+            DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeSeconds().ToString();
+
+        var response = new
+        {
+            error = "Rate limit exceeded",
+            message = "Too many requests. Please try again later.",
+            retryAfter = 60
+        };
+
+        await context.HttpContext.Response.WriteAsync(
+            System.Text.Json.JsonSerializer.Serialize(response),
+            cancellationToken: token);
+    };
+});
+
 
     // 4. Configuración de autenticación JWT
     builder.Services.AddAuthentication(options =>
