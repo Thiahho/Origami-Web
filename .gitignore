@@ -229,6 +229,25 @@ deploy-config.json
 .deployment
 publish/
 
+# ===== DEPLOYMENT FOLDER - ARCHIVOS SENSIBLES =====
+# NO subir archivos de producción con credenciales reales
+deployment/.env.production
+deployment/.env
+deployment/config.production.json
+deployment/secrets/
+deployment/backup/
+deployment/*.key
+deployment/*.pem
+deployment/*.crt
+
+# Permitir archivos template/ejemplo
+!deployment/.env.production.example
+!deployment/*.example
+!deployment/*.md
+!deployment/*.sh
+!deployment/*.service
+!deployment/nginx.conf
+
 # ===== ARCHIVOS DE TESTING Y DEBUG =====
 coverage/
 .nyc_output/
