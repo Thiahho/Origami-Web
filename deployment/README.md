@@ -15,7 +15,11 @@ deployment/
 ├── selinux-policy.sh                   # Configuración de SELinux
 ├── .env.production.example             # Variables de entorno (ejemplo)
 ├── DEPLOYMENT_GUIDE_ALMALINUX.md       # Guía completa paso a paso
-└── README.md                           # Este archivo
+├── SECURITY.md                         # Guía de seguridad para GitHub
+├── README.md                           # Este archivo
+└── database/                           # Base de datos
+    ├── BDOrigami.sql                   # ⚠️ Colocar aquí tu archivo SQL
+    └── README.md                       # Instrucciones de BD
 ```
 
 ---
@@ -39,31 +43,55 @@ cd /root
 tar -xzf origami.tar.gz
 cd Origami-Liquid-
 
+# Convertir line endings (Windows → Unix)
+sed -i 's/\r$//' deployment/deploy.sh
+sed -i 's/\r$//' deployment/selinux-policy.sh
+
+# O usar dos2unix si está disponible
+# dnf install -y dos2unix
+# dos2unix deployment/*.sh
+
 # Ejecutar instalación
 chmod +x deployment/deploy.sh
 sudo bash deployment/deploy.sh
 ```
 
-### 3. Configurar base de datos
+### 3. Colocar archivo de base de datos (IMPORTANTE)
+
+**Antes de ejecutar el deployment**, coloca tu archivo SQL en la carpeta correcta:
 
 ```bash
-# Crear DB y usuario
-sudo -u postgres psql -c "CREATE DATABASE origami_db;"
-sudo -u postgres psql -c "CREATE USER origami_user WITH PASSWORD 'TU_PASSWORD';"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE origami_db TO origami_user;"
+# En tu PC, copiar BDOrigami.sql a la carpeta deployment/database/
+cp BDOrigami.sql Origami-Liquid-/deployment/database/
+
+# O si ya subiste el proyecto, puedes hacerlo después
+scp BDOrigami.sql root@TU_IP:/root/Origami-Liquid-/deployment/database/
 ```
 
-### 4. Editar configuración del backend
+**El script `deploy.sh` importará automáticamente el SQL si está en `deployment/database/`**
+
+Si no colocas el archivo, el script creará una base de datos vacía y deberás importarla manualmente después.
+
+### 4. Configurar password de base de datos
+
+El script creó la base de datos con password temporal `CHANGE_THIS_PASSWORD`. **Cámbialo**:
+
+```bash
+# Cambiar password del usuario de BD
+sudo -u postgres psql -c "ALTER USER origami_user WITH PASSWORD 'TU_PASSWORD_SEGURO_AQUI';"
+```
+
+### 5. Editar configuración del backend
 
 ```bash
 nano /var/www/origami-backend/appsettings.Production.json
 ```
 
-Agregar:
+Agregar (usando el password del paso anterior):
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=origami_db;Username=origami_user;Password=TU_PASSWORD"
+    "DefaultConnection": "Host=localhost;Database=origami_db;Username=origami_user;Password=TU_PASSWORD_SEGURO_AQUI"
   },
   "Jwt": {
     "Key": "GENERA_CLAVE_SEGURA_CON_openssl_rand_base64_64",
@@ -74,7 +102,12 @@ Agregar:
 }
 ```
 
-### 5. Configurar dominio y SSL
+**Generar JWT Key segura**:
+```bash
+openssl rand -base64 64
+```
+
+### 6. Configurar dominio y SSL
 
 ```bash
 # Editar Nginx
@@ -88,11 +121,28 @@ systemctl restart nginx
 certbot --nginx -d tu-dominio.com -d www.tu-dominio.com
 ```
 
-### 6. Reiniciar servicios
+### 7. Reiniciar servicios
 
 ```bash
 systemctl restart origami-backend
 systemctl status origami-backend
+```
+
+### 8. Verificar importación de base de datos
+
+```bash
+# Conectarse a la BD
+sudo -u postgres psql -d origami_db
+
+-- Ver tablas
+\dt
+
+-- Ver cantidad de registros
+SELECT COUNT(*) FROM productos;
+SELECT COUNT(*) FROM categorias;
+
+-- Salir
+\q
 ```
 
 ---

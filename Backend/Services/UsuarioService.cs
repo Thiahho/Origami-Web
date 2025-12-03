@@ -100,7 +100,7 @@ namespace OrigamiBack.Services
                     issuer: _config["JWTKey:ValidIssuer"],
                     audience: _config["JWTKey:ValidAudience"],
                     claims: claims,
-                    expires: DateTime.Now.AddHours(1),
+                    expires: DateTime.Now.AddHours(8),
                     signingCredentials: credentials
                 );
 

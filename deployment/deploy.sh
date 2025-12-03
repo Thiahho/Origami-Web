@@ -65,9 +65,42 @@ dnf install -y nginx postgresql-server postgresql-contrib dotnet-runtime-8.0 dot
 
 # 5. Inicializar y configurar PostgreSQL
 print_info "Inicializando PostgreSQL..."
-postgresql-setup --initdb
+postgresql-setup --initdb || print_warning "PostgreSQL ya inicializado"
 systemctl enable postgresql
 systemctl start postgresql
+
+# 5.1. Crear base de datos y usuario
+print_info "Configurando base de datos PostgreSQL..."
+sudo -u postgres psql <<EOF
+-- Crear usuario si no existe
+DO \$\$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'origami_user') THEN
+        CREATE USER origami_user WITH PASSWORD 'CHANGE_THIS_PASSWORD';
+    END IF;
+END
+\$\$;
+
+-- Crear base de datos si no existe
+SELECT 'CREATE DATABASE origami_db OWNER origami_user'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'origami_db')\gexec
+
+-- Dar permisos
+GRANT ALL PRIVILEGES ON DATABASE origami_db TO origami_user;
+EOF
+
+# 5.2. Importar esquema y datos desde BDOrigami.sql (si existe)
+if [ -f "deployment/database/BDOrigami.sql" ]; then
+    print_info "Importando esquema y datos desde BDOrigami.sql..."
+    sudo -u postgres psql -d origami_db -f deployment/database/BDOrigami.sql
+    print_info "Base de datos importada exitosamente"
+elif [ -f "BDOrigami.sql" ]; then
+    print_info "Importando esquema y datos desde BDOrigami.sql..."
+    sudo -u postgres psql -d origami_db -f BDOrigami.sql
+    print_info "Base de datos importada exitosamente"
+else
+    print_warning "No se encontró BDOrigami.sql. Deberás importar la base de datos manualmente o ejecutar migraciones."
+fi
 
 # 6. Crear directorios
 print_info "Creando directorios..."

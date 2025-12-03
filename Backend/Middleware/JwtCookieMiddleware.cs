@@ -39,8 +39,8 @@ namespace OrigamiBack.Middleware
                     else
                     {
                         _logger.LogWarning("Token JWT en cookie es inválido o expirado");
-                        // Limpiar cookie inválida
-                        context.Response.Cookies.Delete("AuthToken");
+                        // NO eliminar la cookie aquí - dejar que el usuario cierre sesión explícitamente
+                        // o que el endpoint /verify maneje la expiración
                     }
                 }
             }

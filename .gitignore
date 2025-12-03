@@ -240,6 +240,13 @@ deployment/*.key
 deployment/*.pem
 deployment/*.crt
 
+# Base de datos - NO subir SQL con datos sensibles/reales
+deployment/database/*.sql
+deployment/database/backups/
+!deployment/database/schema.sql
+!deployment/database/.gitkeep
+!deployment/database/README.md
+
 # Permitir archivos template/ejemplo
 !deployment/.env.production.example
 !deployment/*.example
