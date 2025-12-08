@@ -17,6 +17,9 @@ namespace OrigamiBack.Data.Dtos
         [Required(ErrorMessage = "La categoría es requerida")]
         public string Categoria { get; set; } = string.Empty;
 
+        // Estado del producto (active/inactive)
+        public string Estado { get; set; } = "active";
+
         // La imagen no es requerida para actualizaciones parciales
         public string? Img { get; set; }
 

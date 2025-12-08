@@ -17,6 +17,8 @@ namespace OrigamiBack.Data.Modelos
         [Column("categoria")]
         [Required]
         public required string Categoria { get; set; }
+        [Column("estado")]
+        public string Estado { get; set; } = "active";
         [Column("img")]
         [Required]
         public required byte[] Img { get; set; }

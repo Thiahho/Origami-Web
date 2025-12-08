@@ -238,7 +238,7 @@ Thumbs.db
 !dockerfile
 !Front/dockerfile
 !*.csproj
-!*.sln
+!*.slns
 !package.json
 !tsconfig.json
 !tailwind.config.js

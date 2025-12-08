@@ -11,7 +11,6 @@ namespace OrigamiBack.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [EnableRateLimiting("AuthPolicy")]
     public class ProductoController : ControllerBase
     {
         private readonly IProductoService _productoService;

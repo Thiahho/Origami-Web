@@ -364,6 +364,41 @@ class AuthManager {
 
         if (!response.isAuthenticated) {
           console.error("[Auth] No autenticado según response");
+
+          // Si tenemos sesión local reciente (menos de 10 segundos), reintentar
+          if (localSession) {
+            try {
+              const session = JSON.parse(localSession);
+              const loginTime = new Date(session.loginTime);
+              const now = new Date();
+              const secondsSinceLogin = (now - loginTime) / 1000;
+
+              // Si el login fue hace menos de 10 segundos, dar tiempo para que la cookie se sincronice
+              if (secondsSinceLogin < 10) {
+                console.warn("[Auth] Login reciente detectado, esperando sincronización de cookies...");
+
+                // Esperar 1 segundo y reintentar
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const retryResponse = await window.apiService.verifySession();
+
+                if (retryResponse.isAuthenticated) {
+                  console.log("[Auth] Reintento exitoso - sesión válida");
+                  const sessionData = {
+                    email: retryResponse.usuario.email,
+                    rol: retryResponse.usuario.rol,
+                    loginTime: session.loginTime, // Mantener tiempo original
+                  };
+                  sessionStorage.setItem("adminSession", JSON.stringify(sessionData));
+                  localStorage.setItem("hadAdminSession", "true");
+                  this.setupSessionDetection();
+                  return sessionData;
+                }
+              }
+            } catch (parseError) {
+              console.error("[Auth] Error parseando sesión local:", parseError);
+            }
+          }
+
           throw new Error("Not authenticated");
         }
 

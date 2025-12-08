@@ -151,7 +151,7 @@ class FormVariante {
 
   loadCondiciones() {
     const variantCondicion = document.getElementById("variantCondicion");
-    if (!variantCondicion) return;
+    if (!variantCondicion) return Promise.resolve();
     variantCondicion.innerHTML =
       '<option value="">Seleccionar condición</option>';
 
@@ -170,7 +170,7 @@ class FormVariante {
       window.apiService &&
       typeof window.apiService.getCondiciones === "function"
     ) {
-      window.apiService
+      return window.apiService
         .getCondiciones()
         .then((list) => {
           const condiciones = Array.isArray(list) ? list : list?.items || [];
@@ -185,7 +185,7 @@ class FormVariante {
         .catch((err) => {
           console.error("Error cargando condiciones para variantes:", err);
           if (typeof window.apiService.getCondicionesActivas === "function") {
-            window.apiService
+            return window.apiService
               .getCondicionesActivas()
               .then((list) => {
                 const condiciones = Array.isArray(list)
@@ -199,6 +199,7 @@ class FormVariante {
           }
         });
     }
+    return Promise.resolve();
   }
 
   loadProducts() {
@@ -263,22 +264,27 @@ class FormVariante {
           modalTitle.textContent = "Editar Variante";
           document.getElementById("variantId").value = variant.id || variant.Id;
           const productIdVariant = variant.productoId || variant.ProductoId;
-          this.loadProducts().then(() => {
+          const condicionIdVariant = variant.condicionId || variant.CondicionId;
+
+          // Cargar productos y condiciones primero, luego establecer valores
+          Promise.all([
+            this.loadProducts(),
+            this.loadCondiciones()
+          ]).then(() => {
             document.getElementById("variantProduct").value = productIdVariant;
+            document.getElementById("variantCondicion").value = condicionIdVariant || "";
           });
-          this.loadCondiciones();
+
           document.getElementById("variantRam").value =
             variant.ram || variant.Ram || "";
           document.getElementById("variantStorage").value =
             variant.almacenamiento || variant.Almacenamiento || "";
           document.getElementById("variantColor").value =
             variant.color || variant.Color || "";
-          document.getElementById("variantCondicion").value =
-            variant.condicionId || variant.CondicionId || "";
 
-          // Calcular precio base desde precio final usando cotización
-          const precioFinal = variant.precio || variant.Precio || 0;
-          document.getElementById("productBasePrice").value = precioFinal;
+          // Establecer precio base (USD)
+          const precioBase = variant.precio || variant.Precio || 0;
+          document.getElementById("productPrecioBase").value = precioBase;
 
           document.getElementById("productBaseStock").value =
             variant.stock || variant.Stock || 0;
@@ -303,10 +309,8 @@ class FormVariante {
       this.loadProducts();
       this.loadCondiciones();
 
-      // Actualizar cotización y limpiar campos de precio
-      //this.updateCotizacionDisplay();
+      // Limpiar campo de precio
       document.getElementById("productPrecioBase").value = "";
-      document.getElementById("productBasePrice").value = "";
 
       this.updatePreview();
       modal.classList.add("active");
@@ -328,7 +332,7 @@ class FormVariante {
         ram: (formData.get("ram") || "").trim(),
         storage: (formData.get("storage") || "").trim(),
         color: (formData.get("color") || "").trim(),
-        price: parseFloat(formData.get("price")) || 0,
+        price: parseFloat(formData.get("precioBase")) || 0,
         stock: parseInt(formData.get("stock")) || 0,
         condicionId: parseInt(formData.get("condicionId")) || null,
       };
@@ -337,14 +341,33 @@ class FormVariante {
         variantData.colorHex = formData.get("colorHex");
       }
 
-      if (
-        !variantData.productId ||
-        !variantData.ram ||
-        !variantData.storage ||
-        !variantData.color ||
-        !variantData.condicionId
-      ) {
-        this.showError("Por favor completa todos los campos obligatorios");
+      // Validación de campos obligatorios
+      if (!variantData.productId) {
+        this.showError("Debes seleccionar un producto");
+        return;
+      }
+      if (!variantData.ram) {
+        this.showError("La RAM es obligatoria");
+        return;
+      }
+      if (!variantData.storage) {
+        this.showError("El almacenamiento es obligatorio");
+        return;
+      }
+      if (!variantData.color) {
+        this.showError("El color es obligatorio");
+        return;
+      }
+      if (!variantData.condicionId) {
+        this.showError("La condición es obligatoria");
+        return;
+      }
+      if (variantData.price <= 0) {
+        this.showError("El precio debe ser mayor a 0");
+        return;
+      }
+      if (variantData.stock < 0) {
+        this.showError("El stock no puede ser negativo");
         return;
       }
 
@@ -375,12 +398,25 @@ class FormVariante {
 
       if (variantId) {
         payload.Id = parseInt(variantId);
+
+        // Log para debug
+        console.log("Enviando payload para actualizar:", payload);
+
         window.apiService
           .updateVariant(variantId, payload)
           .then(after)
           .catch((err) => {
             console.error("Error API al actualizar variante:", err);
-            this.showError("Error al actualizar la variante");
+
+            // Mostrar mensaje más específico según el error
+            let errorMessage = "Error al actualizar la variante";
+            if (err.data && typeof err.data === 'string') {
+              errorMessage = err.data;
+            } else if (err.message) {
+              errorMessage = err.message;
+            }
+
+            this.showError(errorMessage);
           });
       } else {
         window.apiService

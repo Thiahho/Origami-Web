@@ -254,6 +254,7 @@ namespace OrigamiBack.Services
                 entidad.Marca = productoDto.Marca;
                 entidad.Modelo = productoDto.Modelo;
                 entidad.Categoria = productoDto.Categoria;
+                entidad.Estado = productoDto.Estado ?? "active"; // Actualizar estado
                 if (!string.IsNullOrEmpty(productoDto.Img))
                 {
                     try

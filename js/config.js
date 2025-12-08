@@ -28,7 +28,7 @@ class FrontendConfig {
       production: {
         // En producción (Vercel), necesitamos la URL completa del backend
         // ⚠️ IMPORTANTE: Actualizar con tu URL de Render después del deployment
-        apiUrl: "https://origami-web.onrender.com",
+        apiUrl: "https://origamiimportados.com",
         apiTimeout: 30000,
         enableLogging: false,
       },

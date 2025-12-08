@@ -1,6 +1,6 @@
 // ==================== API SERVICE WITH AXIOS ====================
 window.apiConfig = {
-  apiUrl: "https://origami-web.onrender.com", // backend Render
+  apiUrl: "https://origamiimportados.com", // backend Render
   apiTimeout: 30000, // 30 segundos - Render puede tardar en despertar
   log: () => {}, // Desactivar logs de request/response
   error: console.error, // Mantener solo errores

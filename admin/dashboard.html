@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Origami Admin</title>
+
+    <!-- CRITICAL: Auth Guard - DEBE cargarse PRIMERO y de forma sincrónica -->
+    <script src="js/auth-guard.js"></script>
+
     <link rel="stylesheet" href="../Home.css?v=11" />
     <link rel="stylesheet" href="css/admin.css?v=14" />
     <link rel="icon" type="image/jpeg" href="../img/iconoOrigami.webp" />
@@ -122,8 +126,8 @@
     <script src="js/api-service.js"></script>
 
     <script src="js/sidebar.js?v=3"></script>
-    <script src="js/auth.js?v=1"></script>
-    <script src="js/storage.js?v=1"></script>
+    <script src="js/auth.js?v=2"></script>
+    <script src="js/storage.js?v=2"></script>
     <script src="js/dashboard.js?v=2"></script>
 
     <script>
