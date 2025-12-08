@@ -203,6 +203,7 @@ class ProductsController {
         marca: p.marca || p.Marca || "",
         modelo: p.modelo || p.Modelo || "",
         categoria: p.categoria || p.Categoria || "",
+        estado: p.estado || p.Estado || "active",
         imagenUrl:
           p.img || p.Img ? `data:image/webp;base64,${p.img || p.Img}` : "",
         fechaCreacion: p.fechaCreacion || p.FechaCreacion || p.createdAt || p.CreatedAt || new Date().toISOString(),
@@ -373,6 +374,8 @@ class ProductsController {
 
     tbody.innerHTML = products
       .map((product) => {
+        console.log('Producto completo:', product);
+        console.log('Estado del producto:', product.estado, product.Estado);
         const categoryName = product.categoria || "Sin categoría";
         const fechaCreacion = product.fechaCreacion || new Date().toISOString();
 
@@ -403,8 +406,8 @@ class ProductsController {
           </td>
          
           <td>
-            <span class="status-badge status-active">
-              Activo
+            <span class="status-badge status-${product.estado || product.Estado || 'active'}">
+              ${this.getStatusLabel(product.estado || product.Estado || 'active')}
             </span>
           </td>
           <td>

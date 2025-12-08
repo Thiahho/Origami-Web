@@ -297,7 +297,7 @@ async function loadProductsFromApi() {
     try {
       const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/paged") : "/api/Producto/paged";
       const res = await axios.get(apiUrl, {
-        params: { page: 1, pageSize: 100 },
+        params: { page: 1, pageSize: 100, soloActivos: true },
       });
       const data = res.data || {};
       products = Array.isArray(data.items)
@@ -306,8 +306,8 @@ async function loadProductsFromApi() {
         ? res.data
         : [];
     } catch (e) {
-      console.warn("Paged endpoint falló, usando /api/Producto clásico:", e);
-      const fallbackUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto") : "/api/Producto";
+      console.warn("Paged endpoint falló, usando /api/Producto/activos:", e);
+      const fallbackUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/activos") : "/api/Producto/activos";
       const fallback = await axios.get(fallbackUrl);
       products = Array.isArray(fallback.data)
         ? fallback.data
@@ -354,6 +354,19 @@ async function loadProductsFromApi() {
       sections.set(label, pack);
       return pack;
     };
+
+    // Filtrar solo productos activos
+    console.log('Productos ANTES del filtro:', products.length);
+    console.log('Ejemplo de producto:', products[0]);
+    products = products.filter((p) => {
+      const estado = (p.estado || p.Estado || "").toLowerCase();
+      const esActivo = estado === "active" || estado === "";
+      if (!esActivo) {
+        console.log('Producto FILTRADO (inactivo):', p.Marca || p.marca, p.Modelo || p.modelo, 'Estado:', estado);
+      }
+      return esActivo;
+    });
+    console.log('Productos DESPUÉS del filtro:', products.length);
 
     // Orden estable por categoría (alfabético) para consistencia
     products

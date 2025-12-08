@@ -39,8 +39,25 @@ namespace OrigamiBack.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("activos")]
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetActivos()
+        {
+            try
+            {
+                var productos = await _productoService.GetAllProductsAsync();
+                var activos = productos.Where(p => p.Estado == "active").ToList();
+                return Ok(activos);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener productos activos");
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
+        [AllowAnonymous]
         [HttpGet("paged")]
-        public async Task<ActionResult<PagedResult<ProductoDto>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<ActionResult<PagedResult<ProductoDto>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] bool soloActivos = false)
         {
             if (page < 1) page = 1;
             if (pageSize < 1 || pageSize > 100) pageSize = 20;
@@ -48,6 +65,13 @@ namespace OrigamiBack.Controllers
             try
             {
                 var all = await _productoService.GetAllProductsAsync();
+
+                // Filtrar solo activos si se solicita
+                if (soloActivos)
+                {
+                    all = all.Where(p => p.Estado == "active");
+                }
+
                 var total = all.Count();
                 var items = all.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 

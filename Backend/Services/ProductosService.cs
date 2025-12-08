@@ -133,6 +133,7 @@ namespace OrigamiBack.Services
                 Marca = producto.Marca,
                 Modelo = producto.Modelo,
                 Categoria = producto.Categoria,
+                Estado = producto.Estado,
                 Img = producto.Img != null ? Convert.ToBase64String(producto.Img) : null,
                 Variantes = producto.Variantes.Select(v => new ProductosVariantesDto
                 {
