@@ -15,8 +15,7 @@ namespace OrigamiBack.Data.Dtos
         // [Required(ErrorMessage = "La RAM es requerida")]
         // public string Ram { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "El almacenamiento es requerido")]
-        public string Almacenamiento { get; set; } = string.Empty;
+        public string? Almacenamiento { get; set; }
 
         [Required(ErrorMessage = "El color es requerido")]
         public string Color { get; set; } = string.Empty;

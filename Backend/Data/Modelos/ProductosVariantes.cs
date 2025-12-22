@@ -22,8 +22,7 @@ namespace OrigamiBack.Data.Modelos
         // [Required]
         // public required string Ram { get; set; }
         [Column("almacenamiento")]
-        [Required]
-        public required string Almacenamiento { get; set; }
+        public string? Almacenamiento { get; set; }
         [Column("precio")]
         [Required]
         public decimal Precio { get; set; }

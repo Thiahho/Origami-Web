@@ -213,14 +213,24 @@ namespace OrigamiBack.Services
         }
 
         // Modificado: Ya no se busca por RAM, solo por storage y color
-        public async Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string storage, string color, int? condicionId)
+        // Storage puede ser null para productos sin almacenamiento
+        public async Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string? storage, string color, int? condicionId)
         {
             var query = _context.ProductosVariantes
                 .Where(v => v.ProductoId == productId)
-                .Where(v => v.Almacenamiento == storage)
                 .Where(v => v.Color == color)
                 .AsNoTracking()
                 .AsQueryable();
+
+            // Manejar almacenamiento null correctamente
+            if (string.IsNullOrEmpty(storage))
+            {
+                query = query.Where(v => string.IsNullOrEmpty(v.Almacenamiento));
+            }
+            else
+            {
+                query = query.Where(v => v.Almacenamiento == storage);
+            }
 
             if (condicionId.HasValue)
             {
@@ -309,11 +319,21 @@ namespace OrigamiBack.Services
         }
 
         // Modificado: Ya no se valida por RAM
-        public async Task<bool> ExistsVarianteAsync(int productoId, string almacenamiento, string color, int? condicionId)
+        // Almacenamiento puede ser null para productos sin almacenamiento
+        public async Task<bool> ExistsVarianteAsync(int productoId, string? almacenamiento, string color, int? condicionId)
         {
-            var query = _context.ProductosVariantes.Where(v => v.ProductoId == productoId &&
-                                                               v.Almacenamiento == almacenamiento &&
-                                                               v.Color == color);
+            var query = _context.ProductosVariantes.Where(v => v.ProductoId == productoId && v.Color == color);
+
+            // Manejar almacenamiento null correctamente
+            if (string.IsNullOrEmpty(almacenamiento))
+            {
+                query = query.Where(v => string.IsNullOrEmpty(v.Almacenamiento));
+            }
+            else
+            {
+                query = query.Where(v => v.Almacenamiento == almacenamiento);
+            }
+
             if (condicionId.HasValue)
                 query = query.Where(v => v.CondicionId == condicionId.Value);
             else

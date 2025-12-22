@@ -196,13 +196,14 @@ namespace OrigamiBack.Controllers
         [HttpGet("{productId}/variante")]
         public async Task<ActionResult<ProductosVariantesDto>> GetVarianteSpecAsync(
             int productId,
-            [FromQuery] string storage,
+            [FromQuery] string? storage,
             [FromQuery] string color,
             [FromQuery] int? condicionId)
         {
             try
             {
                 // Ya no se busca por RAM, solo por storage y color
+                // Storage puede ser null para productos sin almacenamiento
                 var variante = await _productoService.GetVarianteSpecAsync(productId, storage, color, condicionId);
                 if (variante == null)
                 {
@@ -314,6 +315,19 @@ namespace OrigamiBack.Controllers
         {
             try
             {
+                // Obtener el producto para validar categoría
+                var producto = await _productoService.GetByIdWithVarianteAsync(varianteDto.ProductoId);
+                if (producto == null)
+                {
+                    return NotFound($"No se encontró el producto con ID {varianteDto.ProductoId}");
+                }
+
+                // Validar que almacenamiento sea requerido solo para celulares
+                if (producto.Categoria?.ToLower() == "celular" && string.IsNullOrEmpty(varianteDto.Almacenamiento))
+                {
+                    return BadRequest("El almacenamiento es obligatorio para productos de categoría 'Celular'");
+                }
+
                 // Verificar si ya existe una variante con las mismas especificaciones (sin RAM)
                 var existingVariante = await _productoService.GetVarianteSpecAsync(
                     varianteDto.ProductoId,
@@ -347,7 +361,18 @@ namespace OrigamiBack.Controllers
             if (existingVariante == null)
                 return NotFound($"No se encontró la variante con ID {varianteId}");
 
-            // 2. Validar duplicados (misma combinación de almacenamiento y color, sin ram)
+            // 2. Obtener el producto para validar categoría
+            var producto = await _productoService.GetByIdWithVarianteAsync(existingVariante.ProductoId);
+            if (producto == null)
+                return NotFound($"No se encontró el producto asociado a la variante");
+
+            // 3. Validar que almacenamiento sea requerido solo para celulares
+            if (producto.Categoria?.ToLower() == "celular" && string.IsNullOrEmpty(varianteDto.Almacenamiento))
+            {
+                return BadRequest("El almacenamiento es obligatorio para productos de categoría 'Celular'");
+            }
+
+            // 4. Validar duplicados (misma combinación de almacenamiento y color, sin ram)
             var duplicateCheck = await _productoService.GetVarianteSpecAsync(
                 existingVariante.ProductoId,
                 varianteDto.Almacenamiento,
@@ -357,14 +382,14 @@ namespace OrigamiBack.Controllers
             if (duplicateCheck != null && duplicateCheck.Id != varianteId)
                 return BadRequest("Ya existe una variante con estas especificaciones");
 
-            // 3. Asignar los IDs correctos al DTO
+            // 5. Asignar los IDs correctos al DTO
             varianteDto.Id = varianteId;
             varianteDto.ProductoId = existingVariante.ProductoId;
 
-            // 4. Actualizar la variante (solo update, nunca delete)
+            // 6. Actualizar la variante (solo update, nunca delete)
             await _productoService.UpdateVarianteAsync(varianteDto);
 
-            // 5. Devolver la variante actualizada
+            // 7. Devolver la variante actualizada
             return Ok(varianteDto);
         }
 

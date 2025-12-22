@@ -332,7 +332,7 @@ class FormVariante {
         productId: formData.get("productId"),
         // COMENTADO: Ya no se obtiene RAM del formulario
         // ram: (formData.get("ram") || "").trim(),
-        storage: (formData.get("storage") || "").trim(),
+        storage: (formData.get("storage") || "").trim() || null,
         color: (formData.get("color") || "").trim(),
         price: parseFloat(formData.get("precioBase")) || 0,
         stock: parseInt(formData.get("stock")) || 0,
@@ -353,10 +353,8 @@ class FormVariante {
       //   this.showError("La RAM es obligatoria");
       //   return;
       // }
-      if (!variantData.storage) {
-        this.showError("El almacenamiento es obligatorio");
-        return;
-      }
+      // NOTA: Almacenamiento ya no es obligatorio para todos los productos
+      // El backend validará si es obligatorio según la categoría
       if (!variantData.color) {
         this.showError("El color es obligatorio");
         return;
@@ -378,7 +376,7 @@ class FormVariante {
         ProductoId: parseInt(variantData.productId),
         // COMENTADO: Ya no se envía RAM en el payload
         // Ram: variantData.ram,
-        Almacenamiento: variantData.storage,
+        Almacenamiento: variantData.storage || null,
         Color: variantData.color,
         Precio: variantData.price,
         Stock: variantData.stock,

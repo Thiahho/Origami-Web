@@ -49,15 +49,27 @@ namespace OrigamiBack.Data.Modelos
         {
             return Variantes?
                 .Select(v => v.Almacenamiento)
-                .Where(s => s != null)
+                .Where(s => !string.IsNullOrEmpty(s))
                 .Distinct()
                 .OrderBy(s => s) ?? Enumerable.Empty<string>();
         }
 
         // Método para obtener los colores disponibles por almacenamiento (sin RAM)
-        public IEnumerable<string> GetAvailableColors(string storage)
+        // Si storage es null, devuelve todos los colores disponibles
+        public IEnumerable<string> GetAvailableColors(string? storage)
         {
-            return Variantes?.Where(v => v.Almacenamiento== storage)
+            if (string.IsNullOrEmpty(storage))
+            {
+                // Para productos sin almacenamiento, devolver todos los colores
+                return Variantes?
+                    .Where(v => string.IsNullOrEmpty(v.Almacenamiento))
+                    .Select(v => v.Color)
+                    .Where(c => c != null)
+                    .Distinct()
+                    .OrderBy(c => c) ?? Enumerable.Empty<string>();
+            }
+
+            return Variantes?.Where(v => v.Almacenamiento == storage)
                 .Select(v => v.Color)
                 .Where(c => c != null)
                 .Distinct()

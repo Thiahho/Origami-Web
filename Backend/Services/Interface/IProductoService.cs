@@ -13,7 +13,8 @@ namespace OrigamiBack.Services.Interface
         Task DeleteAsync(int id);
         Task<IEnumerable<ProductosVariantesDto>> GetVariantesByIdAsync(int productId);
         // Modificado: Ya no se busca por RAM
-        Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string storage, string color, int? condicionId);
+        // Storage puede ser null para productos sin almacenamiento
+        Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string? storage, string color, int? condicionId);
         Task<ProductosVariantesDto?> GetVarianteByIdAsync(int varianteId);
         // COMENTADO: Ya no se selecciona por RAM
         // Task<IEnumerable<string>> GetDistintAlmacenamientosAsync(string ram, int productId);
@@ -24,7 +25,8 @@ namespace OrigamiBack.Services.Interface
         Task UpdateVarianteAsync(ProductosVariantesDto variante);
         Task DeleteVarianteAsync(int varianteId);
         // Modificado: Ya no se valida por RAM
-        Task<bool> ExistsVarianteAsync(int productoId, string almacenamiento, string color, int? condicionId);
+        // Almacenamiento puede ser null para productos sin almacenamiento
+        Task<bool> ExistsVarianteAsync(int productoId, string? almacenamiento, string color, int? condicionId);
         Task<bool> ExistsProductoAsync(string marca, string modelo);
     }
 }

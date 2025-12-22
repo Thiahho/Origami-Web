@@ -72,6 +72,11 @@ function getCurrentVariant() {
     const vColor = v.Color || v.color;
     const vStorage = v.Almacenamiento || v.almacenamiento;
 
+    // Si el producto no tiene almacenamiento, solo comparar por color
+    if (!selectedStorage && !vStorage) {
+      return vColor === selectedColor;
+    }
+
     return (
       vColor === selectedColor &&
       vStorage === selectedStorage
@@ -230,7 +235,7 @@ function setupEventListeners() {
     message += `📱 *${model}*\n`;
     // COMENTADO: Ya no se incluye RAM en el mensaje
     // message += `   RAM: ${ram}\n`;
-    message += `   Almacenamiento: ${storage}\n`;
+    if (storage) message += `   Almacenamiento: ${storage}\n`;
     if (color) message += `   Color: ${color}\n`;
     if (condicion) message += `   Condición: ${condicion}\n`;
     message += `   Cantidad: ${qty}\n`;
@@ -477,17 +482,31 @@ async function loadProductData() {
       colorRow.appendChild(btn);
     });
 
-    // Construir botones de almacenamiento
+    // Construir botones de almacenamiento (u ocultar si no hay)
     const capRow = document.getElementById("capRow");
-    capRow.innerHTML = "";
-    storageOptions.forEach((storage, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "detalle-opt" + (idx === 0 ? " is-active" : "");
-      btn.dataset.cap = storage;
-      btn.dataset.delta = 0;
-      btn.textContent = storage;
-      capRow.appendChild(btn);
-    });
+    const capLabel = document.querySelector('label[for="capRow"]') ||
+                     document.querySelector('.detalle-label:has(+ #capRow)');
+
+    if (storageOptions.length === 0) {
+      // Si no hay almacenamiento, ocultar la fila completa
+      capRow.style.display = "none";
+      if (capLabel) capLabel.style.display = "none";
+      if (sumCap) sumCap.parentElement.style.display = "none"; // Ocultar en resumen también
+    } else {
+      capRow.style.display = "";
+      if (capLabel) capLabel.style.display = "";
+      if (sumCap) sumCap.parentElement.style.display = "";
+
+      capRow.innerHTML = "";
+      storageOptions.forEach((storage, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "detalle-opt" + (idx === 0 ? " is-active" : "");
+        btn.dataset.cap = storage;
+        btn.dataset.delta = 0;
+        btn.textContent = storage;
+        capRow.appendChild(btn);
+      });
+    }
 
     // Actualizar precio base con la primera variante
     const firstVariant = variantes[0];
@@ -497,7 +516,9 @@ async function loadProductData() {
     // COMENTADO: Ya no se actualiza sumRam
     // sumRam.textContent = ramOptions[0] || "N/A";
     sumColor.textContent = colorOptions[0] || "N/A";
-    sumCap.textContent = storageOptions[0] || "N/A";
+    if (storageOptions.length > 0) {
+      sumCap.textContent = storageOptions[0] || "N/A";
+    }
     // Asignar condición inicial si viene en la primera variante
     const initCond =
       firstVariant?.CondicionNombre || firstVariant?.condicionNombre || "-";
