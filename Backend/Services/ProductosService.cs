@@ -35,8 +35,7 @@ namespace OrigamiBack.Services
             {
                 Id = variante.Id,
                 ProductoId = variante.ProductoId,
-                // COMENTADO: Ya no se selecciona por RAM
-                // Ram = variante.Ram,
+                Ram = variante.Ram, // Nullable: mantenido para compatibilidad
                 Almacenamiento = variante.Almacenamiento,
                 Color = variante.Color,
                 Stock = variante.Stock,
@@ -140,8 +139,7 @@ namespace OrigamiBack.Services
                 {
                     Id = v.Id,
                     ProductoId = v.ProductoId,
-                    // COMENTADO: Ya no se selecciona por RAM
-                    // Ram = v.Ram,
+                    Ram = v.Ram, // Nullable: mantenido para compatibilidad
                     Almacenamiento = v.Almacenamiento,
                     Color = v.Color,
                     Precio = v.Precio,
@@ -198,8 +196,7 @@ namespace OrigamiBack.Services
             {
                 Id = v.Id,
                 ProductoId = v.ProductoId,
-                // COMENTADO: Ya no se selecciona por RAM
-                // Ram = v.Ram,
+                Ram = v.Ram, // Nullable: mantenido para compatibilidad
                 Almacenamiento = v.Almacenamiento,
                 Color = v.Color,
                 Precio = v.Precio,
@@ -286,8 +283,9 @@ namespace OrigamiBack.Services
 
             if (entidad != null)
             {
-                // COMENTADO: Ya no se selecciona por RAM
-                // entidad.Ram = varianteDto.Ram;
+                // Solo actualizar Ram si se proporciona (nullable)
+                if (varianteDto.Ram != null)
+                    entidad.Ram = varianteDto.Ram;
                 entidad.Almacenamiento = varianteDto.Almacenamiento;
                 entidad.Color = varianteDto.Color;
                 entidad.Precio = varianteDto.Precio;

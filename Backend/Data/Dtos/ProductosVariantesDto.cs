@@ -11,9 +11,8 @@ namespace OrigamiBack.Data.Dtos
         public int Id { get; set; }
         public int ProductoId { get; set; }
 
-        // COMENTADO: Ya no se selecciona por RAM
-        // [Required(ErrorMessage = "La RAM es requerida")]
-        // public string Ram { get; set; } = string.Empty;
+        // NULLABLE: Ya no se selecciona por RAM, pero se mantiene para compatibilidad con BD
+        public string? Ram { get; set; }
 
         [Required(ErrorMessage = "El almacenamiento es requerido")]
         public string Almacenamiento { get; set; } = string.Empty;

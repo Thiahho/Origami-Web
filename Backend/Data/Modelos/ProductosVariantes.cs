@@ -17,10 +17,9 @@ namespace OrigamiBack.Data.Modelos
         [Column("color")]
         [Required]
         public required string Color { get; set; }
-        // COMENTADO: Ya no se selecciona por RAM
-        // [Column("ram")]
-        // [Required]
-        // public required string Ram { get; set; }
+        // NULLABLE: Ya no se selecciona por RAM, pero se mantiene para compatibilidad con BD
+        [Column("ram")]
+        public string? Ram { get; set; }
         [Column("almacenamiento")]
         [Required]
         public required string Almacenamiento { get; set; }
