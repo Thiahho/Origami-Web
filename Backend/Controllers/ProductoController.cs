@@ -314,7 +314,10 @@ namespace OrigamiBack.Controllers
         {
             try
             {
-                // Verificar si ya existe una variante con las mismas especificaciones (sin RAM)
+                // COMENTADO: Validación de duplicados deshabilitada temporalmente
+                // Como ya no usamos RAM, pueden existir múltiples variantes con mismo Storage+Color
+                // pero diferente RAM (datos legacy)
+                /*
                 var existingVariante = await _productoService.GetVarianteSpecAsync(
                     varianteDto.ProductoId,
                     varianteDto.Almacenamiento,
@@ -326,6 +329,7 @@ namespace OrigamiBack.Controllers
                 {
                     return BadRequest("Ya existe una variante con estas especificaciones");
                 }
+                */
 
                 // Crear la nueva variante
                 var createdVariante = await _productoService.AddVarianteAsync(varianteDto);
@@ -347,7 +351,10 @@ namespace OrigamiBack.Controllers
             if (existingVariante == null)
                 return NotFound($"No se encontró la variante con ID {varianteId}");
 
-            // 2. Validar duplicados (misma combinación de almacenamiento y color, sin ram)
+            // 2. COMENTADO: Validación de duplicados deshabilitada temporalmente
+            // Como ya no usamos RAM, pueden existir múltiples variantes con mismo Storage+Color
+            // pero diferente RAM (datos legacy)
+            /*
             var duplicateCheck = await _productoService.GetVarianteSpecAsync(
                 existingVariante.ProductoId,
                 varianteDto.Almacenamiento,
@@ -356,6 +363,7 @@ namespace OrigamiBack.Controllers
             );
             if (duplicateCheck != null && duplicateCheck.Id != varianteId)
                 return BadRequest("Ya existe una variante con estas especificaciones");
+            */
 
             // 3. Asignar los IDs correctos al DTO
             varianteDto.Id = varianteId;
