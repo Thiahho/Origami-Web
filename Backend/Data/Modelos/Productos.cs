@@ -35,28 +35,29 @@ namespace OrigamiBack.Data.Modelos
             return Variantes?.Min(v => v.Precio);
         }
 
-        public IEnumerable<string> GetAvailableRAM()
-        {
-            return Variantes?.Select(v => v.Ram)
-                .Where(r => r != null)
-                .Distinct()
-                .OrderBy(r => r) ?? Enumerable.Empty<string>();
-        }
+        // COMENTADO: Ya no se selecciona por RAM
+        // public IEnumerable<string> GetAvailableRAM()
+        // {
+        //     return Variantes?.Select(v => v.Ram)
+        //         .Where(r => r != null)
+        //         .Distinct()
+        //         .OrderBy(r => r) ?? Enumerable.Empty<string>();
+        // }
 
-        // Método para obtener los almacenamientos disponibles por RAM
-        public IEnumerable<string> GetAvailableStorage(string ram)
+        // Método para obtener los almacenamientos disponibles (sin filtro de RAM)
+        public IEnumerable<string> GetAvailableStorage()
         {
-            return Variantes?.Where(v => v.Ram == ram)
+            return Variantes?
                 .Select(v => v.Almacenamiento)
                 .Where(s => s != null)
                 .Distinct()
                 .OrderBy(s => s) ?? Enumerable.Empty<string>();
         }
 
-        // Método para obtener los colores disponibles por RAM y almacenamiento
-        public IEnumerable<string> GetAvailableColors(string ram, string storage)
+        // Método para obtener los colores disponibles por almacenamiento (sin RAM)
+        public IEnumerable<string> GetAvailableColors(string storage)
         {
-            return Variantes?.Where(v => v.Ram == ram && v.Almacenamiento== storage)
+            return Variantes?.Where(v => v.Almacenamiento== storage)
                 .Select(v => v.Color)
                 .Where(c => c != null)
                 .Distinct()

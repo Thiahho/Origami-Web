@@ -35,7 +35,8 @@ namespace OrigamiBack.Services
             {
                 Id = variante.Id,
                 ProductoId = variante.ProductoId,
-                Ram = variante.Ram,
+                // COMENTADO: Ya no se selecciona por RAM
+                // Ram = variante.Ram,
                 Almacenamiento = variante.Almacenamiento,
                 Color = variante.Color,
                 Stock = variante.Stock,
@@ -139,7 +140,8 @@ namespace OrigamiBack.Services
                 {
                     Id = v.Id,
                     ProductoId = v.ProductoId,
-                    Ram = v.Ram,
+                    // COMENTADO: Ya no se selecciona por RAM
+                    // Ram = v.Ram,
                     Almacenamiento = v.Almacenamiento,
                     Color = v.Color,
                     Precio = v.Precio,
@@ -151,27 +153,29 @@ namespace OrigamiBack.Services
             };
         }
             
-        public async Task<IEnumerable<string>> GetDistintAlmacenamientosAsync(string ram, int productId)
-        {
-            return await _context.ProductosVariantes
-                .Where(v => v.ProductoId == productId && v.Ram == ram)
-                .Select(v => v.Almacenamiento)
-                .Where(s => s != null)
-                .Distinct()
-                .OrderBy(s => s)
-                .ToListAsync();
-        }
+        // COMENTADO: Ya no se selecciona por RAM
+        // public async Task<IEnumerable<string>> GetDistintAlmacenamientosAsync(string ram, int productId)
+        // {
+        //     return await _context.ProductosVariantes
+        //         .Where(v => v.ProductoId == productId && v.Ram == ram)
+        //         .Select(v => v.Almacenamiento)
+        //         .Where(s => s != null)
+        //         .Distinct()
+        //         .OrderBy(s => s)
+        //         .ToListAsync();
+        // }
 
-        public async Task<IEnumerable<string>> GetDistintColorAsync(string ram, string almacenamiento, int productId)
-        {
-            return await _context.ProductosVariantes
-                .Where(v => v.ProductoId == productId && v.Ram == ram && v.Almacenamiento == almacenamiento)
-                .Select(v => v.Color)
-                .Where(c => c != null)
-                .Distinct()
-                .OrderBy(c => c)
-                .ToListAsync();
-        }
+        // COMENTADO: Ya no se selecciona por RAM
+        // public async Task<IEnumerable<string>> GetDistintColorAsync(string ram, string almacenamiento, int productId)
+        // {
+        //     return await _context.ProductosVariantes
+        //         .Where(v => v.ProductoId == productId && v.Ram == ram && v.Almacenamiento == almacenamiento)
+        //         .Select(v => v.Color)
+        //         .Where(c => c != null)
+        //         .Distinct()
+        //         .OrderBy(c => c)
+        //         .ToListAsync();
+        // }
 
         public async Task<IEnumerable<ProductosVariantesDto>> GetVariantesByIdAsync(int productId)
         {
@@ -194,7 +198,8 @@ namespace OrigamiBack.Services
             {
                 Id = v.Id,
                 ProductoId = v.ProductoId,
-                Ram = v.Ram,
+                // COMENTADO: Ya no se selecciona por RAM
+                // Ram = v.Ram,
                 Almacenamiento = v.Almacenamiento,
                 Color = v.Color,
                 Precio = v.Precio,
@@ -207,11 +212,11 @@ namespace OrigamiBack.Services
             return result;
         }
 
-        public async Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string ram, string storage, string color, int? condicionId)
+        // Modificado: Ya no se busca por RAM, solo por storage y color
+        public async Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string storage, string color, int? condicionId)
         {
             var query = _context.ProductosVariantes
                 .Where(v => v.ProductoId == productId)
-                .Where(v => v.Ram == ram)
                 .Where(v => v.Almacenamiento == storage)
                 .Where(v => v.Color == color)
                 .AsNoTracking()
@@ -227,10 +232,10 @@ namespace OrigamiBack.Services
             }
 
             var variante = await query.FirstOrDefaultAsync();
-                
+
             if (variante == null)
                 return null;
-                
+
             return _mapper.Map<ProductosVariantesDto>(variante);
         }
 
@@ -281,7 +286,8 @@ namespace OrigamiBack.Services
 
             if (entidad != null)
             {
-                entidad.Ram = varianteDto.Ram;
+                // COMENTADO: Ya no se selecciona por RAM
+                // entidad.Ram = varianteDto.Ram;
                 entidad.Almacenamiento = varianteDto.Almacenamiento;
                 entidad.Color = varianteDto.Color;
                 entidad.Precio = varianteDto.Precio;
@@ -302,10 +308,10 @@ namespace OrigamiBack.Services
             }
         }
 
-        public async Task<bool> ExistsVarianteAsync(int productoId, string ram, string almacenamiento, string color, int? condicionId)
+        // Modificado: Ya no se valida por RAM
+        public async Task<bool> ExistsVarianteAsync(int productoId, string almacenamiento, string color, int? condicionId)
         {
             var query = _context.ProductosVariantes.Where(v => v.ProductoId == productoId &&
-                                                               v.Ram == ram &&
                                                                v.Almacenamiento == almacenamiento &&
                                                                v.Color == color);
             if (condicionId.HasValue)

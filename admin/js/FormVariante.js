@@ -275,8 +275,9 @@ class FormVariante {
             document.getElementById("variantCondicion").value = condicionIdVariant || "";
           });
 
-          document.getElementById("variantRam").value =
-            variant.ram || variant.Ram || "";
+          // COMENTADO: Ya no se carga RAM
+          // document.getElementById("variantRam").value =
+          //   variant.ram || variant.Ram || "";
           document.getElementById("variantStorage").value =
             variant.almacenamiento || variant.Almacenamiento || "";
           document.getElementById("variantColor").value =
@@ -329,7 +330,8 @@ class FormVariante {
 
       const variantData = {
         productId: formData.get("productId"),
-        ram: (formData.get("ram") || "").trim(),
+        // COMENTADO: Ya no se obtiene RAM del formulario
+        // ram: (formData.get("ram") || "").trim(),
         storage: (formData.get("storage") || "").trim(),
         color: (formData.get("color") || "").trim(),
         price: parseFloat(formData.get("precioBase")) || 0,
@@ -346,10 +348,11 @@ class FormVariante {
         this.showError("Debes seleccionar un producto");
         return;
       }
-      if (!variantData.ram) {
-        this.showError("La RAM es obligatoria");
-        return;
-      }
+      // COMENTADO: Ya no se valida RAM
+      // if (!variantData.ram) {
+      //   this.showError("La RAM es obligatoria");
+      //   return;
+      // }
       if (!variantData.storage) {
         this.showError("El almacenamiento es obligatorio");
         return;
@@ -373,7 +376,8 @@ class FormVariante {
 
       const payload = {
         ProductoId: parseInt(variantData.productId),
-        Ram: variantData.ram,
+        // COMENTADO: Ya no se envía RAM en el payload
+        // Ram: variantData.ram,
         Almacenamiento: variantData.storage,
         Color: variantData.color,
         Precio: variantData.price,

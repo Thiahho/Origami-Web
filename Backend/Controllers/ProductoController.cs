@@ -129,29 +129,30 @@ namespace OrigamiBack.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpGet("{productoId}/Ram-Opciones")]
-        public async Task<ActionResult<IEnumerable<string>>> GetDistinctRamAsync(int productoId)
-        {
-            try
-            {
-                var producto = await _productoService.GetByIdWithVarianteAsync(productoId);
-                if (producto == null)
-                {
-                    return NotFound($"No se encontró el producto con ID {productoId}");
-                }
-                var opciones = producto.GetAvailableRAM();
-                return Ok(opciones);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
-            }
-        }
+        // COMENTADO: Ya no se selecciona por RAM
+        // [AllowAnonymous]
+        // [HttpGet("{productoId}/Ram-Opciones")]
+        // public async Task<ActionResult<IEnumerable<string>>> GetDistinctRamAsync(int productoId)
+        // {
+        //     try
+        //     {
+        //         var producto = await _productoService.GetByIdWithVarianteAsync(productoId);
+        //         if (producto == null)
+        //         {
+        //             return NotFound($"No se encontró el producto con ID {productoId}");
+        //         }
+        //         var opciones = producto.GetAvailableRAM();
+        //         return Ok(opciones);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+        //     }
+        // }
 
         [AllowAnonymous]
         [HttpGet("{productoId}/Almacenamiento-Opciones")]
-        public async Task<ActionResult<IEnumerable<string>>> GetDistinctAlmacenamientosAsync(int productoId, [FromQuery] string ram)
+        public async Task<ActionResult<IEnumerable<string>>> GetDistinctAlmacenamientosAsync(int productoId)
         {
             try
             {
@@ -160,7 +161,8 @@ namespace OrigamiBack.Controllers
                 {
                     return NotFound($"No se encontró el producto con ID {productoId}");
                 }
-                var almacenamientos = producto.GetAvailableStorage(ram);
+                // Ya no se filtra por RAM
+                var almacenamientos = producto.GetAvailableStorage();
                 return Ok(almacenamientos);
             }
             catch (Exception ex)
@@ -171,7 +173,7 @@ namespace OrigamiBack.Controllers
 
         [AllowAnonymous]
         [HttpGet("{productoId}/Color-Opciones")]
-        public async Task<ActionResult<IEnumerable<string>>> GetDistinctColorsAsync(int productoId, [FromQuery] string ram, [FromQuery] string almacenamiento)
+        public async Task<ActionResult<IEnumerable<string>>> GetDistinctColorsAsync(int productoId, [FromQuery] string almacenamiento)
         {
             try
             {
@@ -180,7 +182,8 @@ namespace OrigamiBack.Controllers
                 {
                     return NotFound($"No se encontró el producto con ID {productoId}");
                 }
-                var colores = producto.GetAvailableColors(ram, almacenamiento);
+                // Ya no se filtra por RAM, solo por almacenamiento
+                var colores = producto.GetAvailableColors(almacenamiento);
                 return Ok(colores);
             }
             catch (Exception ex)
@@ -193,14 +196,14 @@ namespace OrigamiBack.Controllers
         [HttpGet("{productId}/variante")]
         public async Task<ActionResult<ProductosVariantesDto>> GetVarianteSpecAsync(
             int productId,
-            [FromQuery] string ram,
             [FromQuery] string storage,
             [FromQuery] string color,
             [FromQuery] int? condicionId)
         {
             try
             {
-                var variante = await _productoService.GetVarianteSpecAsync(productId, ram, storage, color, condicionId);
+                // Ya no se busca por RAM, solo por storage y color
+                var variante = await _productoService.GetVarianteSpecAsync(productId, storage, color, condicionId);
                 if (variante == null)
                 {
                     return NotFound($"No se encontró la variante con las especificaciones solicitadas");
@@ -311,10 +314,9 @@ namespace OrigamiBack.Controllers
         {
             try
             {
-                // Verificar si ya existe una variante con las mismas especificaciones
+                // Verificar si ya existe una variante con las mismas especificaciones (sin RAM)
                 var existingVariante = await _productoService.GetVarianteSpecAsync(
                     varianteDto.ProductoId,
-                    varianteDto.Ram,
                     varianteDto.Almacenamiento,
                     varianteDto.Color,
                     varianteDto.CondicionId
@@ -345,10 +347,9 @@ namespace OrigamiBack.Controllers
             if (existingVariante == null)
                 return NotFound($"No se encontró la variante con ID {varianteId}");
 
-            // 2. Validar duplicados (misma combinación de ram, almacenamiento y color en el mismo producto)
+            // 2. Validar duplicados (misma combinación de almacenamiento y color, sin ram)
             var duplicateCheck = await _productoService.GetVarianteSpecAsync(
                 existingVariante.ProductoId,
-                varianteDto.Ram,
                 varianteDto.Almacenamiento,
                 varianteDto.Color,
                 varianteDto.CondicionId

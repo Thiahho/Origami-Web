@@ -258,11 +258,12 @@ class VariantsController {
       // Esperar condiciones
       await condicionesPromise;
 
-      // Normalizar variantes
+      // Normalizar variantes (sin RAM)
       variants = variants.map((v) => ({
         id: v.id ?? v.Id,
         productoId: v.productoId ?? v.ProductoId,
-        ram: v.ram || v.Ram || "",
+        // COMENTADO: Ya no se usa RAM
+        // ram: v.ram || v.Ram || "",
         almacenamiento: v.almacenamiento || v.Almacenamiento || "",
         color: v.color || v.Color || "",
         precio: v.precio ?? v.Precio ?? 0,
@@ -293,7 +294,8 @@ class VariantsController {
         const search = this.currentFilter.search.toLowerCase();
         variants = variants.filter(
           (variant) =>
-            (variant.ram || "").toLowerCase().includes(search) ||
+            // COMENTADO: Ya no se busca por RAM
+            // (variant.ram || "").toLowerCase().includes(search) ||
             (variant.almacenamiento || "").toLowerCase().includes(search) ||
             (variant.color || "").toLowerCase().includes(search)
         );
@@ -452,9 +454,7 @@ class VariantsController {
               }
             </div>
           </td>
-          <td>
-            <strong>${variant.ram}</strong>
-          </td>
+          <!-- COMENTADO: Ya no se muestra columna RAM -->
           <td>
             <strong>${variant.almacenamiento}</strong>
           </td>

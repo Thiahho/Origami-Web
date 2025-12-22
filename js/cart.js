@@ -47,13 +47,13 @@
       items.forEach((it, idx) => {
         const row = document.createElement("div");
         row.className = "cart-item";
-        const metaText = `${it.ram} · ${it.storage}${
+        // COMENTADO: Ya no se muestra RAM
+        const metaText = `${it.storage}${
           it.color ? " · " + it.color : ""
         }${it.condicionNombre ? " · " + it.condicionNombre : ""}`;
         /*  //console.log(`📦 Item #${idx}:`, {
           model: it.model,
           variantId: it.variantId,
-          ram: it.ram,
           storage: it.storage,
           color: it.color,
           condicionNombre: it.condicionNombre,
@@ -137,12 +137,13 @@
     // Número de WhatsApp (incluir código de país sin +, ej: 5491234567890)
     const phoneNumber = "5491172376181"; // CAMBIAR POR TU NÚMERO
 
-    // Construir mensaje
+    // Construir mensaje (sin RAM)
     let message =
       "Hola, quisiera hacer un pedido: 🛒 *Mi Lista de Productos*\n\n";
     items.forEach((it, idx) => {
       message += `${idx + 1}. *${it.model}*\n`;
-      message += `   📱 ${it.ram} · ${it.storage}`;
+      // COMENTADO: Ya no se incluye RAM en el mensaje
+      message += `   📱 ${it.storage}`;
       if (it.color) message += ` · ${it.color}`;
       if (it.condicionNombre) message += ` · ${it.condicionNombre}`;
       message += `\n   💰 ${fmt(it.unitPrice)} x ${it.qty} = ${fmt(

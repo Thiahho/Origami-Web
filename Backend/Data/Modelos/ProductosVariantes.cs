@@ -17,9 +17,10 @@ namespace OrigamiBack.Data.Modelos
         [Column("color")]
         [Required]
         public required string Color { get; set; }
-        [Column("ram")]
-        [Required]
-        public required string Ram { get; set; }
+        // COMENTADO: Ya no se selecciona por RAM
+        // [Column("ram")]
+        // [Required]
+        // public required string Ram { get; set; }
         [Column("almacenamiento")]
         [Required]
         public required string Almacenamiento { get; set; }

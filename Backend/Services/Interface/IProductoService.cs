@@ -12,16 +12,19 @@ namespace OrigamiBack.Services.Interface
         Task UpdateAsync(ProductoDto productos);
         Task DeleteAsync(int id);
         Task<IEnumerable<ProductosVariantesDto>> GetVariantesByIdAsync(int productId);
-        Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string ram, string storage, string color, int? condicionId);
+        // Modificado: Ya no se busca por RAM
+        Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string storage, string color, int? condicionId);
         Task<ProductosVariantesDto?> GetVarianteByIdAsync(int varianteId);
-        Task<IEnumerable<string>> GetDistintAlmacenamientosAsync(string ram, int productId);
-        Task<IEnumerable<string>> GetDistintColorAsync(string ram, string almacenamiento, int productId);
+        // COMENTADO: Ya no se selecciona por RAM
+        // Task<IEnumerable<string>> GetDistintAlmacenamientosAsync(string ram, int productId);
+        // Task<IEnumerable<string>> GetDistintColorAsync(string ram, string almacenamiento, int productId);
         Task<IEnumerable<ProductoDto>> GetAllProductsAsync();
-        
+
         // Nuevos métodos
         Task UpdateVarianteAsync(ProductosVariantesDto variante);
         Task DeleteVarianteAsync(int varianteId);
-        Task<bool> ExistsVarianteAsync(int productoId, string ram, string almacenamiento, string color, int? condicionId);
+        // Modificado: Ya no se valida por RAM
+        Task<bool> ExistsVarianteAsync(int productoId, string almacenamiento, string color, int? condicionId);
         Task<bool> ExistsProductoAsync(string marca, string modelo);
     }
 }

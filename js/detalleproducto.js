@@ -11,7 +11,8 @@ const fmt = (v) => "$" + v.toLocaleString("en-US");
 let img,
   priceEl,
   sumModel,
-  sumRam,
+  // COMENTADO: Ya no se selecciona por RAM
+  // sumRam,
   sumColor,
   sumCap,
   sumQty,
@@ -21,7 +22,8 @@ let qtyHelpEl, plusBtn, minusBtn;
 
 let colorDelta = 0,
   capDelta = 0,
-  ramDelta = 0,
+  // COMENTADO: Ya no se selecciona por RAM
+  // ramDelta = 0,
   qty = 1;
 
 // Variables globales para variantes
@@ -48,10 +50,11 @@ function calc() {
   enforceQtyByStock(stock);
 }
 
-// Obtener variante actual según selección
+// Obtener variante actual según selección (sin RAM)
 function getCurrentVariant() {
-  const selectedRam = document.querySelector("#ramRow .detalle-opt.is-active")
-    ?.dataset.ram;
+  // COMENTADO: Ya no se selecciona por RAM
+  // const selectedRam = document.querySelector("#ramRow .detalle-opt.is-active")
+  //   ?.dataset.ram;
   const selectedColor = document.querySelector(".detalle-swatch.is-active")
     ?.dataset.color;
   const selectedStorage = document.querySelector(
@@ -59,18 +62,17 @@ function getCurrentVariant() {
   )?.dataset.cap;
 
   /*  //console.log("Buscando variante:", {
-    selectedRam,
     selectedColor,
     selectedStorage,
   }); */
 
   const found = allVariants.find((v) => {
-    const vRam = v.Ram || v.ram;
+    // COMENTADO: Ya no se selecciona por RAM
+    // const vRam = v.Ram || v.ram;
     const vColor = v.Color || v.color;
     const vStorage = v.Almacenamiento || v.almacenamiento;
 
     return (
-      vRam === selectedRam &&
       vColor === selectedColor &&
       vStorage === selectedStorage
     );
@@ -80,69 +82,31 @@ function getCurrentVariant() {
   return found;
 }
 
-// Filtrar opciones disponibles según selección
+// Filtrar opciones disponibles según selección (sin RAM)
 function filterAvailableOptions() {
-  const selectedRam = document.querySelector("#ramRow .detalle-opt.is-active")
-    ?.dataset.ram;
   const selectedStorage = document.querySelector(
     "#capRow .detalle-opt.is-active"
   )?.dataset.cap;
 
-  ////console.log('Filtering options. Selected:', { selectedRam, selectedStorage });
+  ////console.log('Filtering options. Selected storage:', selectedStorage);
 
-  // Filtrar almacenamientos disponibles según RAM seleccionada
-  if (selectedRam) {
-    const availableStorages = [
-      ...new Set(
-        allVariants
-          .filter((v) => (v.Ram || v.ram) === selectedRam)
-          .map((v) => v.Almacenamiento || v.almacenamiento)
-      ),
-    ].filter(Boolean);
+  // COMENTADO: Ya no se filtran almacenamientos por RAM
+  // Todos los almacenamientos están disponibles
 
-    ////console.log('Available storages for RAM', selectedRam, ':', availableStorages);
-
-    document.querySelectorAll("#capRow .detalle-opt").forEach((btn) => {
-      if (availableStorages.includes(btn.dataset.cap)) {
-        btn.disabled = false;
-        btn.style.opacity = "1";
-      } else {
-        btn.disabled = true;
-        btn.style.opacity = "0.3";
-      }
-    });
-
-    // Si el almacenamiento actual no está disponible, seleccionar el primero disponible
-    if (selectedStorage && !availableStorages.includes(selectedStorage)) {
-      const firstAvailable = document.querySelector(
-        "#capRow .detalle-opt:not([disabled])"
-      );
-      if (firstAvailable) {
-        document
-          .querySelectorAll("#capRow .detalle-opt")
-          .forEach((x) => x.classList.remove("is-active"));
-        firstAvailable.classList.add("is-active");
-        sumCap.textContent = firstAvailable.dataset.cap;
-      }
-    }
-  }
-
-  // Filtrar colores disponibles según RAM y Almacenamiento
-  // IMPORTANTE: Solo filtrar si AMBOS están seleccionados
-  if (selectedRam && selectedStorage) {
+  // Filtrar colores disponibles según Almacenamiento
+  if (selectedStorage) {
     const availableColors = [
       ...new Set(
         allVariants
           .filter(
             (v) =>
-              (v.Ram || v.ram) === selectedRam &&
               (v.Almacenamiento || v.almacenamiento) === selectedStorage
           )
           .map((v) => v.Color || v.color)
       ),
     ].filter(Boolean);
 
-    // //console.log('Available colors for', selectedRam, '+', selectedStorage, ':', availableColors);
+    // //console.log('Available colors for storage', selectedStorage, ':', availableColors);
 
     document.querySelectorAll(".detalle-swatch").forEach((btn) => {
       if (availableColors.includes(btn.dataset.color)) {
@@ -170,8 +134,8 @@ function filterAvailableOptions() {
       }
     }
   } else {
-    // Si no hay RAM y almacenamiento seleccionados, habilitar todos los colores
-    // //console.log('Not filtering colors - waiting for RAM and storage selection');
+    // Si no hay almacenamiento seleccionado, habilitar todos los colores
+    // //console.log('Not filtering colors - waiting for storage selection');
     document.querySelectorAll(".detalle-swatch").forEach((btn) => {
       btn.disabled = false;
       btn.style.opacity = "1";
@@ -195,21 +159,21 @@ function setupEventListeners() {
     calc();
   });
 
-  // RAM
-  document.getElementById("ramRow").addEventListener("click", (e) => {
-    const b = e.target.closest(".detalle-opt");
-    if (!b) return;
-    document
-      .querySelectorAll("#ramRow .detalle-opt")
-      .forEach((x) => x.classList.remove("is-active"));
-    b.classList.add("is-active");
-    ramDelta = +b.dataset.delta || 0;
-    sumRam.textContent = b.dataset.ram;
+  // COMENTADO: Ya no se selecciona por RAM
+  // document.getElementById("ramRow").addEventListener("click", (e) => {
+  //   const b = e.target.closest(".detalle-opt");
+  //   if (!b) return;
+  //   document
+  //     .querySelectorAll("#ramRow .detalle-opt")
+  //     .forEach((x) => x.classList.remove("is-active"));
+  //   b.classList.add("is-active");
+  //   ramDelta = +b.dataset.delta || 0;
+  //   sumRam.textContent = b.dataset.ram;
 
-    // Filtrar opciones disponibles
-    filterAvailableOptions();
-    calc();
-  });
+  //   // Filtrar opciones disponibles
+  //   filterAvailableOptions();
+  //   calc();
+  // });
 
   // Capacidad
   document.getElementById("capRow").addEventListener("click", (e) => {
@@ -252,9 +216,10 @@ function setupEventListeners() {
     // Número de WhatsApp (sin +, espacios ni guiones)
     const phoneNumber = "5491172376181";
 
-    // Construir mensaje
+    // Construir mensaje (sin RAM)
     const model = document.getElementById("detalleModel")?.textContent || "Producto";
-    const ram = document.querySelector("#ramRow .detalle-opt.is-active")?.dataset.ram || "";
+    // COMENTADO: Ya no se selecciona por RAM
+    // const ram = document.querySelector("#ramRow .detalle-opt.is-active")?.dataset.ram || "";
     const storage = document.querySelector("#capRow .detalle-opt.is-active")?.dataset.cap || "";
     const color = document.querySelector(".detalle-swatch.is-active")?.dataset.color || "";
     const condicion = variant?.CondicionNombre || variant?.condicionNombre || "";
@@ -263,7 +228,8 @@ function setupEventListeners() {
 
     let message = `Hola, quisiera consultar por el siguiente producto:\n\n`;
     message += `📱 *${model}*\n`;
-    message += `   RAM: ${ram}\n`;
+    // COMENTADO: Ya no se incluye RAM en el mensaje
+    // message += `   RAM: ${ram}\n`;
     message += `   Almacenamiento: ${storage}\n`;
     if (color) message += `   Color: ${color}\n`;
     if (condicion) message += `   Condición: ${condicion}\n`;
@@ -299,9 +265,10 @@ function setupEventListeners() {
         productId,
         model:
           document.getElementById("detalleModel")?.textContent || "Producto",
-        ram:
-          document.querySelector("#ramRow .detalle-opt.is-active")?.dataset
-            .ram || "",
+        // COMENTADO: Ya no se selecciona por RAM
+        // ram:
+        //   document.querySelector("#ramRow .detalle-opt.is-active")?.dataset
+        //     .ram || "",
         storage:
           document.querySelector("#capRow .detalle-opt.is-active")?.dataset
             .cap || "",
@@ -464,10 +431,11 @@ async function loadProductData() {
     // Guardar variantes globalmente
     allVariants = variantes;
 
-    // Obtener opciones únicas de RAM, Almacenamiento y Color
-    const ramOptions = [...new Set(variantes.map((v) => v.Ram || v.ram))]
-      .filter(Boolean)
-      .sort();
+    // Obtener opciones únicas de Almacenamiento y Color (sin RAM)
+    // COMENTADO: Ya no se obtienen opciones de RAM
+    // const ramOptions = [...new Set(variantes.map((v) => v.Ram || v.ram))]
+    //   .filter(Boolean)
+    //   .sort();
     const storageOptions = [
       ...new Set(variantes.map((v) => v.Almacenamiento || v.almacenamiento)),
     ]
@@ -478,22 +446,21 @@ async function loadProductData() {
     ].filter(Boolean);
 
     //console.log("Opciones:", {
-    /*   ramOptions,
-      storageOptions,
+    /*   storageOptions,
       colorOptions,
     }); */
 
-    // Construir botones de RAM
-    const ramRow = document.getElementById("ramRow");
-    ramRow.innerHTML = "";
-    ramOptions.forEach((ram, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "detalle-opt" + (idx === 0 ? " is-active" : "");
-      btn.dataset.ram = ram;
-      btn.dataset.delta = 0;
-      btn.textContent = ram;
-      ramRow.appendChild(btn);
-    });
+    // COMENTADO: Ya no se construyen botones de RAM
+    // const ramRow = document.getElementById("ramRow");
+    // ramRow.innerHTML = "";
+    // ramOptions.forEach((ram, idx) => {
+    //   const btn = document.createElement("button");
+    //   btn.className = "detalle-opt" + (idx === 0 ? " is-active" : "");
+    //   btn.dataset.ram = ram;
+    //   btn.dataset.delta = 0;
+    //   btn.textContent = ram;
+    //   ramRow.appendChild(btn);
+    // });
 
     // Construir botones de color (solo círculo sin texto)
     const colorRow = document.getElementById("colorRow");
@@ -526,8 +493,9 @@ async function loadProductData() {
     const firstVariant = variantes[0];
     BASE = firstVariant ? firstVariant.Precio || firstVariant.precio || 0 : 0;
 
-    // Actualizar summary inicial
-    sumRam.textContent = ramOptions[0] || "N/A";
+    // Actualizar summary inicial (sin RAM)
+    // COMENTADO: Ya no se actualiza sumRam
+    // sumRam.textContent = ramOptions[0] || "N/A";
     sumColor.textContent = colorOptions[0] || "N/A";
     sumCap.textContent = storageOptions[0] || "N/A";
     // Asignar condición inicial si viene en la primera variante
@@ -536,7 +504,7 @@ async function loadProductData() {
     if (sumCondicion) sumCondicion.textContent = initCond;
     if (condicionValueEl) condicionValueEl.textContent = initCond;
 
-    // Aplicar filtros iniciales según la primera RAM seleccionada
+    // Aplicar filtros iniciales
     filterAvailableOptions();
 
     // Calcular precio inicial
@@ -553,11 +521,12 @@ async function loadProductData() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", () => {
-  // Inicializar referencias a elementos DOM
+  // Inicializar referencias a elementos DOM (sin sumRam)
   img = document.getElementById("detalleImg");
   priceEl = document.getElementById("price");
   sumModel = document.getElementById("sumModel");
-  sumRam = document.getElementById("sumRam");
+  // COMENTADO: Ya no se inicializa sumRam
+  // sumRam = document.getElementById("sumRam");
   sumColor = document.getElementById("sumColor");
   sumCap = document.getElementById("sumCap");
   sumQty = document.getElementById("sumQty");
