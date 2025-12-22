@@ -70,7 +70,7 @@ namespace OrigamiBack.Data
                 e.HasKey(v => v.Id);
                 e.Property(v=>v.Id).HasColumnName("Id");
                 e.Property(v=>v.ProductoId).HasColumnName("ProductoId");
-                e.Property(v=>v.Ram).HasColumnName("ram");
+                //e.Property(v=>v.Ram).HasColumnName("ram");
                 e.Property(v=>v.Almacenamiento).HasColumnName("almacenamiento");
                 e.Property(v=>v.Color).HasColumnName("color");
                 e.Property(v=>v.Precio).HasColumnName("precio");

@@ -185,11 +185,23 @@ body {
   background: #3b82f6;
 }
 
+.detalle-swatch[data-color="ultramarine"],
+.detalle-swatch[data-color="Ultramarine"] {
+  background: #5a7acd;
+}
+
 .detalle-swatch[data-color="Pink"],
 .detalle-swatch[data-color="pink"],
 .detalle-swatch[data-color="Rosa"],
 .detalle-swatch[data-color="rosa"] {
   background: #ff80ab;
+}
+
+.detalle-swatch[data-color="Teal"],
+.detalle-swatch[data-color="teal"],
+.detalle-swatch[data-color="Verde Agua"],
+.detalle-swatch[data-color="verde agua"] {
+  background: #10b981;
 }
 
 .detalle-swatch[data-color="Green"],
@@ -227,6 +239,20 @@ body {
 .detalle-swatch[data-color="Gris"],
 .detalle-swatch[data-color="gris"] {
   background: #6b7280;
+}
+
+.detalle-swatch[data-color="Silver"],
+.detalle-swatch[data-color="silver"],
+.detalle-swatch[data-color="plata"],
+.detalle-swatch[data-color="Plata"] {
+  background: #99a0ae;
+}
+
+.detalle-swatch[data-color="Gold"],
+.detalle-swatch[data-color="gold"],
+.detalle-swatch[data-color="Oro"],
+.detalle-swatch[data-color="oro"] {
+  background: #d4af37;
 }
 
 .detalle-swatch[data-color="Orange"],

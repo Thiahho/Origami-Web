@@ -35,6 +35,5 @@ namespace OrigamiBack.Data.Modelos
         [Column("condicion_id")]
         public int? CondicionId { get; set; }
 
-
     }
 }
