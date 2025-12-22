@@ -62,30 +62,31 @@ class VariantsController {
 
   setupColumnSorting() {
     try {
-      const table = document.getElementById('variantsTable');
+      const table = document.getElementById("variantsTable");
       if (!table) {
-        console.warn('[Variants] Table not found');
+        console.warn("[Variants] Table not found");
         return;
       }
 
       // Usar delegación de eventos en la tabla
-      table.removeEventListener('click', this.handleColumnClick);
+      table.removeEventListener("click", this.handleColumnClick);
       this.handleColumnClick = (e) => {
-        const header = e.target.closest('.sortable');
+        const header = e.target.closest(".sortable");
         if (!header) return;
 
         try {
           const sortColumn = header.dataset.sort;
           if (!sortColumn) return;
 
-          console.log('[Variants] Column clicked:', sortColumn);
+          console.log("[Variants] Column clicked:", sortColumn);
 
           // Toggle direction
           if (this.currentSort.column === sortColumn) {
-            this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+            this.currentSort.direction =
+              this.currentSort.direction === "asc" ? "desc" : "asc";
           } else {
             this.currentSort.column = sortColumn;
-            this.currentSort.direction = 'asc';
+            this.currentSort.direction = "asc";
           }
 
           // Update visual indicators
@@ -93,42 +94,49 @@ class VariantsController {
 
           // Map column to sort type
           const sortMap = {
-            'product': this.currentSort.direction === 'asc' ? 'product-asc' : 'product-desc',
-            'price': this.currentSort.direction === 'asc' ? 'price-asc' : 'price-desc',
-            'stock': this.currentSort.direction === 'asc' ? 'stock-asc' : 'stock-desc',
-            'date': this.currentSort.direction === 'asc' ? 'oldest' : 'newest',
+            product:
+              this.currentSort.direction === "asc"
+                ? "product-asc"
+                : "product-desc",
+            price:
+              this.currentSort.direction === "asc" ? "price-asc" : "price-desc",
+            stock:
+              this.currentSort.direction === "asc" ? "stock-asc" : "stock-desc",
+            date: this.currentSort.direction === "asc" ? "oldest" : "newest",
           };
 
           this.currentFilter.sort = sortMap[sortColumn];
           this.currentPage = 1;
           this.loadVariants();
         } catch (error) {
-          console.error('[Variants] Error handling column click:', error);
+          console.error("[Variants] Error handling column click:", error);
         }
       };
 
-      table.addEventListener('click', this.handleColumnClick);
-      console.log('[Variants] Column sorting delegated to table');
+      table.addEventListener("click", this.handleColumnClick);
+      console.log("[Variants] Column sorting delegated to table");
     } catch (error) {
-      console.error('[Variants] Error setting up column sorting:', error);
+      console.error("[Variants] Error setting up column sorting:", error);
     }
   }
 
   updateSortIcons() {
     // Reset all icons
-    document.querySelectorAll('.sortable .sort-icon').forEach(icon => {
-      icon.className = 'fa-solid fa-sort sort-icon';
+    document.querySelectorAll(".sortable .sort-icon").forEach((icon) => {
+      icon.className = "fa-solid fa-sort sort-icon";
     });
 
     // Update active column icon
     if (this.currentSort.column) {
-      const activeHeader = document.querySelector(`.sortable[data-sort="${this.currentSort.column}"]`);
+      const activeHeader = document.querySelector(
+        `.sortable[data-sort="${this.currentSort.column}"]`
+      );
       if (activeHeader) {
-        const icon = activeHeader.querySelector('.sort-icon');
-        if (this.currentSort.direction === 'asc') {
-          icon.className = 'fa-solid fa-sort-up sort-icon active';
+        const icon = activeHeader.querySelector(".sort-icon");
+        if (this.currentSort.direction === "asc") {
+          icon.className = "fa-solid fa-sort-up sort-icon active";
         } else {
-          icon.className = 'fa-solid fa-sort-down sort-icon active';
+          icon.className = "fa-solid fa-sort-down sort-icon active";
         }
       }
     }
@@ -302,7 +310,11 @@ class VariantsController {
       }
 
       // Apply sorting
-      variants = this.sortVariants(variants, this.normalizedProducts, this.currentFilter.sort);
+      variants = this.sortVariants(
+        variants,
+        this.normalizedProducts,
+        this.currentFilter.sort
+      );
 
       // Calculate pagination
       const totalVariants = variants.length;
@@ -337,15 +349,15 @@ class VariantsController {
     const sorted = [...variants];
 
     // Log para debugging
-    console.log('[Variants] sortVariants called:', {
+    console.log("[Variants] sortVariants called:", {
       variantsCount: variants.length,
       productsCount: products?.length || 0,
-      sortType: sortType
+      sortType: sortType,
     });
 
     // Protección contra productos undefined
     if (!products || products.length === 0) {
-      console.warn('[Variants] No products available for sorting');
+      console.warn("[Variants] No products available for sorting");
       products = this.normalizedProducts || [];
     }
 
