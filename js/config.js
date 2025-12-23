@@ -7,6 +7,7 @@ class FrontendConfig {
   }
 
   detectEnvironment() {
+    // Detección automática de ambiente
     const hostname = window.location.hostname;
 
     if (hostname === "localhost" || hostname === "127.0.0.1") {
@@ -21,13 +22,12 @@ class FrontendConfig {
       development: {
         // En desarrollo, el backend sirve el frontend
         // Las rutas relativas /api/ funcionan directamente
-        apiUrl: "", // Vacío para usar rutas relativas
+        apiUrl: "", // Vacío para usar rutas relativas (localhost)
         apiTimeout: 30000,
         enableLogging: true,
       },
       production: {
-        // En producción (Vercel), necesitamos la URL completa del backend
-        // ⚠️ IMPORTANTE: Actualizar con tu URL de Render después del deployment
+        // En producción, necesitamos la URL completa del backend
         apiUrl: "https://origamiimportados.com",
         apiTimeout: 30000,
         enableLogging: false,
@@ -61,7 +61,7 @@ class FrontendConfig {
 
   log(...args) {
     if (this.enableLogging) {
-      console.log("[Frontend]", ...args);
+      //console.log("[Frontend]", ...args);
     }
   }
 

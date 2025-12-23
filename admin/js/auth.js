@@ -34,7 +34,7 @@ class AuthManager {
     openTabs.push(tabData);
     localStorage.setItem("openAdminTabs", JSON.stringify(openTabs));
 
-    console.log(`[Auth] Pestaña registrada: ${this.tabId}. Total pestañas activas: ${openTabs.length}`);
+    //console.log(`[Auth] Pestaña registrada: ${this.tabId}. Total pestañas activas: ${openTabs.length}`);
 
     // Usar beforeunload solo para marcar que no estamos activos
     window.addEventListener("beforeunload", () => {
@@ -55,7 +55,7 @@ class AuthManager {
     });
 
     localStorage.setItem("openAdminTabs", JSON.stringify(openTabs));
-    console.log(`[Auth] Pestaña marcada como inactiva: ${this.tabId}`);
+    //console.log(`[Auth] Pestaña marcada como inactiva: ${this.tabId}`);
   }
 
   removeTab() {
@@ -67,11 +67,11 @@ class AuthManager {
       return tab.id !== this.tabId;
     });
 
-    console.log(`[Auth] Pestaña eliminada: ${this.tabId}. Pestañas restantes: ${openTabs.length}`);
+    //console.log(`[Auth] Pestaña eliminada: ${this.tabId}. Pestañas restantes: ${openTabs.length}`);
 
     if (openTabs.length === 0) {
       // Esta era la última pestaña - cerrar sesión
-      console.log("[Auth] Última pestaña cerrada - cerrando sesión");
+      //console.log("[Auth] Última pestaña cerrada - cerrando sesión");
       localStorage.removeItem("openAdminTabs");
       sessionStorage.clear();
       localStorage.removeItem("hadAdminSession");
@@ -106,7 +106,7 @@ class AuthManager {
 
     const hadSessionBefore = localStorage.getItem("hadAdminSession");
 
-    console.log(`[Auth] Tabs activos: ${activeTabs.length}, Había sesión: ${hadSessionBefore}`);
+    //console.log(`[Auth] Tabs activos: ${activeTabs.length}, Había sesión: ${hadSessionBefore}`);
 
     // IMPORTANTE: Solo cerrar sesión si no hay tabs Y no estamos en proceso de login
     // El tab actual ya se registró en setupTabTracking(), así que si activeTabs.length === 0
@@ -124,7 +124,7 @@ class AuthManager {
         });
 
         if (recheckActive.length === 0) {
-          console.log("[Auth] No hay pestañas activas - limpiando sesión");
+          //console.log("[Auth] No hay pestañas activas - limpiando sesión");
           this.performTabCloseLogout();
         }
       }, 1000);
@@ -136,7 +136,7 @@ class AuthManager {
 
 
   performTabCloseLogout() {
-    console.log("[Auth] Ejecutando cierre de sesión por cierre de todas las pestañas");
+    //console.log("[Auth] Ejecutando cierre de sesión por cierre de todas las pestañas");
 
     // Limpiar toda la información de sesión
     sessionStorage.clear();
@@ -190,7 +190,7 @@ class AuthManager {
       // Si este tab no está registrado, agregarlo
       if (!tabFound) {
         openTabs.push({ id: this.tabId, lastSeen: now });
-        console.log(`[Auth] Tab re-registrado: ${this.tabId}`);
+        //console.log(`[Auth] Tab re-registrado: ${this.tabId}`);
       }
 
       // Limpiar tabs inactivos (más de 10 segundos sin heartbeat)
@@ -200,7 +200,7 @@ class AuthManager {
       });
 
       if (activeTabs.length !== openTabs.length) {
-        console.log(`[Auth] Limpiados ${openTabs.length - activeTabs.length} tabs inactivos`);
+        //console.log(`[Auth] Limpiados ${openTabs.length - activeTabs.length} tabs inactivos`);
       }
 
       localStorage.setItem("openAdminTabs", JSON.stringify(activeTabs));
@@ -230,8 +230,8 @@ class AuthManager {
   async handleLogin(event) {
     event.preventDefault();
 
-    // //console.log("[Auth] DOM readyState:", document.readyState);
-    ////console.log("[Auth] Buscando inputs...");
+    // ////console.log("[Auth] DOM readyState:", document.readyState);
+    //////console.log("[Auth] Buscando inputs...");
 
     // Usar el formulario que disparó el submit para mayor robustez
     const form = event.currentTarget || document.getElementById("loginForm");
@@ -248,13 +248,13 @@ class AuthManager {
       document.querySelector("#password") ||
       document.querySelector('input[name="password"]');
 
-    /* //console.log("[Auth] Inputs encontrados:", {
+    /* ////console.log("[Auth] Inputs encontrados:", {
       emailInput: !!emailInput,
       passwordInput: !!passwordInput,
     }); */
 
-    //  //console.log("[Auth] Email input element:", emailInput);
-    // //console.log("[Auth] Password input element:", passwordInput);
+    //  ////console.log("[Auth] Email input element:", emailInput);
+    // ////console.log("[Auth] Password input element:", passwordInput);
 
     if (!emailInput || !passwordInput) {
       this.showError("Error: No se encontraron los campos del formulario");
@@ -265,7 +265,7 @@ class AuthManager {
     const email = emailInput.value?.trim() || "";
     const password = passwordInput.value || "";
 
-    /*  //console.log("[Auth] Valores:", {
+    /*  ////console.log("[Auth] Valores:", {
       emailLength: email.length,
       passwordLength: password.length,
       emailValue: email,
@@ -358,9 +358,9 @@ class AuthManager {
       const localSession = sessionStorage.getItem("adminSession");
 
       try {
-        //  //console.log("[Auth] Verificando sesión...");
+        //  ////console.log("[Auth] Verificando sesión...");
         const response = await window.apiService.verifySession();
-        // //console.log("[Auth] Respuesta de verify:", response);
+        // ////console.log("[Auth] Respuesta de verify:", response);
 
         if (!response.isAuthenticated) {
           console.error("[Auth] No autenticado según response");
@@ -382,7 +382,7 @@ class AuthManager {
                 const retryResponse = await window.apiService.verifySession();
 
                 if (retryResponse.isAuthenticated) {
-                  console.log("[Auth] Reintento exitoso - sesión válida");
+                  //console.log("[Auth] Reintento exitoso - sesión válida");
                   const sessionData = {
                     email: retryResponse.usuario.email,
                     rol: retryResponse.usuario.rol,
@@ -413,7 +413,7 @@ class AuthManager {
         // Marcar que hay una sesión activa
         localStorage.setItem("hadAdminSession", "true");
 
-        // //console.log("[Auth] Sesión válida:", sessionData);
+        // ////console.log("[Auth] Sesión válida:", sessionData);
 
         // Ejecutar session detection DESPUÉS de verificar y guardar sesión
         this.setupSessionDetection();
@@ -452,7 +452,7 @@ class AuthManager {
     try {
       const response = await window.apiService.verifySession();
       if (response.isAuthenticated) {
-        console.log("[Auth] Reconexión exitosa");
+        //console.log("[Auth] Reconexión exitosa");
         const sessionData = {
           email: response.usuario.email,
           rol: response.usuario.rol,

@@ -37,7 +37,7 @@
     const total = document.getElementById("cartTotal");
     if (!list || !total) return;
     const items = getItems();
-    // //console.log('🛒 Rendering cart with items:', items);
+    // ////console.log('🛒 Rendering cart with items:', items);
 
     list.innerHTML = "";
     if (items.length === 0) {
@@ -51,7 +51,7 @@
         const metaText = `${it.storage}${
           it.color ? " · " + it.color : ""
         }${it.condicionNombre ? " · " + it.condicionNombre : ""}`;
-        /*  //console.log(`📦 Item #${idx}:`, {
+        /*  ////console.log(`📦 Item #${idx}:`, {
           model: it.model,
           variantId: it.variantId,
           storage: it.storage,
@@ -231,13 +231,13 @@
 
   async function completeMissingConditions() {
     const items = getItems();
-    ////console.log("🔍 Checking for missing conditions in cart items:", items);
+    //////console.log("🔍 Checking for missing conditions in cart items:", items);
 
     const missing = items
       .map((it, idx) => ({ it, idx }))
       .filter((x) => !x.it.condicionNombre && x.it.variantId);
 
-    ////console.log(`📋 Found ${missing.length} items without condition`);
+    //////console.log(`📋 Found ${missing.length} items without condition`);
     if (missing.length === 0) return;
 
     try {
@@ -254,18 +254,18 @@
       await Promise.all(
         missing.map(async ({ it, idx }) => {
           try {
-            //   //console.log(`🔎 Fetching condition for variant ${it.variantId}...`);
+            //   ////console.log(`🔎 Fetching condition for variant ${it.variantId}...`);
             const variantUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/variante/${it.variantId}`) : `/api/Producto/variante/${it.variantId}`;
             const res = await axios.get(variantUrl);
             const data = res.data || {};
-            // //console.log(`✅ API response for variant ${it.variantId}:`, data);
+            // ////console.log(`✅ API response for variant ${it.variantId}:`, data);
 
             const cond = data.CondicionNombre || data.condicionNombre || "";
-            // //console.log(`📦 Condition found: "${cond}"`);
+            // ////console.log(`📦 Condition found: "${cond}"`);
 
             if (cond) {
               items[idx].condicionNombre = cond;
-              // //console.log(`✔️ Updated item ${idx} with condition: ${cond}`);
+              // ////console.log(`✔️ Updated item ${idx} with condition: ${cond}`);
             } else {
               console.warn(`⚠️ No condition found for variant ${it.variantId}`);
             }
@@ -278,7 +278,7 @@
         })
       );
 
-      //  //console.log("💾 Saving updated items to localStorage:", items);
+      //  ////console.log("💾 Saving updated items to localStorage:", items);
       setItems(items);
       renderModal();
     } catch (err) {

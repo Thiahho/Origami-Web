@@ -254,7 +254,7 @@ class StoreIntegration {
 
   updateProductDisplay() {
     // Method for updating product display - can be expanded as needed
-    //console.log('Product display updated');
+    ////console.log('Product display updated');
   }
 }
 

@@ -128,7 +128,7 @@
     const mobileMenu = document.getElementById("mobileMenu");
     const mobileOverlay = document.getElementById("mobileOverlay");
 
-    console.log("Inicializando menú móvil...", {
+    //console.log("Inicializando menú móvil...", {
       menuToggle,
       menuClose,
       mobileMenu,
@@ -137,7 +137,7 @@
 
     function openMenu(e) {
       e.preventDefault();
-      console.log("Abriendo menú...");
+      //console.log("Abriendo menú...");
       if (mobileMenu && mobileOverlay) {
         mobileMenu.classList.add("is-open");
         mobileOverlay.classList.add("is-open");
@@ -147,7 +147,7 @@
 
     function closeMenu(e) {
       if (e) e.preventDefault();
-      console.log("Cerrando menú...");
+      //console.log("Cerrando menú...");
       if (mobileMenu && mobileOverlay) {
         mobileMenu.classList.remove("is-open");
         mobileOverlay.classList.remove("is-open");
@@ -157,19 +157,19 @@
 
     if (menuToggle) {
       menuToggle.addEventListener("click", openMenu);
-      console.log("Event listener añadido al botón hamburguesa");
+      //console.log("Event listener añadido al botón hamburguesa");
     } else {
       console.error("menuToggle no encontrado");
     }
 
     if (menuClose) {
       menuClose.addEventListener("click", closeMenu);
-      console.log("Event listener añadido al botón cerrar");
+      //console.log("Event listener añadido al botón cerrar");
     }
 
     if (mobileOverlay) {
       mobileOverlay.addEventListener("click", closeMenu);
-      console.log("Event listener añadido al overlay");
+      //console.log("Event listener añadido al overlay");
     }
 
     // Cerrar menú al hacer clic en un enlace (excepto carrito)
@@ -184,7 +184,7 @@
         }
       });
     });
-    console.log("Event listeners añadidos a", menuLinks.length, "enlaces");
+    //console.log("Event listeners añadidos a", menuLinks.length, "enlaces");
 
     // Sincronizar contador del carrito entre navbar y menú móvil
     const cartButton = document.getElementById("cartButton");

@@ -75,6 +75,7 @@ namespace OrigamiBack.Data
                 e.Property(v=>v.Color).HasColumnName("color");
                 e.Property(v=>v.Precio).HasColumnName("precio");
                 e.Property(v=>v.Stock).HasColumnName("stock");
+                e.Property(v=>v.Imagen).HasColumnName("imagen");
                 e.Property(v=>v.CondicionId).HasColumnName("condicion_id");
                 e.HasOne(v=>v.Condicion)
                 .WithMany(c=>c.Variantes)

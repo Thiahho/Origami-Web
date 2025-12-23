@@ -14,11 +14,10 @@ namespace OrigamiBack.Data.Dtos
         // NULLABLE: Ya no se selecciona por RAM, pero se mantiene para compatibilidad con BD
         public string? Ram { get; set; }
 
-        [Required(ErrorMessage = "El almacenamiento es requerido")]
-        public string Almacenamiento { get; set; } = string.Empty;
+        // Almacenamiento ahora acepta null
+        public string? Almacenamiento { get; set; }
 
-        [Required(ErrorMessage = "El color es requerido")]
-        public string Color { get; set; } = string.Empty;
+        public string? Color { get; set; }
 
         [Required(ErrorMessage = "El precio es requerido")]
         [Range(0, double.MaxValue, ErrorMessage = "El precio debe ser mayor o igual a 0")]
@@ -27,6 +26,9 @@ namespace OrigamiBack.Data.Dtos
         [Required(ErrorMessage = "El stock es requerido")]
         [Range(0, int.MaxValue, ErrorMessage = "El stock debe ser mayor o igual a 0")]
         public int Stock { get; set; }
+
+        // Imagen específica de la variante (base64, opcional)
+        public string? Imagen { get; set; }
 
         public ProductoDto? Producto { get; set; }
         public string? CondicionNombre { get; set; }

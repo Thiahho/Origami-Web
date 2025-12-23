@@ -8,6 +8,10 @@ class ApiConfig {
   }
 
   detectEnvironment() {
+    // FORZAR MODO DESARROLLO PARA TRABAJO LOCAL (comentar para producción)
+    //return "development";
+
+    // Detección automática de ambiente (activado para producción)
     const hostname = window.location.hostname;
 
     if (hostname === "localhost" || hostname === "127.0.0.1") {
@@ -20,13 +24,11 @@ class ApiConfig {
   getConfig() {
     const configs = {
       development: {
-        apiUrl: "", // Backend API URL
-        apiTimeout: 30000, // 30 segundos
+        apiUrl: "", // Vacío para usar rutas relativas (localhost)
+        apiTimeout: 30000,
         enableLogging: true,
       },
       production: {
-        // ⚠️ IMPORTANTE: Actualizar con tu URL de Render después del deployment
-        // Formato: https://origami-backend-api.onrender.com
         apiUrl: "https://origamiimportados.com",
         apiTimeout: 30000,
         enableLogging: false,
@@ -50,7 +52,7 @@ class ApiConfig {
 
   log(...args) {
     if (this.enableLogging) {
-      ////console.log('[API]', ...args);
+      //////console.log('[API]', ...args);
     }
   }
 

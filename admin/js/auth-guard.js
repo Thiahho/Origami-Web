@@ -29,7 +29,7 @@
 
     try {
       // Verificar sesión con el servidor usando fetch
-      const apiBaseUrl = "https://origamiimportados.com";
+      const apiBaseUrl = ""; // VACÍO PARA LOCALHOST - Cambiar a "https://origamiimportados.com" en producción
       const response = await fetch(`${apiBaseUrl}/api/Admin/verify`, {
         method: "GET",
         credentials: "include",
@@ -61,7 +61,7 @@
         await new Promise((resolve) => setTimeout(resolve, 500));
 
         try {
-          const apiBaseUrl = "https://origamiimportados.com";
+          const apiBaseUrl = ""; // VACÍO PARA LOCALHOST - Cambiar a "https://origamiimportados.com" en producción
           const retryResponse = await fetch(`${apiBaseUrl}/api/Admin/verify`, {
             method: "GET",
             credentials: "include",
@@ -73,7 +73,7 @@
           if (retryResponse.ok) {
             const retryData = await retryResponse.json();
             if (retryData.isAuthenticated) {
-              console.log("[Auth Guard] Reintento exitoso");
+              //console.log("[Auth Guard] Reintento exitoso");
               document.documentElement.style.visibility = "visible";
               return;
             }

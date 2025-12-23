@@ -71,7 +71,7 @@ class CategoriesController {
         window.apiService
           .getCategories()
           .then((data) => {
-            //    //console.log("[Categories] API data:", data);
+            //    ////console.log("[Categories] API data:", data);
             const list = Array.isArray(data) ? data : data?.items || [];
             this.categories = list.map((c) => ({
               id: c.id ?? c.Id,

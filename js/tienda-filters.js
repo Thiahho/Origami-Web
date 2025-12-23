@@ -356,17 +356,17 @@ async function loadProductsFromApi() {
     };
 
     // Filtrar solo productos activos
-    console.log('Productos ANTES del filtro:', products.length);
-    console.log('Ejemplo de producto:', products[0]);
+    //console.log('Productos ANTES del filtro:', products.length);
+    //console.log('Ejemplo de producto:', products[0]);
     products = products.filter((p) => {
       const estado = (p.estado || p.Estado || "").toLowerCase();
       const esActivo = estado === "active" || estado === "";
       if (!esActivo) {
-        console.log('Producto FILTRADO (inactivo):', p.Marca || p.marca, p.Modelo || p.modelo, 'Estado:', estado);
+        //console.log('Producto FILTRADO (inactivo):', p.Marca || p.marca, p.Modelo || p.modelo, 'Estado:', estado);
       }
       return esActivo;
     });
-    console.log('Productos DESPUÉS del filtro:', products.length);
+    //console.log('Productos DESPUÉS del filtro:', products.length);
 
     // Orden estable por categoría (alfabético) para consistencia
     products

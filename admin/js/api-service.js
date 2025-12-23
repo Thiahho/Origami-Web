@@ -1,10 +1,13 @@
 // ==================== API SERVICE WITH AXIOS ====================
+// COMENTADO: Usar configuración de config.js en lugar de hardcodear
+/* CONFIGURACIÓN DE PRODUCCIÓN (comentada para trabajo local)
 window.apiConfig = {
   apiUrl: "https://origamiimportados.com", // backend Render
   apiTimeout: 30000, // 30 segundos - Render puede tardar en despertar
   log: () => {}, // Desactivar logs de request/response
   error: console.error, // Mantener solo errores
 };
+*/
 
 class ApiService {
   constructor() {

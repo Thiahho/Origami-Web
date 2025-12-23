@@ -78,7 +78,7 @@ class VariantsController {
           const sortColumn = header.dataset.sort;
           if (!sortColumn) return;
 
-          console.log('[Variants] Column clicked:', sortColumn);
+          //console.log('[Variants] Column clicked:', sortColumn);
 
           // Toggle direction
           if (this.currentSort.column === sortColumn) {
@@ -108,7 +108,7 @@ class VariantsController {
       };
 
       table.addEventListener('click', this.handleColumnClick);
-      console.log('[Variants] Column sorting delegated to table');
+      //console.log('[Variants] Column sorting delegated to table');
     } catch (error) {
       console.error('[Variants] Error setting up column sorting:', error);
     }
@@ -280,7 +280,7 @@ class VariantsController {
         categoria: p.categoria || p.Categoria || "",
       }));
 
-      // //console.log("[Variants] Loaded:", variants.length, variants);
+      // ////console.log("[Variants] Loaded:", variants.length, variants);
 
       // Apply filters
       if (this.currentFilter.product) {
@@ -337,7 +337,7 @@ class VariantsController {
     const sorted = [...variants];
 
     // Log para debugging
-    console.log('[Variants] sortVariants called:', {
+    //console.log('[Variants] sortVariants called:', {
       variantsCount: variants.length,
       productsCount: products?.length || 0,
       sortType: sortType

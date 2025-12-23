@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         theme: "light",
         callback: function (token) {
           turnstileToken = token;
-          //  console.log("✅ Turnstile verificado");
+          //  //console.log("✅ Turnstile verificado");
         },
         "error-callback": function () {
           console.error("❌ Error en Turnstile");

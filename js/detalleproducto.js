@@ -38,7 +38,7 @@ function calc() {
 
   // Mostrar stock si existe
   const stock = variant ? variant.Stock || variant.stock || 0 : 0;
-  ////console.log("Precio:", unitPrice, "Stock:", stock);
+  //////console.log("Precio:", unitPrice, "Stock:", stock);
   // Mostrar condición si existe
   const condicionName = variant
     ? variant.CondicionNombre || variant.condicionNombre || ""
@@ -61,7 +61,7 @@ function getCurrentVariant() {
     "#capRow .detalle-opt.is-active"
   )?.dataset.cap;
 
-  /*  //console.log("Buscando variante:", {
+  /*  ////console.log("Buscando variante:", {
     selectedColor,
     selectedStorage,
   }); */
@@ -72,13 +72,19 @@ function getCurrentVariant() {
     const vColor = v.Color || v.color;
     const vStorage = v.Almacenamiento || v.almacenamiento;
 
+    // Si no hay almacenamiento seleccionado o la variante no tiene almacenamiento,
+    // buscar solo por color
+    const storageMatch = !selectedStorage || !vStorage
+      ? true
+      : vStorage === selectedStorage;
+
     return (
       vColor === selectedColor &&
-      vStorage === selectedStorage
+      storageMatch
     );
   });
 
-  ////console.log("Variante encontrada:", found);
+  //////console.log("Variante encontrada:", found);
   return found;
 }
 
@@ -88,7 +94,7 @@ function filterAvailableOptions() {
     "#capRow .detalle-opt.is-active"
   )?.dataset.cap;
 
-  ////console.log('Filtering options. Selected storage:', selectedStorage);
+  //////console.log('Filtering options. Selected storage:', selectedStorage);
 
   // COMENTADO: Ya no se filtran almacenamientos por RAM
   // Todos los almacenamientos están disponibles
@@ -106,7 +112,7 @@ function filterAvailableOptions() {
       ),
     ].filter(Boolean);
 
-    // //console.log('Available colors for storage', selectedStorage, ':', availableColors);
+    // ////console.log('Available colors for storage', selectedStorage, ':', availableColors);
 
     document.querySelectorAll(".detalle-swatch").forEach((btn) => {
       if (availableColors.includes(btn.dataset.color)) {
@@ -131,15 +137,41 @@ function filterAvailableOptions() {
           .forEach((x) => x.classList.remove("is-active"));
         firstAvailable.classList.add("is-active");
         sumColor.textContent = firstAvailable.dataset.color;
+        updateProductImage();
       }
     }
   } else {
     // Si no hay almacenamiento seleccionado, habilitar todos los colores
-    // //console.log('Not filtering colors - waiting for storage selection');
+    // ////console.log('Not filtering colors - waiting for storage selection');
     document.querySelectorAll(".detalle-swatch").forEach((btn) => {
       btn.disabled = false;
       btn.style.opacity = "1";
     });
+  }
+}
+
+// Actualiza la imagen del producto según la variante seleccionada
+function updateProductImage() {
+  const variant = getCurrentVariant();
+
+  if (variant && (variant.Imagen || variant.imagen)) {
+    // Si la variante tiene imagen específica, usarla
+    const variantImg = variant.Imagen || variant.imagen;
+    img.src = `data:image/webp;base64,${variantImg}`;
+  } else {
+    // Si no hay imagen de variante, buscar por color únicamente
+    const selectedColor = document.querySelector(".detalle-swatch.is-active")?.dataset.color;
+    if (selectedColor) {
+      const varianteConImagen = allVariants.find(v =>
+        (v.Color || v.color) === selectedColor &&
+        (v.Imagen || v.imagen)
+      );
+
+      if (varianteConImagen) {
+        const colorImg = varianteConImagen.Imagen || varianteConImagen.imagen;
+        img.src = `data:image/webp;base64,${colorImg}`;
+      }
+    }
   }
 }
 
@@ -155,7 +187,7 @@ function setupEventListeners() {
     b.classList.add("is-active");
     colorDelta = +b.dataset.delta || 0;
     sumColor.textContent = b.dataset.color;
-    if (b.dataset.img) img.src = b.dataset.img;
+    updateProductImage();
     calc();
   });
 
@@ -188,6 +220,7 @@ function setupEventListeners() {
 
     // Filtrar opciones disponibles
     filterAvailableOptions();
+    updateProductImage();
     calc();
   });
 
@@ -209,7 +242,7 @@ function setupEventListeners() {
   document.getElementById("buyBtn").addEventListener("click", (e) => {
     const variant = getCurrentVariant();
     if (!variant) {
-      alert("Seleccioná RAM, almacenamiento y color.");
+      alert("Por favor, seleccioná las opciones del producto.");
       return;
     }
 
@@ -230,7 +263,7 @@ function setupEventListeners() {
     message += `📱 *${model}*\n`;
     // COMENTADO: Ya no se incluye RAM en el mensaje
     // message += `   RAM: ${ram}\n`;
-    message += `   Almacenamiento: ${storage}\n`;
+    if (storage) message += `   Almacenamiento: ${storage}\n`;
     if (color) message += `   Color: ${color}\n`;
     if (condicion) message += `   Condición: ${condicion}\n`;
     message += `   Cantidad: ${qty}\n`;
@@ -252,7 +285,7 @@ function setupEventListeners() {
     addBtn.addEventListener("click", () => {
       const variant = getCurrentVariant();
       if (!variant) {
-        alert("Seleccioná RAM, almacenamiento y color.");
+        alert("Por favor, seleccioná las opciones del producto.");
         return;
       }
       const stock = variant ? variant.Stock || variant.stock || 0 : 0;
@@ -284,7 +317,7 @@ function setupEventListeners() {
         img: img?.src || "",
       };
 
-      ////console.log("Adding to cart:", product);
+      //////console.log("Adding to cart:", product);
 
       const key = "cart_items";
       const items = JSON.parse(localStorage.getItem(key) || "[]");
@@ -381,7 +414,7 @@ async function loadProductData() {
     }
 
     // Obtener producto
-    //console.log("Fetching product with ID:", productId);
+    ////console.log("Fetching product with ID:", productId);
     const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}`) : `/api/Producto/${productId}`;
     const res = await axios.get(apiUrl);
     const product = res.data;
@@ -392,7 +425,7 @@ async function loadProductData() {
       return;
     }
 
-    //console.log("Product loaded:", product);
+    ////console.log("Product loaded:", product);
 
     // Actualizar título y modelo
     const modelo = `${product.Marca || product.marca || ""} ${
@@ -409,13 +442,13 @@ async function loadProductData() {
     }
 
     // Obtener variantes
-    //console.log("Fetching variants for product ID:", productId);
+    ////console.log("Fetching variants for product ID:", productId);
     const variantesUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}/variantes`) : `/api/Producto/${productId}/variantes`;
     const variantesRes = await axios.get(variantesUrl);
-    //console.log("Variants API response:", variantesRes);
+    ////console.log("Variants API response:", variantesRes);
     const variantes = Array.isArray(variantesRes.data) ? variantesRes.data : [];
 
-    //console.log("Variantes cargadas:", variantes);
+    ////console.log("Variantes cargadas:", variantes);
 
     if (variantes.length === 0) {
       document.getElementById("colorRow").innerHTML =
@@ -445,7 +478,7 @@ async function loadProductData() {
       ...new Set(variantes.map((v) => v.Color || v.color)),
     ].filter(Boolean);
 
-    //console.log("Opciones:", {
+    ////console.log("Opciones:", {
     /*   storageOptions,
       colorOptions,
     }); */
@@ -471,23 +504,42 @@ async function loadProductData() {
       btn.title = color;
       btn.dataset.color = color;
       btn.dataset.delta = 0;
-      btn.dataset.img = imgBase64 ? `data:image/webp;base64,${imgBase64}` : "";
+
+      // Buscar variante con este color para obtener su imagen específica
+      const varianteConImagen = variantes.find(v =>
+        (v.Color || v.color) === color &&
+        (v.Imagen || v.imagen)
+      );
+
+      // Usar imagen de variante si existe, sino la del producto base
+      const varianteImg = varianteConImagen ?
+        (varianteConImagen.Imagen || varianteConImagen.imagen) : null;
+      btn.dataset.img = varianteImg ?
+        `data:image/webp;base64,${varianteImg}` :
+        (imgBase64 ? `data:image/webp;base64,${imgBase64}` : "");
+
       btn.style.setProperty("--c", getColorHex(color));
 
       colorRow.appendChild(btn);
     });
 
-    // Construir botones de almacenamiento
+    // Construir botones de almacenamiento (si existen)
     const capRow = document.getElementById("capRow");
     capRow.innerHTML = "";
-    storageOptions.forEach((storage, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "detalle-opt" + (idx === 0 ? " is-active" : "");
-      btn.dataset.cap = storage;
-      btn.dataset.delta = 0;
-      btn.textContent = storage;
-      capRow.appendChild(btn);
-    });
+    if (storageOptions.length > 0) {
+      storageOptions.forEach((storage, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "detalle-opt" + (idx === 0 ? " is-active" : "");
+        btn.dataset.cap = storage;
+        btn.dataset.delta = 0;
+        btn.textContent = storage;
+        capRow.appendChild(btn);
+      });
+    } else {
+      // Si no hay almacenamiento, ocultar la fila completa
+      const capSection = capRow.closest('.detalle-row');
+      if (capSection) capSection.style.display = 'none';
+    }
 
     // Actualizar precio base con la primera variante
     const firstVariant = variantes[0];
@@ -497,7 +549,14 @@ async function loadProductData() {
     // COMENTADO: Ya no se actualiza sumRam
     // sumRam.textContent = ramOptions[0] || "N/A";
     sumColor.textContent = colorOptions[0] || "N/A";
-    sumCap.textContent = storageOptions[0] || "N/A";
+    if (sumCap) {
+      sumCap.textContent = storageOptions[0] || "N/A";
+      // Si no hay almacenamiento, ocultar en el summary también
+      if (storageOptions.length === 0) {
+        const capSummaryRow = sumCap.closest('p, div, .summary-item');
+        if (capSummaryRow) capSummaryRow.style.display = 'none';
+      }
+    }
     // Asignar condición inicial si viene en la primera variante
     const initCond =
       firstVariant?.CondicionNombre || firstVariant?.condicionNombre || "-";
@@ -506,6 +565,9 @@ async function loadProductData() {
 
     // Aplicar filtros iniciales
     filterAvailableOptions();
+
+    // Actualizar imagen inicial
+    updateProductImage();
 
     // Calcular precio inicial
     calc();
@@ -536,8 +598,8 @@ document.addEventListener("DOMContentLoaded", () => {
   minusBtn = document.querySelector('#qtyRow .detalle-opt[data-q="-1"]');
   qtyHelpEl = document.querySelector("#qtyRow + .detalle-help");
 
-  //console.log("DOM loaded. Product ID:", productId);
-  //console.log("Elements initialized:", { img, priceEl, sumModel });
+  ////console.log("DOM loaded. Product ID:", productId);
+  ////console.log("Elements initialized:", { img, priceEl, sumModel });
 
   setupEventListeners();
   loadProductData();

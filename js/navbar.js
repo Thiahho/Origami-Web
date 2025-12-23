@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     sessionStorage.getItem("token") ||
     sessionStorage.getItem("authToken");
 
-  //console.log('Token encontrado:', token); // Para debug
-  //console.log('LocalStorage keys:', Object.keys(localStorage)); // Para debug
+  ////console.log('Token encontrado:', token); // Para debug
+  ////console.log('LocalStorage keys:', Object.keys(localStorage)); // Para debug
 
   if (token && token !== "null" && token !== "") {
     // Usuario logueado - cambiar a "Volver al Panel"
@@ -21,8 +21,8 @@ document.addEventListener("DOMContentLoaded", function () {
     authButton.querySelector(".btn-login__label").textContent =
       "Volver al Panel";
     authButton.querySelector("i").className = "fa-solid fa-gauge";
-    //console.log('Botón actualizado a "Ir al Panel"');
+    ////console.log('Botón actualizado a "Ir al Panel"');
   } else {
-    //console.log('No hay token válido encontrado');
+    ////console.log('No hay token válido encontrado');
   }
 });
