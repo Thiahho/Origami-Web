@@ -337,11 +337,11 @@ class VariantsController {
     const sorted = [...variants];
 
     // Log para debugging
-    //console.log('[Variants] sortVariants called:', {
+    /*console.log('[Variants] sortVariants called:', {
       variantsCount: variants.length,
       productsCount: products?.length || 0,
       sortType: sortType
-    });
+    });*/
 
     // Protección contra productos undefined
     if (!products || products.length === 0) {
