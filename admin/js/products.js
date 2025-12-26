@@ -265,11 +265,11 @@ class ProductsController {
     // Log para debugging
     if (sortType === 'newest' || sortType === 'oldest') {
       //console.log('[Products] Sorting by date:', sortType);
-      //console.log('[Products] Sample dates:', sorted.slice(0, 3).map(p => ({
+      /*console.log('[Products] Sample dates:', sorted.slice(0, 3).map(p => ({
         id: p.id,
         modelo: p.modelo,
         fecha: p.fechaCreacion
-      })));
+      })));*/
     }
 
     switch (sortType) {

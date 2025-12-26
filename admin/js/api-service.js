@@ -198,6 +198,14 @@ class ApiService {
     return response.data;
   }
 
+  async toggleVariantActivo(variantId, activo) {
+    const response = await this.axios.patch(
+      `/api/Producto/variante/${variantId}/toggle-activo`,
+      activo
+    );
+    return response.data;
+  }
+
   // ==================== VARIANT OPTIONS ====================
 
   async getRamOptions(productId) {

@@ -56,6 +56,7 @@ class VariantsController {
     window.deleteVariant = (id) => this.deleteVariant(id);
     window.closeDeleteModal = () => this.closeDeleteModal();
     window.confirmDelete = () => this.confirmDelete();
+    window.toggleVariantActivo = (id, activo) => this.toggleVariantActivo(id, activo);
 
     // editVariant y openVariantModal serán manejados por FormVariante.js
   }
@@ -219,7 +220,7 @@ class VariantsController {
       const tbody = document.getElementById("variantsTableBody");
       tbody.innerHTML = `
         <tr>
-          <td colspan="9" style="text-align: center; padding: 2rem;">
+          <td colspan="10" style="text-align: center; padding: 2rem;">
             <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
             <p>Cargando variantes...</p>
           </td>
@@ -269,6 +270,7 @@ class VariantsController {
         precio: v.precio ?? v.Precio ?? 0,
         stock: v.stock ?? v.Stock ?? 0,
         condicionId: v.condicionId ?? v.CondicionId ?? null,
+        activo: v.activo ?? v.Activo ?? true,
         createdAt: v.createdAt || v.CreatedAt || new Date().toISOString(),
       }));
 
@@ -319,7 +321,7 @@ class VariantsController {
       const tbody = document.getElementById("variantsTableBody");
       tbody.innerHTML = `
         <tr>
-          <td colspan="9" class="empty-state">
+          <td colspan="10" class="empty-state">
             <i class="fa-solid fa-exclamation-circle"></i>
             <p>Error al cargar las variantes</p>
             <button class="btn btn-primary" onclick="variantsController.loadVariants()">
@@ -424,7 +426,7 @@ class VariantsController {
     if (variants.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="9" class="empty-state">
+          <td colspan="10" class="empty-state">
             <i class="fa-solid fa-palette"></i>
             <p>No se encontraron variantes</p>
           </td>
@@ -489,7 +491,17 @@ class VariantsController {
             </div>
           </td>
           <td>
+            <span class="status-badge status-${variant.activo ? 'active' : 'inactive'}">
+              ${variant.activo ? 'Activa' : 'Inactiva'}
+            </span>
+          </td>
+          <td>
             <div class="table-actions">
+              <button class="btn btn-small ${variant.activo ? 'btn-warning' : 'btn-success'}"
+                      onclick="toggleVariantActivo('${variant.id}', ${!variant.activo})"
+                      title="${variant.activo ? 'Desactivar' : 'Activar'}">
+                <i class="fa-solid fa-${variant.activo ? 'eye-slash' : 'eye'}"></i>
+              </button>
               <button class="btn btn-small btn-secondary" onclick="editVariant('${
                 variant.id
               }')" title="Editar">
@@ -639,6 +651,23 @@ class VariantsController {
     }
   }
 
+  async toggleVariantActivo(variantId, activo) {
+    try {
+      await window.apiService.toggleVariantActivo(variantId, activo);
+      this.showSuccess(activo ? 'Variante activada correctamente' : 'Variante desactivada correctamente');
+      this.loadVariants();
+    } catch (error) {
+      console.error('Error toggling variant status:', error);
+
+      let errorMessage = 'Error al cambiar el estado de la variante';
+      if (error instanceof window.ApiError) {
+        errorMessage = error.message;
+      }
+
+      this.showError(errorMessage);
+    }
+  }
+
   getTypeLabel(type) {
     const labels = {
       color: "Color",
@@ -681,6 +710,28 @@ class VariantsController {
       .sort-icon.active {
         opacity: 1;
         color: var(--primary-color);
+      }
+
+      .btn-warning {
+        background: rgba(255, 152, 0, 0.2);
+        color: #FF9800;
+        border: 1px solid rgba(255, 152, 0, 0.3);
+      }
+
+      .btn-warning:hover {
+        background: rgba(255, 152, 0, 0.3);
+        border-color: rgba(255, 152, 0, 0.5);
+      }
+
+      .btn-success {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4CAF50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+      }
+
+      .btn-success:hover {
+        background: rgba(76, 175, 80, 0.3);
+        border-color: rgba(76, 175, 80, 0.5);
       }
 
       .product-info {
