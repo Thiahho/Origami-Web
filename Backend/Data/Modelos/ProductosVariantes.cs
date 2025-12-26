@@ -38,5 +38,9 @@ namespace OrigamiBack.Data.Modelos
         [Column("condicion_id")]
         public int? CondicionId { get; set; }
 
+        // Campo para activar/desactivar variante sin eliminarla
+        [Column("activo")]
+        public bool Activo { get; set; } = true;
+
     }
 }

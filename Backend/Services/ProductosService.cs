@@ -24,6 +24,7 @@ namespace OrigamiBack.Services
         public async Task<ProductosVariantesDto?> GetVarianteByIdAsync(int varianteId)
         {
             var variante = await _context.ProductosVariantes
+                .Where(pv => pv.Activo) // Solo variantes activas
                 .Include(pv => pv.Producto)
                 .Include(pv => pv.Condicion)
                 .FirstOrDefaultAsync(pv => pv.Id == varianteId);
@@ -43,6 +44,40 @@ namespace OrigamiBack.Services
                 Imagen = variante.Imagen != null ? Convert.ToBase64String(variante.Imagen) : null,
                 CondicionId = variante.CondicionId,
                 CondicionNombre = variante.Condicion != null ? variante.Condicion.Nombre : null,
+                Activo = variante.Activo,
+                Producto = new ProductoDto
+                {
+                    Id = variante.Producto.Id,
+                    Marca = variante.Producto.Marca,
+                    Modelo = variante.Producto.Modelo,
+                    Img = variante.Producto.Img  !=null ? Convert.ToBase64String(variante.Producto.Img) : null,
+                }
+            };
+        }
+
+        public async Task<ProductosVariantesDto?> GetVarianteByIdAdminAsync(int varianteId)
+        {
+            var variante = await _context.ProductosVariantes
+                .Include(pv => pv.Producto)
+                .Include(pv => pv.Condicion)
+                .FirstOrDefaultAsync(pv => pv.Id == varianteId);
+
+            if (variante == null || variante.Producto == null)
+                return null;
+
+            return new ProductosVariantesDto
+            {
+                Id = variante.Id,
+                ProductoId = variante.ProductoId,
+                Ram = variante.Ram, // Nullable: mantenido para compatibilidad
+                Almacenamiento = variante.Almacenamiento,
+                Color = variante.Color,
+                Stock = variante.Stock,
+                Precio = variante.Precio,
+                Imagen = variante.Imagen != null ? Convert.ToBase64String(variante.Imagen) : null,
+                CondicionId = variante.CondicionId,
+                CondicionNombre = variante.Condicion != null ? variante.Condicion.Nombre : null,
+                Activo = variante.Activo,
                 Producto = new ProductoDto
                 {
                     Id = variante.Producto.Id,
@@ -152,19 +187,22 @@ namespace OrigamiBack.Services
                 Categoria = producto.Categoria,
                 Estado = producto.Estado,
                 Img = producto.Img != null ? Convert.ToBase64String(producto.Img) : null,
-                Variantes = producto.Variantes.Select(v => new ProductosVariantesDto
-                {
-                    Id = v.Id,
-                    ProductoId = v.ProductoId,
-                    Ram = v.Ram, // Nullable: mantenido para compatibilidad
-                    Almacenamiento = v.Almacenamiento,
-                    Color = v.Color,
-                    Precio = v.Precio,
-                    Stock = v.Stock,
-                    CondicionId = v.CondicionId,
-                    CondicionNombre = v.Condicion != null ? v.Condicion.Nombre : null,
-                    // No incluir Producto aquí
-                }).ToList()
+                Variantes = producto.Variantes
+                    .Where(v => v.Activo) // Solo variantes activas
+                    .Select(v => new ProductosVariantesDto
+                    {
+                        Id = v.Id,
+                        ProductoId = v.ProductoId,
+                        Ram = v.Ram, // Nullable: mantenido para compatibilidad
+                        Almacenamiento = v.Almacenamiento,
+                        Color = v.Color,
+                        Precio = v.Precio,
+                        Stock = v.Stock,
+                        CondicionId = v.CondicionId,
+                        CondicionNombre = v.Condicion != null ? v.Condicion.Nombre : null,
+                        Activo = v.Activo,
+                        // No incluir Producto aquí
+                    }).ToList()
             };
         }
             
@@ -195,9 +233,9 @@ namespace OrigamiBack.Services
         public async Task<IEnumerable<ProductosVariantesDto>> GetVariantesByIdAsync(int productId)
         {
             // Console.WriteLine($"GetVariantesByIdAsync llamado con productId: {productId}");
-            
+
             var variantes = await _context.ProductosVariantes
-                .Where(v => v.ProductoId == productId)
+                .Where(v => v.ProductoId == productId && v.Activo) // Solo variantes activas
                 .Include(v => v.Condicion)
                 .AsNoTracking()
                 .ToListAsync();
@@ -220,7 +258,8 @@ namespace OrigamiBack.Services
                 Stock = v.Stock,
                 Imagen = v.Imagen != null ? Convert.ToBase64String(v.Imagen) : null,
                 CondicionId = v.CondicionId,
-                CondicionNombre = v.Condicion != null ? v.Condicion.Nombre : null
+                CondicionNombre = v.Condicion != null ? v.Condicion.Nombre : null,
+                Activo = v.Activo
             }).ToList();
             
            // Console.WriteLine($"Variantes mapeadas: {result.Count}");
@@ -231,7 +270,7 @@ namespace OrigamiBack.Services
         public async Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string storage, string color, int? condicionId)
         {
             var query = _context.ProductosVariantes
-                .Where(v => v.ProductoId == productId)
+                .Where(v => v.ProductoId == productId && v.Activo) // Solo variantes activas
                 .Where(v => v.Almacenamiento == storage)
                 .Where(v => v.Color == color)
                 .AsNoTracking()
@@ -309,6 +348,7 @@ namespace OrigamiBack.Services
                 entidad.Precio = varianteDto.Precio;
                 entidad.Stock = varianteDto.Stock;
                 entidad.CondicionId = varianteDto.CondicionId;
+                entidad.Activo = varianteDto.Activo; // Actualizar estado activo
 
                 // Actualizar imagen si se proporciona
                 if (!string.IsNullOrEmpty(varianteDto.Imagen))

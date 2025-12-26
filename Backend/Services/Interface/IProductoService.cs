@@ -15,6 +15,7 @@ namespace OrigamiBack.Services.Interface
         // Modificado: Ya no se busca por RAM
         Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string storage, string color, int? condicionId);
         Task<ProductosVariantesDto?> GetVarianteByIdAsync(int varianteId);
+        Task<ProductosVariantesDto?> GetVarianteByIdAdminAsync(int varianteId); // Sin filtrar por estado activo
         // COMENTADO: Ya no se selecciona por RAM
         // Task<IEnumerable<string>> GetDistintAlmacenamientosAsync(string ram, int productId);
         // Task<IEnumerable<string>> GetDistintColorAsync(string ram, string almacenamiento, int productId);

@@ -33,5 +33,8 @@ namespace OrigamiBack.Data.Dtos
         public ProductoDto? Producto { get; set; }
         public string? CondicionNombre { get; set; }
         public int? CondicionId { get; set; }
+
+        // Campo para activar/desactivar variante sin eliminarla
+        public bool Activo { get; set; } = true;
     }
 }

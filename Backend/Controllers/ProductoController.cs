@@ -346,8 +346,8 @@ namespace OrigamiBack.Controllers
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> UpdateVariante(int varianteId, [FromBody] ProductosVariantesDto varianteDto)
         {
-            // 1. Buscar la variante existente
-            var existingVariante = await _productoService.GetVarianteByIdAsync(varianteId);
+            // 1. Buscar la variante existente (incluso si está inactiva)
+            var existingVariante = await _productoService.GetVarianteByIdAdminAsync(varianteId);
             if (existingVariante == null)
                 return NotFound($"No se encontró la variante con ID {varianteId}");
 
@@ -382,7 +382,8 @@ namespace OrigamiBack.Controllers
         {
             try
             {
-                var variante = await _productoService.GetVarianteByIdAsync(id);
+                // Usar método admin para eliminar variantes incluso si están inactivas
+                var variante = await _productoService.GetVarianteByIdAdminAsync(id);
                 if (variante == null)
                 {
                     return NotFound($"No se encontró la variante con ID {id}");
@@ -394,6 +395,34 @@ namespace OrigamiBack.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error al eliminar la variante {id}");
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
+        [HttpPatch("variante/{id}/toggle-activo")]
+        [Authorize(Roles = "ADMIN")]
+        public async Task<IActionResult> ToggleVarianteActivo(int id, [FromBody] bool activo)
+        {
+            try
+            {
+                // Usar método admin para obtener variantes incluso si están inactivas
+                var variante = await _productoService.GetVarianteByIdAdminAsync(id);
+                if (variante == null)
+                {
+                    return NotFound($"No se encontró la variante con ID {id}");
+                }
+
+                variante.Activo = activo;
+                await _productoService.UpdateVarianteAsync(variante);
+
+                return Ok(new {
+                    message = activo ? "Variante activada correctamente" : "Variante desactivada correctamente",
+                    activo = activo
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error al cambiar el estado de la variante {id}");
                 return StatusCode(500, "Error interno del servidor");
             }
         }
