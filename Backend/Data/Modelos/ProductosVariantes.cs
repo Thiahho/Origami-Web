@@ -15,17 +15,21 @@ namespace OrigamiBack.Data.Modelos
         [Required]
         public int Stock { get; set; }
         [Column("color")]
-        [Required]
-        public required string Color { get; set; }
-        // COMENTADO: Ya no se selecciona por RAM
-        // [Column("ram")]
-        // [Required]
-        // public required string Ram { get; set; }
+        public string? Color { get; set; }
+        // NULLABLE: Ya no se selecciona por RAM, pero se mantiene para compatibilidad con BD
+        [Column("ram")]
+        public string? Ram { get; set; }
+        // Almacenamiento ahora acepta null
         [Column("almacenamiento")]
         public string? Almacenamiento { get; set; }
         [Column("precio")]
         [Required]
         public decimal Precio { get; set; }
+
+        // Imagen específica de la variante (opcional)
+        [Column("imagen")]
+        public byte[]? Imagen { get; set; }
+
         [JsonIgnore]
         public Productos? Producto { get; set; }
 

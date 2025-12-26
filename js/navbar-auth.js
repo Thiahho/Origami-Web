@@ -2,16 +2,16 @@
 // Función global para manejar la autenticación del navbar
 
 async function initNavbarAuth() {
-  ////console.log("initNavbarAuth ejecutándose...");
+  //////console.log("initNavbarAuth ejecutándose...");
 
   const authButton = document.getElementById("authButton");
   if (!authButton) {
-    ////console.log('Botón de autenticación no encontrado, reintentando en 200ms...');
+    //////console.log('Botón de autenticación no encontrado, reintentando en 200ms...');
     // Reintentar después de un breve delay
     setTimeout(initNavbarAuth, 200);
     return;
   }
-  ////console.log('Botón de autenticación encontrado:', authButton);
+  //////console.log('Botón de autenticación encontrado:', authButton);
 
   try {
     // Cargar axios si no está disponible
@@ -45,13 +45,13 @@ async function initNavbarAuth() {
         iconElement.className = "fa-solid fa-cog";
       }
 
-      //console.log('Botón actualizado a "Volver al Panel"');
+      ////console.log('Botón actualizado a "Volver al Panel"');
     } else {
-      //console.log('Usuario no autenticado - mostrando "Iniciar sesión"');
+      ////console.log('Usuario no autenticado - mostrando "Iniciar sesión"');
     }
   } catch (error) {
-    //console.log("Error verificando autenticación:", error.message);
-    //console.log('Mostrando "Iniciar sesión" por defecto');
+    ////console.log("Error verificando autenticación:", error.message);
+    ////console.log('Mostrando "Iniciar sesión" por defecto');
   }
 }
 
@@ -75,7 +75,7 @@ async function isUserAuthenticated() {
     });
     return res?.data?.isAuthenticated || false;
   } catch (error) {
-    //console.log("Error verificando autenticación:", error.message);
+    ////console.log("Error verificando autenticación:", error.message);
     return false;
   }
 }
@@ -124,7 +124,7 @@ function setupNavbarObserver() {
               node.id === "navbar-placeholder" ||
               (node.querySelector && node.querySelector("#authButton"))
             ) {
-              //console.log("Navbar detectado, ejecutando initNavbarAuth...");
+              ////console.log("Navbar detectado, ejecutando initNavbarAuth...");
               setTimeout(() => initNavbarAuth(), 100);
             }
             // También verificar si el contenido del navbar-placeholder cambió
@@ -132,7 +132,7 @@ function setupNavbarObserver() {
               node.id === "navbar-placeholder" &&
               node.innerHTML.includes("authButton")
             ) {
-              //console.log(
+              ////console.log(
               ("Contenido del navbar detectado, ejecutando initNavbarAuth...");
               //  );
               setTimeout(() => initNavbarAuth(), 100);

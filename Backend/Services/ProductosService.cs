@@ -35,12 +35,12 @@ namespace OrigamiBack.Services
             {
                 Id = variante.Id,
                 ProductoId = variante.ProductoId,
-                // COMENTADO: Ya no se selecciona por RAM
-                // Ram = variante.Ram,
+                Ram = variante.Ram, // Nullable: mantenido para compatibilidad
                 Almacenamiento = variante.Almacenamiento,
                 Color = variante.Color,
                 Stock = variante.Stock,
                 Precio = variante.Precio,
+                Imagen = variante.Imagen != null ? Convert.ToBase64String(variante.Imagen) : null,
                 CondicionId = variante.CondicionId,
                 CondicionNombre = variante.Condicion != null ? variante.Condicion.Nombre : null,
                 Producto = new ProductoDto
@@ -88,10 +88,26 @@ namespace OrigamiBack.Services
         public async Task<ProductosVariantesDto> AddVarianteAsync(ProductosVariantesDto varianteDto)
         {
             var entidad = _mapper.Map<ProductosVariantes>(varianteDto);
+
+            // Convertir imagen de base64 a bytes si se proporciona
+            if (!string.IsNullOrEmpty(varianteDto.Imagen))
+            {
+                try
+                {
+                    var originalBytes = Convert.FromBase64String(varianteDto.Imagen);
+                    entidad.Imagen = ConvertToWebpBytes(originalBytes);
+                }
+                catch
+                {
+                    // Si falla la conversión, conservar bytes originales
+                    entidad.Imagen = Convert.FromBase64String(varianteDto.Imagen);
+                }
+            }
+
             // Asegurar que no se creen entidades navegadas por accidente
             entidad.Condicion = null;
             entidad.Producto = null;
-            _context.ProductosVariantes.Add(entidad);    
+            _context.ProductosVariantes.Add(entidad);
             await _context.SaveChangesAsync();
             return _mapper.Map<ProductosVariantesDto>(entidad);
         }
@@ -140,8 +156,7 @@ namespace OrigamiBack.Services
                 {
                     Id = v.Id,
                     ProductoId = v.ProductoId,
-                    // COMENTADO: Ya no se selecciona por RAM
-                    // Ram = v.Ram,
+                    Ram = v.Ram, // Nullable: mantenido para compatibilidad
                     Almacenamiento = v.Almacenamiento,
                     Color = v.Color,
                     Precio = v.Precio,
@@ -198,12 +213,12 @@ namespace OrigamiBack.Services
             {
                 Id = v.Id,
                 ProductoId = v.ProductoId,
-                // COMENTADO: Ya no se selecciona por RAM
-                // Ram = v.Ram,
+                Ram = v.Ram, // Nullable: mantenido para compatibilidad
                 Almacenamiento = v.Almacenamiento,
                 Color = v.Color,
                 Precio = v.Precio,
                 Stock = v.Stock,
+                Imagen = v.Imagen != null ? Convert.ToBase64String(v.Imagen) : null,
                 CondicionId = v.CondicionId,
                 CondicionNombre = v.Condicion != null ? v.Condicion.Nombre : null
             }).ToList();
@@ -296,13 +311,30 @@ namespace OrigamiBack.Services
 
             if (entidad != null)
             {
-                // COMENTADO: Ya no se selecciona por RAM
-                // entidad.Ram = varianteDto.Ram;
+                // Solo actualizar Ram si se proporciona (nullable)
+                if (varianteDto.Ram != null)
+                    entidad.Ram = varianteDto.Ram;
                 entidad.Almacenamiento = varianteDto.Almacenamiento;
                 entidad.Color = varianteDto.Color;
                 entidad.Precio = varianteDto.Precio;
                 entidad.Stock = varianteDto.Stock;
                 entidad.CondicionId = varianteDto.CondicionId;
+
+                // Actualizar imagen si se proporciona
+                if (!string.IsNullOrEmpty(varianteDto.Imagen))
+                {
+                    try
+                    {
+                        var originalBytes = Convert.FromBase64String(varianteDto.Imagen);
+                        entidad.Imagen = ConvertToWebpBytes(originalBytes);
+                    }
+                    catch
+                    {
+                        // Si falla la conversión, conservar bytes originales
+                        entidad.Imagen = Convert.FromBase64String(varianteDto.Imagen);
+                    }
+                }
+
                 _context.ProductosVariantes.Update(entidad);
                 await _context.SaveChangesAsync();
             }

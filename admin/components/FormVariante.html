@@ -42,13 +42,12 @@
           />
         </div>
         <div class="form-field">
-          <label for="variantColor">Color *</label>
+          <label for="variantColor">Color</label>
           <input
             type="text"
             id="variantColor"
             name="color"
-            required
-            placeholder="Ej: Azul"
+            placeholder="Ej: Azul (opcional)"
           />
         </div>
         <div class="form-field">
@@ -96,6 +95,29 @@
             placeholder="Ej: 10"
           />
         </div>
+      </div>
+
+      <!-- Imagen de la variante (opcional) -->
+      <div class="form-field">
+        <label for="variantImagen">Imagen de la variante (opcional)</label>
+
+        <!-- Preview de imagen existente -->
+        <div id="variantImagePreview" style="display: none; margin-bottom: 10px;">
+          <img id="variantImagePreviewImg" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid var(--border-color);" />
+          <div style="margin-top: 5px;">
+            <button type="button" id="removeVariantImage" class="btn btn-secondary btn-sm" style="padding: 4px 8px; font-size: 0.85rem;">
+              <i class="fa-solid fa-times"></i> Eliminar imagen
+            </button>
+          </div>
+        </div>
+
+        <input
+          type="file"
+          id="variantImagen"
+          name="imagen"
+          accept="image/*"
+        />
+        <small class="form-help">Imagen específica para esta variante. Si no se selecciona, usará la imagen del producto.</small>
       </div>
 
       <!-- Color-specific fields -->

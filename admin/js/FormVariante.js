@@ -149,6 +149,79 @@ class FormVariante {
     }
   }
 
+  // Convertir archivo de imagen a base64
+  fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        // Obtener solo la parte base64 (remover el prefijo data:image/...;base64,)
+        const base64 = reader.result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Configurar preview de imagen
+  setupImagePreview() {
+    const imagenInput = document.getElementById("variantImagen");
+    const removeBtn = document.getElementById("removeVariantImage");
+
+    if (imagenInput) {
+      imagenInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            this.showImagePreview(ev.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    if (removeBtn) {
+      removeBtn.addEventListener("click", () => {
+        this.hideImagePreview();
+        imagenInput.value = "";
+      });
+    }
+  }
+
+  // Cargar imagen existente de variante
+  loadExistingVariantImage(variant) {
+    const imagen = variant.imagen || variant.Imagen;
+    if (imagen) {
+      const imageSrc = `data:image/webp;base64,${imagen}`;
+      this.showImagePreview(imageSrc);
+    } else {
+      this.hideImagePreview();
+    }
+  }
+
+  // Mostrar preview de imagen
+  showImagePreview(imageSrc) {
+    const preview = document.getElementById("variantImagePreview");
+    const previewImg = document.getElementById("variantImagePreviewImg");
+
+    if (preview && previewImg) {
+      previewImg.src = imageSrc;
+      preview.style.display = "block";
+    }
+  }
+
+  // Ocultar preview de imagen
+  hideImagePreview() {
+    const preview = document.getElementById("variantImagePreview");
+    const previewImg = document.getElementById("variantImagePreviewImg");
+
+    if (preview && previewImg) {
+      previewImg.src = "";
+      preview.style.display = "none";
+    }
+  }
+
   loadCondiciones() {
     const variantCondicion = document.getElementById("variantCondicion");
     if (!variantCondicion) return Promise.resolve();
@@ -253,6 +326,8 @@ class FormVariante {
     this.bindFormHandlers();
     this.setupTypeFields();
     this.setupPreview();
+    this.setupImagePreview();
+
     if (variantId) {
       this.isEditMode = true;
       this.currentVariantId = variantId;
@@ -294,6 +369,10 @@ class FormVariante {
             baseCondInput.value =
               variant.condicionId || variant.CondicionId || "";
           }
+
+          // Cargar imagen existente si existe
+          this.loadExistingVariantImage(variant);
+
           this.updatePreview();
           modal.classList.add("active");
         })
@@ -313,6 +392,9 @@ class FormVariante {
       // Limpiar campo de precio
       document.getElementById("productPrecioBase").value = "";
 
+      // Ocultar preview de imagen
+      this.hideImagePreview();
+
       this.updatePreview();
       modal.classList.add("active");
     }
@@ -323,7 +405,7 @@ class FormVariante {
     modal.classList.remove("active");
   }
 
-  saveVariant() {
+  async saveVariant() {
     try {
       const formData = new FormData(document.getElementById("variantForm"));
       const variantId = document.getElementById("variantId").value;
@@ -332,7 +414,7 @@ class FormVariante {
         productId: formData.get("productId"),
         // COMENTADO: Ya no se obtiene RAM del formulario
         // ram: (formData.get("ram") || "").trim(),
-        storage: (formData.get("storage") || "").trim() || null,
+        storage: (formData.get("storage") || "").trim(),
         color: (formData.get("color") || "").trim(),
         price: parseFloat(formData.get("precioBase")) || 0,
         stock: parseInt(formData.get("stock")) || 0,
@@ -353,12 +435,16 @@ class FormVariante {
       //   this.showError("La RAM es obligatoria");
       //   return;
       // }
-      // NOTA: Almacenamiento ya no es obligatorio para todos los productos
-      // El backend validará si es obligatorio según la categoría
-      if (!variantData.color) {
-        this.showError("El color es obligatorio");
-        return;
-      }
+      // COMENTADO: Almacenamiento ahora es opcional (nullable)
+      // if (!variantData.storage) {
+      //   this.showError("El almacenamiento es obligatorio");
+      //   return;
+      // }
+      // COMENTADO: Color ahora es opcional (nullable)
+      // if (!variantData.color) {
+      //   this.showError("El color es obligatorio");
+      //   return;
+      // }
       if (!variantData.condicionId) {
         this.showError("La condición es obligatoria");
         return;
@@ -376,12 +462,25 @@ class FormVariante {
         ProductoId: parseInt(variantData.productId),
         // COMENTADO: Ya no se envía RAM en el payload
         // Ram: variantData.ram,
-        Almacenamiento: variantData.storage || null,
-        Color: variantData.color,
+        Almacenamiento: variantData.storage || null, // null si está vacío
+        Color: variantData.color || null,
         Precio: variantData.price,
         Stock: variantData.stock,
         CondicionId: variantData.condicionId,
       };
+
+      // Capturar imagen si existe
+      const imagenInput = document.getElementById("variantImagen");
+      if (imagenInput && imagenInput.files && imagenInput.files[0]) {
+        try {
+          const imagenBase64 = await this.fileToBase64(imagenInput.files[0]);
+          payload.Imagen = imagenBase64;
+        } catch (err) {
+          console.error("Error al convertir imagen:", err);
+          this.showError("Error al procesar la imagen");
+          return;
+        }
+      }
 
       const after = () => {
         this.showSuccess(
@@ -402,7 +501,7 @@ class FormVariante {
         payload.Id = parseInt(variantId);
 
         // Log para debug
-        console.log("Enviando payload para actualizar:", payload);
+        //console.log("Enviando payload para actualizar:", { ...payload, Imagen: payload.Imagen ? `[${payload.Imagen.length} chars]` : 'null' });
 
         window.apiService
           .updateVariant(variantId, payload)
@@ -463,9 +562,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Verificar si el DOM del componente está disponible
   const checkAndInit = () => {
     if (document.getElementById("variantForm")) {
-      ////console.log('Initializing FormVariante component...');
+      //////console.log('Initializing FormVariante component...');
       window.formVariante = new FormVariante();
-      ////console.log('FormVariante initialized:', !!window.formVariante);
+      //////console.log('FormVariante initialized:', !!window.formVariante);
     } else {
       // Si no está disponible, intentar de nuevo en breve
       setTimeout(checkAndInit, 100);

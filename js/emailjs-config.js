@@ -20,7 +20,7 @@ const EMAILJS_CONFIG = {
 function initEmailJS() {
   if (typeof emailjs !== "undefined") {
     emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-    //console.log('EmailJS inicializado correctamente');
+    ////console.log('EmailJS inicializado correctamente');
   } else {
     console.error("EmailJS no está cargado");
   }
@@ -59,7 +59,7 @@ function sendContactEmail(formData) {
         templateParams
       )
       .then(function (response) {
-        //console.log('Email enviado exitosamente:', response);
+        ////console.log('Email enviado exitosamente:', response);
         resolve(response);
       })
       .catch(function (error) {

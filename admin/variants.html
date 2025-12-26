@@ -30,17 +30,17 @@
 
         // Stub global inicial - muy simple
         window.openVariantModal = function (id = null) {
-          // //console.log("openVariantModal called with ID:", id);
+          // ////console.log("openVariantModal called with ID:", id);
 
           // Si ya fue override por FormVariante, no hacer nada más
           if (modalFunctionOverridden) {
-            //   //console.log("Function was overridden, this should not execute");
+            //   ////console.log("Function was overridden, this should not execute");
             return;
           }
 
           // Intentar FormVariante primero
           if (window.formVariante && window.formVariante.openModal) {
-            // //console.log("Using FormVariante");
+            // ////console.log("Using FormVariante");
             retryCount = 0;
             return window.formVariante.openModal(id);
           }
@@ -50,7 +50,7 @@
             window.variantsController &&
             window.variantsController.openVariantModal
           ) {
-            //  //console.log("Using variants controller");
+            //  ////console.log("Using variants controller");
             retryCount = 0;
             return window.variantsController.openVariantModal(id);
           }
@@ -58,7 +58,7 @@
           // Reintento con límite
           if (retryCount < maxRetries) {
             retryCount++;
-            // //console.log(`Retry ${retryCount}/${maxRetries}`);
+            // ////console.log(`Retry ${retryCount}/${maxRetries}`);
             setTimeout(() => window.openVariantModal(id), 300);
           } else {
             console.error(
@@ -66,7 +66,7 @@
               maxRetries,
               "attempts"
             );
-            /*  //console.log("Available globals:", {
+            /*  ////console.log("Available globals:", {
               formVariante: !!window.formVariante,
               variantsController: !!window.variantsController,
             }); */
@@ -207,7 +207,7 @@
           setTimeout(() => {
             if (window.FormVariante && !window.formVariante) {
               window.formVariante = new FormVariante();
-              console.log("FormVariante initialized manually");
+              //console.log("FormVariante initialized manually");
             }
           }, 100);
         })

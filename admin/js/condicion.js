@@ -53,7 +53,7 @@ class CondicionesController {
         window.apiService
           .getCondiciones()
           .then((data) => {
-            // //console.log("[Condiciones] API data:", data);
+            // ////console.log("[Condiciones] API data:", data);
             const list = Array.isArray(data) ? data : data?.items || [];
             this.condiciones = list.map((c) => ({
               id: c.id ?? c.Id,

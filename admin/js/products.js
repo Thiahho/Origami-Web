@@ -94,7 +94,7 @@ class ProductsController {
           const sortColumn = header.dataset.sort;
           if (!sortColumn) return;
 
-          console.log('[Products] Column clicked:', sortColumn);
+          //console.log('[Products] Column clicked:', sortColumn);
 
           // Toggle direction
           if (this.currentSort.column === sortColumn) {
@@ -123,7 +123,7 @@ class ProductsController {
       };
 
       table.addEventListener('click', this.handleColumnClick);
-      console.log('[Products] Column sorting delegated to table');
+      //console.log('[Products] Column sorting delegated to table');
     } catch (error) {
       console.error('[Products] Error setting up column sorting:', error);
     }
@@ -194,7 +194,7 @@ class ProductsController {
 
       // Obtener productos del backend
       const raw = await window.apiService.getProducts();
-      ////console.log('[Products] RAW:', raw);
+      //////console.log('[Products] RAW:', raw);
       let products = Array.isArray(raw) ? raw : raw?.items || [];
 
       // Normalizar campos
@@ -208,7 +208,7 @@ class ProductsController {
           p.img || p.Img ? `data:image/webp;base64,${p.img || p.Img}` : "",
         fechaCreacion: p.fechaCreacion || p.FechaCreacion || p.createdAt || p.CreatedAt || new Date().toISOString(),
       }));
-      //  //console.log('[Products] NORMALIZED:', products.length, products);
+      //  ////console.log('[Products] NORMALIZED:', products.length, products);
 
       // Apply filters
       if (this.currentFilter.search) {
@@ -232,7 +232,7 @@ class ProductsController {
       // Calculate pagination
       const totalProducts = products.length;
       const totalPages = Math.ceil(totalProducts / this.itemsPerPage);
-      // //console.log("[Products] total:", totalProducts, "pages:", totalPages);
+      // ////console.log("[Products] total:", totalProducts, "pages:", totalPages);
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
       const endIndex = startIndex + this.itemsPerPage;
       const paginatedProducts = products.slice(startIndex, endIndex);
@@ -264,8 +264,8 @@ class ProductsController {
 
     // Log para debugging
     if (sortType === 'newest' || sortType === 'oldest') {
-      console.log('[Products] Sorting by date:', sortType);
-      console.log('[Products] Sample dates:', sorted.slice(0, 3).map(p => ({
+      //console.log('[Products] Sorting by date:', sortType);
+      //console.log('[Products] Sample dates:', sorted.slice(0, 3).map(p => ({
         id: p.id,
         modelo: p.modelo,
         fecha: p.fechaCreacion
@@ -374,8 +374,8 @@ class ProductsController {
 
     tbody.innerHTML = products
       .map((product) => {
-        console.log('Producto completo:', product);
-        console.log('Estado del producto:', product.estado, product.Estado);
+        //console.log('Producto completo:', product);
+        //console.log('Estado del producto:', product.estado, product.Estado);
         const categoryName = product.categoria || "Sin categoría";
         const fechaCreacion = product.fechaCreacion || new Date().toISOString();
 

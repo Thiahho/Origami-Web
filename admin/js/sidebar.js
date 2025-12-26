@@ -187,7 +187,7 @@
       })
       .catch(() => {
         // Fallback: usar contenido embebido
-        console.log("Using embedded sidebar HTML");
+        //console.log("Using embedded sidebar HTML");
         placeholder.innerHTML = sidebarHTML;
         initSidebarBehavior();
       });
@@ -214,20 +214,20 @@
         e.preventDefault();
         e.stopPropagation();
 
-        console.log("Desktop toggle clicked, window width:", window.innerWidth);
+        //console.log("Desktop toggle clicked, window width:", window.innerWidth);
 
         // Solo permitir collapse en desktop
         if (window.innerWidth > 768) {
-          console.log("Toggling sidebar collapse");
+          //console.log("Toggling sidebar collapse");
           layout.classList.toggle("sidebar-collapsed");
           const isCollapsed = layout.classList.contains("sidebar-collapsed");
-          console.log("Sidebar collapsed:", isCollapsed);
+          //console.log("Sidebar collapsed:", isCollapsed);
           localStorage.setItem(
             "admin_sidebar_collapsed",
             isCollapsed ? "1" : "0"
           );
         } else {
-          console.log("Desktop toggle ignored in mobile view");
+          //console.log("Desktop toggle ignored in mobile view");
         }
       });
     }
@@ -282,21 +282,21 @@
 
       // Event listeners
       mobileToggle.addEventListener("click", function () {
-        console.log("Toggle clicked"); // Debug
-        console.log("Sidebar:", sidebar); // Debug
-        console.log("Sidebar classes before:", sidebar.className); // Debug
+        //console.log("Toggle clicked"); // Debug
+        //console.log("Sidebar:", sidebar); // Debug
+        //console.log("Sidebar classes before:", sidebar.className); // Debug
         sidebar.classList.toggle("is-open");
-        console.log("Sidebar classes after:", sidebar.className); // Debug
+        //console.log("Sidebar classes after:", sidebar.className); // Debug
 
         const styles = window.getComputedStyle(sidebar);
-        console.log("Sidebar left position:", styles.left);
-        console.log("Sidebar display:", styles.display);
-        console.log("Sidebar visibility:", styles.visibility);
-        console.log("Sidebar opacity:", styles.opacity);
-        console.log("Sidebar z-index:", styles.zIndex);
-        console.log("Sidebar background:", styles.background);
-        console.log("Sidebar width:", styles.width);
-        console.log("Sidebar height:", styles.height);
+        //console.log("Sidebar left position:", styles.left);
+        //console.log("Sidebar display:", styles.display);
+        //console.log("Sidebar visibility:", styles.visibility);
+        //console.log("Sidebar opacity:", styles.opacity);
+        //console.log("Sidebar z-index:", styles.zIndex);
+        //console.log("Sidebar background:", styles.background);
+        //console.log("Sidebar width:", styles.width);
+        //console.log("Sidebar height:", styles.height);
 
         overlay.classList.toggle("is-open");
         document.body.style.overflow = sidebar.classList.contains("is-open")

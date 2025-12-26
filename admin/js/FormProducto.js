@@ -320,14 +320,14 @@ class FormProducto {
       };
 
       // Debug: ver qué se está enviando
-      console.log("Payload completo:", payload);
-      console.log("Estado seleccionado:", productData.status);
+      //console.log("Payload completo:", payload);
+      //console.log("Estado seleccionado:", productData.status);
 
       let message = "";
 
       if (this.isEditMode && this.currentProductId) {
         payload.Id = parseInt(this.currentProductId);
-        console.log("Actualizando producto con payload:", payload);
+        //console.log("Actualizando producto con payload:", payload);
         await window.apiService.updateProduct(this.currentProductId, payload);
         message = "Producto actualizado correctamente";
       } else {
