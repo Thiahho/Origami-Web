@@ -352,10 +352,21 @@ namespace OrigamiBack.Controllers
                 var createdVariante = await _productoService.AddVarianteAsync(varianteDto);
                 return CreatedAtAction(nameof(GetVarianteById), new { id = createdVariante.Id }, createdVariante);
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error de validación al crear la variante");
+                return BadRequest(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Error de base de datos al crear la variante");
+                var innerMessage = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, $"Error de base de datos: {innerMessage}");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al crear la variante");
-                return StatusCode(500, "Error interno del servidor");
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
 

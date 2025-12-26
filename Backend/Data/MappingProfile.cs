@@ -11,10 +11,14 @@ namespace OrigamiBack.Data
             CreateMap<Productos, ProductoDto>().ReverseMap();
 
             CreateMap<ProductosVariantes, ProductosVariantesDto>()
-                .ForMember(dest => dest.Producto, opt => opt.Ignore());
+                .ForMember(dest => dest.Producto, opt => opt.Ignore())
+                .ForMember(dest => dest.Imagen, opt => opt.MapFrom(src =>
+                    src.Imagen != null ? Convert.ToBase64String(src.Imagen) : null));
+
             CreateMap<ProductosVariantesDto, ProductosVariantes>()
                 .ForMember(dest => dest.Condicion, opt => opt.Ignore())
-                .ForMember(dest => dest.Producto, opt => opt.Ignore());
+                .ForMember(dest => dest.Producto, opt => opt.Ignore())
+                .ForMember(dest => dest.Imagen, opt => opt.Ignore()); // Se maneja manualmente en el servicio
 
             CreateMap<ProductoDto, Productos>()
                 .ForMember(dest => dest.Img, opt => opt.MapFrom(src =>

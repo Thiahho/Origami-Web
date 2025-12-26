@@ -467,6 +467,7 @@ class FormVariante {
         Precio: variantData.price,
         Stock: variantData.stock,
         CondicionId: variantData.condicionId,
+        Activo: true, // Nueva variante siempre se crea activa
       };
 
       // Capturar imagen si existe
@@ -525,7 +526,16 @@ class FormVariante {
           .then(after)
           .catch((err) => {
             console.error("Error API al crear variante:", err);
-            this.showError("Error al crear la variante");
+
+            // Mostrar mensaje más específico según el error
+            let errorMessage = "Error al crear la variante";
+            if (err.data && typeof err.data === 'string') {
+              errorMessage = err.data;
+            } else if (err.message) {
+              errorMessage = err.message;
+            }
+
+            this.showError(errorMessage);
           });
       }
     } catch (err) {
