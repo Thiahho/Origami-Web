@@ -239,6 +239,41 @@ namespace OrigamiBack.Services
                 .Include(v => v.Condicion)
                 .AsNoTracking()
                 .ToListAsync();
+
+            //Console.WriteLine($"Variantes encontradas en BD: {variantes.Count}");
+            foreach (var v in variantes)
+            {
+                     //Console.WriteLine($"Variante ID: {v.Id}, RAM: {v.Ram}, Almacenamiento: {v.Almacenamiento}, Color: {v.Color}");
+            }
+
+            // Mapeo manual para evitar problemas con AutoMapper
+            var result = variantes.Select(v => new ProductosVariantesDto
+            {
+                Id = v.Id,
+                ProductoId = v.ProductoId,
+                Ram = v.Ram, // Nullable: mantenido para compatibilidad
+                Almacenamiento = v.Almacenamiento,
+                Color = v.Color,
+                Precio = v.Precio,
+                Stock = v.Stock,
+                Imagen = v.Imagen != null ? Convert.ToBase64String(v.Imagen) : null,
+                CondicionId = v.CondicionId,
+                CondicionNombre = v.Condicion != null ? v.Condicion.Nombre : null,
+                Activo = v.Activo
+            }).ToList();
+
+           // Console.WriteLine($"Variantes mapeadas: {result.Count}");
+            return result;
+        }
+
+        public async Task<IEnumerable<ProductosVariantesDto>> GetAllVariantesByIdAsync(int productId)
+        {
+            // Admin: Obtiene TODAS las variantes sin filtrar por estado activo
+            var variantes = await _context.ProductosVariantes
+                .Where(v => v.ProductoId == productId) // Sin filtro de Activo
+                .Include(v => v.Condicion)
+                .AsNoTracking()
+                .ToListAsync();
             
             //Console.WriteLine($"Variantes encontradas en BD: {variantes.Count}");
             foreach (var v in variantes)

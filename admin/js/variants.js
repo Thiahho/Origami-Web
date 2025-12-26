@@ -56,23 +56,24 @@ class VariantsController {
     window.deleteVariant = (id) => this.deleteVariant(id);
     window.closeDeleteModal = () => this.closeDeleteModal();
     window.confirmDelete = () => this.confirmDelete();
-    window.toggleVariantActivo = (id, activo) => this.toggleVariantActivo(id, activo);
+    window.toggleVariantActivo = (id, activo) =>
+      this.toggleVariantActivo(id, activo);
 
     // editVariant y openVariantModal serán manejados por FormVariante.js
   }
 
   setupColumnSorting() {
     try {
-      const table = document.getElementById('variantsTable');
+      const table = document.getElementById("variantsTable");
       if (!table) {
-        console.warn('[Variants] Table not found');
+        console.warn("[Variants] Table not found");
         return;
       }
 
       // Usar delegación de eventos en la tabla
-      table.removeEventListener('click', this.handleColumnClick);
+      table.removeEventListener("click", this.handleColumnClick);
       this.handleColumnClick = (e) => {
-        const header = e.target.closest('.sortable');
+        const header = e.target.closest(".sortable");
         if (!header) return;
 
         try {
@@ -83,10 +84,11 @@ class VariantsController {
 
           // Toggle direction
           if (this.currentSort.column === sortColumn) {
-            this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+            this.currentSort.direction =
+              this.currentSort.direction === "asc" ? "desc" : "asc";
           } else {
             this.currentSort.column = sortColumn;
-            this.currentSort.direction = 'asc';
+            this.currentSort.direction = "asc";
           }
 
           // Update visual indicators
@@ -94,42 +96,49 @@ class VariantsController {
 
           // Map column to sort type
           const sortMap = {
-            'product': this.currentSort.direction === 'asc' ? 'product-asc' : 'product-desc',
-            'price': this.currentSort.direction === 'asc' ? 'price-asc' : 'price-desc',
-            'stock': this.currentSort.direction === 'asc' ? 'stock-asc' : 'stock-desc',
-            'date': this.currentSort.direction === 'asc' ? 'oldest' : 'newest',
+            product:
+              this.currentSort.direction === "asc"
+                ? "product-asc"
+                : "product-desc",
+            price:
+              this.currentSort.direction === "asc" ? "price-asc" : "price-desc",
+            stock:
+              this.currentSort.direction === "asc" ? "stock-asc" : "stock-desc",
+            date: this.currentSort.direction === "asc" ? "oldest" : "newest",
           };
 
           this.currentFilter.sort = sortMap[sortColumn];
           this.currentPage = 1;
           this.loadVariants();
         } catch (error) {
-          console.error('[Variants] Error handling column click:', error);
+          console.error("[Variants] Error handling column click:", error);
         }
       };
 
-      table.addEventListener('click', this.handleColumnClick);
+      table.addEventListener("click", this.handleColumnClick);
       //console.log('[Variants] Column sorting delegated to table');
     } catch (error) {
-      console.error('[Variants] Error setting up column sorting:', error);
+      console.error("[Variants] Error setting up column sorting:", error);
     }
   }
 
   updateSortIcons() {
     // Reset all icons
-    document.querySelectorAll('.sortable .sort-icon').forEach(icon => {
-      icon.className = 'fa-solid fa-sort sort-icon';
+    document.querySelectorAll(".sortable .sort-icon").forEach((icon) => {
+      icon.className = "fa-solid fa-sort sort-icon";
     });
 
     // Update active column icon
     if (this.currentSort.column) {
-      const activeHeader = document.querySelector(`.sortable[data-sort="${this.currentSort.column}"]`);
+      const activeHeader = document.querySelector(
+        `.sortable[data-sort="${this.currentSort.column}"]`
+      );
       if (activeHeader) {
-        const icon = activeHeader.querySelector('.sort-icon');
-        if (this.currentSort.direction === 'asc') {
-          icon.className = 'fa-solid fa-sort-up sort-icon active';
+        const icon = activeHeader.querySelector(".sort-icon");
+        if (this.currentSort.direction === "asc") {
+          icon.className = "fa-solid fa-sort-up sort-icon active";
         } else {
-          icon.className = 'fa-solid fa-sort-down sort-icon active';
+          icon.className = "fa-solid fa-sort-down sort-icon active";
         }
       }
     }
@@ -236,11 +245,11 @@ class VariantsController {
       // Cargar condiciones en paralelo
       const condicionesPromise = this.ensureCondicionesLoaded();
 
-      // Obtener variantes de cada producto
+      // Obtener variantes de cada producto (ADMIN: incluye activas e inactivas)
       const variantPromises = products.map(async (p) => {
         const productId = p.id ?? p.Id;
         try {
-          const variantesRaw = await window.apiService.getVariants(productId);
+          const variantesRaw = await window.apiService.getAllVariantsAdmin(productId);
           return Array.isArray(variantesRaw)
             ? variantesRaw
             : variantesRaw?.items || [];
@@ -275,12 +284,6 @@ class VariantsController {
           createdAt: v.createdAt || v.CreatedAt || new Date().toISOString(),
         };
 
-        // Log para debugging - solo primera variante
-        if (v.id === variants[0]?.id || v.Id === variants[0]?.Id) {
-          console.log('[Variants] Primera variante original:', v);
-          console.log('[Variants] Primera variante normalizada:', normalized);
-        }
-
         return normalized;
       });
 
@@ -314,7 +317,11 @@ class VariantsController {
       }
 
       // Apply sorting
-      variants = this.sortVariants(variants, this.normalizedProducts, this.currentFilter.sort);
+      variants = this.sortVariants(
+        variants,
+        this.normalizedProducts,
+        this.currentFilter.sort
+      );
 
       // Calculate pagination
       const totalVariants = variants.length;
@@ -357,7 +364,7 @@ class VariantsController {
 
     // Protección contra productos undefined
     if (!products || products.length === 0) {
-      console.warn('[Variants] No products available for sorting');
+      console.warn("[Variants] No products available for sorting");
       products = this.normalizedProducts || [];
     }
 
@@ -445,12 +452,6 @@ class VariantsController {
       return;
     }
 
-    // Log para debugging
-    if (variants.length > 0) {
-      console.log('[Variants] Renderizando variantes. Primera variante:', variants[0]);
-      console.log('[Variants] Campo activo de primera variante:', variants[0].activo);
-    }
-
     tbody.innerHTML = variants
       .map((variant) => {
         const product = products.find((p) => p.id === variant.productoId);
@@ -507,16 +508,38 @@ class VariantsController {
             </div>
           </td>
           <td>
-            <span class="status-badge status-${variant.activo ? 'active' : 'inactive'}">
-              ${variant.activo ? 'Activa' : 'Inactiva'}
+            <span class="status-badge status-${
+              variant.activo ? "active" : "inactive"
+            }">
+              ${variant.activo ? "Activa" : "Inactiva"}
             </span>
           </td>
           <td>
             <div class="table-actions">
-              <button class="btn btn-small ${typeof variant.activo !== 'undefined' ? (variant.activo ? 'btn-warning' : 'btn-success') : 'btn-secondary'}"
-                      onclick="toggleVariantActivo('${variant.id}', ${!variant.activo})"
-                      title="${typeof variant.activo !== 'undefined' ? (variant.activo ? 'Desactivar' : 'Activar') : 'Toggle'}">
-                <i class="fa-solid fa-${typeof variant.activo !== 'undefined' ? (variant.activo ? 'eye-slash' : 'eye') : 'eye'}"></i>
+              <button class="btn btn-small ${
+                typeof variant.activo !== "undefined"
+                  ? variant.activo
+                    ? "btn-warning"
+                    : "btn-success"
+                  : "btn-secondary"
+              }"
+                      onclick="toggleVariantActivo('${
+                        variant.id
+                      }', ${!variant.activo})"
+                      title="${
+                        typeof variant.activo !== "undefined"
+                          ? variant.activo
+                            ? "Desactivar"
+                            : "Activar"
+                          : "Toggle"
+                      }">
+                <i class="fa-solid fa-${
+                  typeof variant.activo !== "undefined"
+                    ? variant.activo
+                      ? "eye-slash"
+                      : "eye"
+                    : "eye"
+                }"></i>
               </button>
               <button class="btn btn-small btn-secondary" onclick="editVariant('${
                 variant.id
@@ -670,12 +693,16 @@ class VariantsController {
   async toggleVariantActivo(variantId, activo) {
     try {
       await window.apiService.toggleVariantActivo(variantId, activo);
-      this.showSuccess(activo ? 'Variante activada correctamente' : 'Variante desactivada correctamente');
+      this.showSuccess(
+        activo
+          ? "Variante activada correctamente"
+          : "Variante desactivada correctamente"
+      );
       this.loadVariants();
     } catch (error) {
-      console.error('Error toggling variant status:', error);
+      console.error("Error toggling variant status:", error);
 
-      let errorMessage = 'Error al cambiar el estado de la variante';
+      let errorMessage = "Error al cambiar el estado de la variante";
       if (error instanceof window.ApiError) {
         errorMessage = error.message;
       }

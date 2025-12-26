@@ -12,6 +12,7 @@ namespace OrigamiBack.Services.Interface
         Task UpdateAsync(ProductoDto productos);
         Task DeleteAsync(int id);
         Task<IEnumerable<ProductosVariantesDto>> GetVariantesByIdAsync(int productId);
+        Task<IEnumerable<ProductosVariantesDto>> GetAllVariantesByIdAsync(int productId); // Admin: obtiene todas sin filtrar
         // Modificado: Ya no se busca por RAM
         Task<ProductosVariantesDto?> GetVarianteSpecAsync(int productId, string storage, string color, int? condicionId);
         Task<ProductosVariantesDto?> GetVarianteByIdAsync(int varianteId);

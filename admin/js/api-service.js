@@ -168,6 +168,13 @@ class ApiService {
     return response.data;
   }
 
+  async getAllVariantsAdmin(productId) {
+    const response = await this.axios.get(
+      `/api/Producto/${productId}/variantes/admin`
+    );
+    return response.data;
+  }
+
   async getVariant(variantId) {
     const response = await this.axios.get(
       `/api/Producto/variante/${variantId}`

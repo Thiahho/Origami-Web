@@ -129,6 +129,23 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        [Authorize(Roles = "ADMIN")]
+        [HttpGet("{productoId}/variantes/admin")]
+        public async Task<ActionResult<IEnumerable<ProductosVariantesDto>>> GetAllVariantesAdminAsync(int productoId)
+        {
+            try
+            {
+                // Admin: obtiene TODAS las variantes (activas e inactivas)
+                var variantes = await _productoService.GetAllVariantesByIdAsync(productoId);
+                return Ok(variantes ?? new List<ProductosVariantesDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error al obtener todas las variantes para el producto {productoId}");
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
         // COMENTADO: Ya no se selecciona por RAM
         // [AllowAnonymous]
         // [HttpGet("{productoId}/Ram-Opciones")]
