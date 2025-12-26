@@ -260,19 +260,29 @@ class VariantsController {
       await condicionesPromise;
 
       // Normalizar variantes (sin RAM)
-      variants = variants.map((v) => ({
-        id: v.id ?? v.Id,
-        productoId: v.productoId ?? v.ProductoId,
-        // COMENTADO: Ya no se usa RAM
-        // ram: v.ram || v.Ram || "",
-        almacenamiento: v.almacenamiento || v.Almacenamiento || "",
-        color: v.color || v.Color || "",
-        precio: v.precio ?? v.Precio ?? 0,
-        stock: v.stock ?? v.Stock ?? 0,
-        condicionId: v.condicionId ?? v.CondicionId ?? null,
-        activo: v.activo ?? v.Activo ?? true,
-        createdAt: v.createdAt || v.CreatedAt || new Date().toISOString(),
-      }));
+      variants = variants.map((v) => {
+        const normalized = {
+          id: v.id ?? v.Id,
+          productoId: v.productoId ?? v.ProductoId,
+          // COMENTADO: Ya no se usa RAM
+          // ram: v.ram || v.Ram || "",
+          almacenamiento: v.almacenamiento || v.Almacenamiento || "",
+          color: v.color || v.Color || "",
+          precio: v.precio ?? v.Precio ?? 0,
+          stock: v.stock ?? v.Stock ?? 0,
+          condicionId: v.condicionId ?? v.CondicionId ?? null,
+          activo: v.activo ?? v.Activo ?? true,
+          createdAt: v.createdAt || v.CreatedAt || new Date().toISOString(),
+        };
+
+        // Log para debugging - solo primera variante
+        if (v.id === variants[0]?.id || v.Id === variants[0]?.Id) {
+          console.log('[Variants] Primera variante original:', v);
+          console.log('[Variants] Primera variante normalizada:', normalized);
+        }
+
+        return normalized;
+      });
 
       // Normalizar productos y almacenarlos
       this.normalizedProducts = products.map((p) => ({
@@ -435,6 +445,12 @@ class VariantsController {
       return;
     }
 
+    // Log para debugging
+    if (variants.length > 0) {
+      console.log('[Variants] Renderizando variantes. Primera variante:', variants[0]);
+      console.log('[Variants] Campo activo de primera variante:', variants[0].activo);
+    }
+
     tbody.innerHTML = variants
       .map((variant) => {
         const product = products.find((p) => p.id === variant.productoId);
@@ -497,10 +513,10 @@ class VariantsController {
           </td>
           <td>
             <div class="table-actions">
-              <button class="btn btn-small ${variant.activo ? 'btn-warning' : 'btn-success'}"
+              <button class="btn btn-small ${typeof variant.activo !== 'undefined' ? (variant.activo ? 'btn-warning' : 'btn-success') : 'btn-secondary'}"
                       onclick="toggleVariantActivo('${variant.id}', ${!variant.activo})"
-                      title="${variant.activo ? 'Desactivar' : 'Activar'}">
-                <i class="fa-solid fa-${variant.activo ? 'eye-slash' : 'eye'}"></i>
+                      title="${typeof variant.activo !== 'undefined' ? (variant.activo ? 'Desactivar' : 'Activar') : 'Toggle'}">
+                <i class="fa-solid fa-${typeof variant.activo !== 'undefined' ? (variant.activo ? 'eye-slash' : 'eye') : 'eye'}"></i>
               </button>
               <button class="btn btn-small btn-secondary" onclick="editVariant('${
                 variant.id
