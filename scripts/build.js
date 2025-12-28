@@ -67,7 +67,7 @@ function writeManifest(bundleFileName) {
 
 function stripOldScripts(html, bundleTag) {
   const scriptRegex =
-    /<script\s+src="(?:\.?\.\/|\/)?js\/[^\">]+"><\/script>\s*/g;
+    /<script[^>]*\s+src="(?:\.?\.\/|\/)?js\/[^">]+"[^>]*><\/script>\s*/gi;
   let updated = html.replace(scriptRegex, "");
   updated = updated.replace(/\n{3,}/g, "\n\n");
 

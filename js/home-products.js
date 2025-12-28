@@ -1,12 +1,5 @@
 // Home products loader - Carga productos desde el backend
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("home-products");
-  const iphoneContainer = document.getElementById("home-iphone");
-
-  if (!container || !iphoneContainer) {
-    return;
-  }
-
   const navItems = document.querySelectorAll(".bottom-nav__item");
 
   navItems.forEach((item) => {
@@ -39,6 +32,98 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   changeBackground();
+
+  const CARD_STYLE =
+    "flex:0 0 260px; min-height:200px; padding:1.5rem; border-radius:var(--medium-radius);";
+
+  const buildCardHtml = (product) => {
+    const basePrice =
+      product.variantes && product.variantes.length
+        ? Math.min(...product.variantes.map((v) => v.precio))
+        : null;
+    const priceText = basePrice != null ? `$${basePrice}` : "";
+    const imgBase64 = product.img || product.Img;
+    const img = imgBase64
+      ? `data:image/webp;base64,${imgBase64}`
+      : "/img/LOGO+CIRCULO.webp";
+    const productId = product.id ?? product.Id;
+    const marca = product.Marca || product.marca || "Marca";
+    const modelo = product.Modelo || product.modelo || "Modelo";
+    const category = product.Categoria || product.categoria || "";
+
+    return `
+      <a href="DetalleProducto.html?id=${productId}" style="text-decoration:none; color:inherit;">
+        <div class="glass-effect card" style="${CARD_STYLE}">
+          <div style="text-align:center; margin-bottom:1rem; line-height:1;">
+            <h3 style="font-size:1.3rem; font-weight:700; margin:0; line-height:1.1; color:var(--text-color);">${marca}</h3>
+            <p style="font-size:0.95rem; font-weight:400; margin:0; line-height:1.2; color:var(--text-muted-color);">${modelo}</p>
+          </div>
+          <figure class="card__media">
+            <img src="${img}" alt="${marca} ${modelo}" loading="lazy" decoding="async" width="220" height="200">
+          </figure>
+          <p>${category}</p>
+          <div class="card__price">${priceText}</div>
+        </div>
+      </a>
+    `;
+  };
+
+  const skeletonCard = () => `
+    <div class="glass-effect card card--skeleton" style="${CARD_STYLE}">
+      <div class="card__skeleton-title skeleton-block"></div>
+      <div class="card__skeleton-subtitle skeleton-block"></div>
+      <div class="card__media skeleton-block skeleton-media"></div>
+      <div class="card__skeleton-desc skeleton-block"></div>
+      <div class="card__skeleton-price skeleton-block"></div>
+    </div>
+  `;
+
+  const renderSkeletons = (container, titleText) => {
+    if (!container) return;
+    const skeletons = Array.from({ length: 3 })
+      .map(() => skeletonCard())
+      .join("");
+    container.innerHTML = `
+      <h2 style="flex-basis:100%; margin:0 0 1rem 0;">${titleText}</h2>
+      ${skeletons}
+    `;
+  };
+
+  const renderProducts = (options) => {
+    const { container, titleText, products, emptyText } = options;
+    if (!container) return;
+
+    if (!products.length) {
+      container.innerHTML = `
+        <h2 style="flex-basis:100%; margin:0 0 1rem 0;">${titleText}</h2>
+        <div class="glass-effect card card--empty" style="padding:1rem; flex:0 0 100%; text-align:center;">${emptyText}</div>
+      `;
+      return;
+    }
+
+    const cardsHtml = products.map((p) => buildCardHtml(p)).join("");
+    const viewMoreHtml = `
+      <div style="flex-basis:100%; text-align:center;">
+        <a href="Tienda.html" style="display:inline-block; padding:0.75rem 1.5rem; color:var(--text-color); text-decoration:none; font-weight:500; border-radius:8px; transition:background 0.3s ease;">Ver más</a>
+      </div>
+    `;
+
+    container.innerHTML = `
+      <h2 style="flex-basis:100%; margin:0 0 1rem 0;">${titleText}</h2>
+      ${cardsHtml}
+      ${viewMoreHtml}
+    `;
+  };
+
+  const homeContainer = document.getElementById("home-products");
+  const iphoneContainer = document.getElementById("home-iphone");
+
+  if (!homeContainer || !iphoneContainer) {
+    return;
+  }
+
+  renderSkeletons(homeContainer, "Nuestros Equipos");
+  renderSkeletons(iphoneContainer, "Últimos iPhone");
 
   // Render dinámico de productos desde backend
   (async function loadHomeProducts() {
@@ -75,219 +160,24 @@ document.addEventListener("DOMContentLoaded", () => {
           ? fallbackData
           : fallbackData?.items || [];
       }
-      container.innerHTML =
-        '<h2 style="flex-basis:100%; margin:0 0 1rem 0;">Nuestros Equipos</h2>';
-      iphoneContainer.innerHTML =
-        '<h2 style="flex-basis:100%; margin:0 0 1rem 0;">Últimos iPhone</h2>';
 
-      const cards = products.slice(0, 3).map((p) => {
-        const basePrice =
-          p.variantes && p.variantes.length
-            ? Math.min(...p.variantes.map((v) => v.precio))
-            : null;
-        const priceText = basePrice != null ? `$${basePrice}` : "";
-        const imgBase64 = p.img || p.Img;
-        const img = imgBase64
-          ? `data:image/webp;base64,${imgBase64}`
-          : "/img/LOGO+CIRCULO.webp";
-        const productId = p.id ?? p.Id;
-
-        const a = document.createElement("a");
-        a.href = `DetalleProducto.html?id=${productId}`;
-        a.style.textDecoration = "none";
-        a.style.color = "inherit";
-
-        const card = document.createElement("div");
-        card.className = "glass-effect card";
-        card.style.flex = "0 0 260px";
-        card.style.minHeight = "200px";
-        card.style.padding = "1.5rem";
-        card.style.borderRadius = "var(--medium-radius)";
-
-        // Contenedor para marca y modelo
-        const titleContainer = document.createElement("div");
-        titleContainer.style.textAlign = "center";
-        titleContainer.style.marginBottom = "1rem";
-        titleContainer.style.lineHeight = "1";
-
-        // Marca - más grande y gruesa
-        const marca = document.createElement("h3");
-        marca.textContent = p.Marca || p.marca || "Marca";
-        marca.style.fontSize = "1.3rem";
-        marca.style.fontWeight = "700";
-        marca.style.margin = "0";
-        marca.style.lineHeight = "1.1";
-        marca.style.color = "var(--text-color)";
-
-        // Modelo - más pequeño y fino
-        const modelo = document.createElement("p");
-        modelo.textContent = p.Modelo || p.modelo || "Modelo";
-        modelo.style.fontSize = "0.95rem";
-        modelo.style.fontWeight = "400";
-        modelo.style.margin = "0";
-        modelo.style.lineHeight = "1.2";
-        modelo.style.color = "var(--text-muted-color)";
-
-        titleContainer.appendChild(marca);
-        titleContainer.appendChild(modelo);
-
-        const fig = document.createElement("figure");
-        fig.className = "card__media";
-        const image = document.createElement("img");
-        image.src = img;
-        image.alt = "Producto";
-        image.loading = "lazy";
-        fig.appendChild(image);
-
-        const pDesc = document.createElement("p");
-        pDesc.textContent = p.Categoria || p.categoria || "";
-
-        const price = document.createElement("div");
-        price.className = "card__price";
-        price.textContent = priceText;
-
-        card.appendChild(titleContainer);
-        card.appendChild(fig);
-        card.appendChild(pDesc);
-        card.appendChild(price);
-        a.appendChild(card);
-        return a;
+      renderProducts({
+        container: homeContainer,
+        titleText: "Nuestros Equipos",
+        products: products.slice(0, 3),
+        emptyText: "No hay productos disponibles.",
       });
 
-      if (cards.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "glass-effect";
-        empty.style.padding = "1rem";
-        empty.textContent = "No hay productos disponibles.";
-        container.appendChild(empty);
-      } else {
-        cards.forEach((c) => container.appendChild(c));
+      const appleProducts = products.filter(
+        (p) => (p.Marca || p.marca || "").toLowerCase() === "apple"
+      );
 
-        // Botón "Ver más"
-        const verMasWrapper = document.createElement("div");
-        verMasWrapper.style.cssText = "flex-basis:100%; text-align:center;";
-
-        const verMasBtn = document.createElement("a");
-        verMasBtn.href = "Tienda.html";
-        verMasBtn.textContent = "Ver más";
-        verMasBtn.style.cssText =
-          "display:inline-block; padding:0.75rem 1.5rem; color:var(--text-color); text-decoration:none; font-weight:500; border-radius:8px; transition:background 0.3s ease;";
-        verMasBtn.addEventListener("mouseenter", () => {
-          verMasBtn.style.background = "rgba(255, 255, 255, 0.1)";
-        });
-        verMasBtn.addEventListener("mouseleave", () => {
-          verMasBtn.style.background = "transparent";
-        });
-
-        verMasWrapper.appendChild(verMasBtn);
-        container.appendChild(verMasWrapper);
-      }
-
-      // iPhone (Apple) únicamente
-      const appleCards = products
-        .filter((p) => (p.Marca || p.marca || "").toLowerCase() === "apple")
-        .slice(0, 3)
-        .map((p) => {
-          const basePrice =
-            p.variantes && p.variantes.length
-              ? Math.min(...p.variantes.map((v) => v.precio))
-              : null;
-          const priceText = basePrice != null ? `$${basePrice}` : "";
-          const imgBase64 = p.img || p.Img;
-          const img = imgBase64
-            ? `data:image/webp;base64,${imgBase64}`
-            : "/img/LOGO+CIRCULO.webp";
-          const productId = p.id ?? p.Id;
-
-          const a = document.createElement("a");
-          a.href = `DetalleProducto.html?id=${productId}`;
-          a.style.textDecoding = "none";
-          a.style.color = "inherit";
-
-          const card = document.createElement("div");
-          card.className = "glass-effect card";
-          card.style.flex = "0 0 260px";
-          card.style.minHeight = "200px";
-          card.style.padding = "1.5rem";
-          card.style.borderRadius = "var(--medium-radius)";
-
-          // Contenedor para marca y modelo
-          const titleContainer = document.createElement("div");
-          titleContainer.style.textAlign = "center";
-          titleContainer.style.marginBottom = "1rem";
-          titleContainer.style.lineHeight = "1";
-
-          // Marca - más grande y gruesa
-          const marca = document.createElement("h3");
-          marca.textContent = p.Marca || p.marca || "Marca";
-          marca.style.fontSize = "1.3rem";
-          marca.style.fontWeight = "700";
-          marca.style.margin = "0";
-          marca.style.lineHeight = "1.1";
-          marca.style.color = "var(--text-color)";
-
-          // Modelo - más pequeño y fino
-          const modelo = document.createElement("p");
-          modelo.textContent = p.Modelo || p.modelo || "Modelo";
-          modelo.style.fontSize = "0.95rem";
-          modelo.style.fontWeight = "400";
-          modelo.style.margin = "0";
-          modelo.style.lineHeight = "1.2";
-          modelo.style.color = "var(--text-muted-color)";
-
-          titleContainer.appendChild(marca);
-          titleContainer.appendChild(modelo);
-
-          const fig = document.createElement("figure");
-          fig.className = "card__media";
-          const image = document.createElement("img");
-          image.src = img;
-          image.alt = "Producto";
-          image.loading = "lazy";
-          fig.appendChild(image);
-
-          const pDesc = document.createElement("p");
-          pDesc.textContent = p.Categoria || p.categoria || "";
-
-          const price = document.createElement("div");
-          price.className = "card__price";
-          price.textContent = priceText;
-
-          card.appendChild(titleContainer);
-          card.appendChild(fig);
-          card.appendChild(pDesc);
-          card.appendChild(price);
-          a.appendChild(card);
-          return a;
-        });
-      if (appleCards.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "glass-effect";
-        empty.style.padding = "1rem";
-        empty.textContent = "No hay productos Apple disponibles.";
-        iphoneContainer.appendChild(empty);
-      } else {
-        appleCards.forEach((c) => iphoneContainer.appendChild(c));
-
-        // Botón "Ver más"
-        const verMasWrapper = document.createElement("div");
-        verMasWrapper.style.cssText = "flex-basis:100%; text-align:center;";
-
-        const verMasBtn = document.createElement("a");
-        verMasBtn.href = "Tienda.html";
-        verMasBtn.textContent = "Ver más";
-        verMasBtn.style.cssText =
-          "display:inline-block; padding:0.75rem 1.5rem; color:var(--text-color); text-decoration:none; font-weight:500; border-radius:8px; transition:background 0.3s ease;";
-        verMasBtn.addEventListener("mouseenter", () => {
-          verMasBtn.style.background = "rgba(255, 255, 255, 0.1)";
-        });
-        verMasBtn.addEventListener("mouseleave", () => {
-          verMasBtn.style.background = "transparent";
-        });
-
-        verMasWrapper.appendChild(verMasBtn);
-        iphoneContainer.appendChild(verMasWrapper);
-      }
+      renderProducts({
+        container: iphoneContainer,
+        titleText: "Últimos iPhone",
+        products: appleProducts.slice(0, 3),
+        emptyText: "No hay productos Apple disponibles.",
+      });
     } catch (e) {
       console.error("Error cargando productos del backend:", e);
     }

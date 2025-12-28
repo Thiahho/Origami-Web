@@ -78,21 +78,14 @@ return;
 }
 //////console.log('Botón de autenticación encontrado:', authButton);
 try {
-// Cargar axios si no está disponible
-if (typeof axios === "undefined") {
-const script = document.createElement("script");
-script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-await new Promise((resolve, reject) => {
-script.onload = resolve;
-script.onerror = reject;
-document.head.appendChild(script);
+const apiBase =
+(window.apiConfig && window.apiConfig.apiUrl) ||
+(window.frontendConfig ? window.frontendConfig.getApiUrl("") : "");
+const res = await fetch(`${apiBase}/api/Admin/verify`, {
+credentials: "include",
 });
-}
-const apiBase = window.apiConfig.apiUrl;
-const res = await axios.get(`${apiBase}/api/Admin/verify`, {
-withCredentials: true,
-});
-if (res?.data?.isAuthenticated) {
+const data = await res.json();
+if (data?.isAuthenticated) {
 // Usuario logueado - cambiar a "Volver al Panel"
 authButton.href = "admin/dashboard.html";
 authButton.setAttribute("aria-label", "Volver al Panel");
@@ -116,21 +109,14 @@ iconElement.className = "fa-solid fa-cog";
 // Función para verificar si el usuario está autenticado
 async function isUserAuthenticated() {
 try {
-// Cargar axios si no está disponible
-if (typeof axios === "undefined") {
-const script = document.createElement("script");
-script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-await new Promise((resolve, reject) => {
-script.onload = resolve;
-script.onerror = reject;
-document.head.appendChild(script);
+const apiBase =
+(window.apiConfig && window.apiConfig.apiUrl) ||
+(window.frontendConfig ? window.frontendConfig.getApiUrl("") : "");
+const res = await fetch(`${apiBase}/api/Admin/verify`, {
+credentials: "include",
 });
-}
-const apiBase = window.apiConfig.apiUrl;
-const res = await axios.get(`${apiBase}/api/Admin/verify`, {
-withCredentials: true,
-});
-return res?.data?.isAuthenticated || false;
+const data = await res.json();
+return data?.isAuthenticated || false;
 } catch (error) {
 ////console.log("Error verificando autenticación:", error.message);
 return false;
@@ -536,11 +522,6 @@ window.storeIntegration.refreshFromAdmin();
 };
 ;// Home products loader - Carga productos desde el backend
 document.addEventListener("DOMContentLoaded", () => {
-const container = document.getElementById("home-products");
-const iphoneContainer = document.getElementById("home-iphone");
-if (!container || !iphoneContainer) {
-return;
-}
 const navItems = document.querySelectorAll(".bottom-nav__item");
 navItems.forEach((item) => {
 item.addEventListener("click", function (e) {
@@ -566,222 +547,136 @@ body.style.backgroundImage = `url('${backgroundImages[currentImageIndex]}')`;
 currentImageIndex = nextImageIndex;
 }
 changeBackground();
+const CARD_STYLE =
+"flex:0 0 260px; min-height:200px; padding:1.5rem; border-radius:var(--medium-radius);";
+const buildCardHtml = (product) => {
+const basePrice =
+product.variantes && product.variantes.length
+? Math.min(...product.variantes.map((v) => v.precio))
+: null;
+const priceText = basePrice != null ? `$${basePrice}` : "";
+const imgBase64 = product.img || product.Img;
+const img = imgBase64
+? `data:image/webp;base64,${imgBase64}`
+: "/img/LOGO+CIRCULO.webp";
+const productId = product.id ?? product.Id;
+const marca = product.Marca || product.marca || "Marca";
+const modelo = product.Modelo || product.modelo || "Modelo";
+const category = product.Categoria || product.categoria || "";
+return `
+<a href="DetalleProducto.html?id=${productId}" style="text-decoration:none; color:inherit;">
+<div class="glass-effect card" style="${CARD_STYLE}">
+<div style="text-align:center; margin-bottom:1rem; line-height:1;">
+<h3 style="font-size:1.3rem; font-weight:700; margin:0; line-height:1.1; color:var(--text-color);">${marca}</h3>
+<p style="font-size:0.95rem; font-weight:400; margin:0; line-height:1.2; color:var(--text-muted-color);">${modelo}</p>
+</div>
+<figure class="card__media">
+<img src="${img}" alt="${marca} ${modelo}" loading="lazy" decoding="async" width="220" height="200">
+</figure>
+<p>${category}</p>
+<div class="card__price">${priceText}</div>
+</div>
+</a>
+`;
+};
+const skeletonCard = () => `
+<div class="glass-effect card card--skeleton" style="${CARD_STYLE}">
+<div class="card__skeleton-title skeleton-block"></div>
+<div class="card__skeleton-subtitle skeleton-block"></div>
+<div class="card__media skeleton-block skeleton-media"></div>
+<div class="card__skeleton-desc skeleton-block"></div>
+<div class="card__skeleton-price skeleton-block"></div>
+</div>
+`;
+const renderSkeletons = (container, titleText) => {
+if (!container) return;
+const skeletons = Array.from({ length: 3 })
+.map(() => skeletonCard())
+.join("");
+container.innerHTML = `
+<h2 style="flex-basis:100%; margin:0 0 1rem 0;">${titleText}</h2>
+${skeletons}
+`;
+};
+const renderProducts = (options) => {
+const { container, titleText, products, emptyText } = options;
+if (!container) return;
+if (!products.length) {
+container.innerHTML = `
+<h2 style="flex-basis:100%; margin:0 0 1rem 0;">${titleText}</h2>
+<div class="glass-effect card card--empty" style="padding:1rem; flex:0 0 100%; text-align:center;">${emptyText}</div>
+`;
+return;
+}
+const cardsHtml = products.map((p) => buildCardHtml(p)).join("");
+const viewMoreHtml = `
+<div style="flex-basis:100%; text-align:center;">
+<a href="Tienda.html" style="display:inline-block; padding:0.75rem 1.5rem; color:var(--text-color); text-decoration:none; font-weight:500; border-radius:8px; transition:background 0.3s ease;">Ver más</a>
+</div>
+`;
+container.innerHTML = `
+<h2 style="flex-basis:100%; margin:0 0 1rem 0;">${titleText}</h2>
+${cardsHtml}
+${viewMoreHtml}
+`;
+};
+const homeContainer = document.getElementById("home-products");
+const iphoneContainer = document.getElementById("home-iphone");
+if (!homeContainer || !iphoneContainer) {
+return;
+}
+renderSkeletons(homeContainer, "Nuestros Equipos");
+renderSkeletons(iphoneContainer, "Últimos iPhone");
 // Render dinámico de productos desde backend
 (async function loadHomeProducts() {
 try {
-if (typeof axios === "undefined") {
-const script = document.createElement("script");
-script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-await new Promise((resolve, reject) => {
-script.onload = resolve;
-script.onerror = reject;
-document.head.appendChild(script);
-});
-}
 let products = [];
 try {
-const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/paged") : "/api/Producto/paged";
-const res = await axios.get(apiUrl, {
-params: { page: 1, pageSize: 30 },
-});
-const data = res.data || {};
+const apiUrl = window.frontendConfig
+? window.frontendConfig.getApiUrl("/api/Producto/paged")
+: "/api/Producto/paged";
+const pagedUrl = new URL(apiUrl, window.location.origin);
+pagedUrl.searchParams.set("page", "1");
+pagedUrl.searchParams.set("pageSize", "30");
+const res = await fetch(pagedUrl.toString());
+if (!res.ok) {
+throw new Error(`Error ${res.status}`);
+}
+const data = await res.json();
 products = Array.isArray(data.items)
 ? data.items
-: Array.isArray(res.data)
-? res.data
+: Array.isArray(data)
+? data
 : [];
 } catch (e) {
 console.warn("Paged endpoint falló, usando /api/Producto clásico:", e);
-const fallbackUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto") : "/api/Producto";
-const fallback = await axios.get(fallbackUrl);
-products = Array.isArray(fallback.data)
-? fallback.data
-: fallback.data?.items || [];
+const fallbackUrl = window.frontendConfig
+? window.frontendConfig.getApiUrl("/api/Producto")
+: "/api/Producto";
+const fallback = await fetch(fallbackUrl);
+if (!fallback.ok) {
+throw new Error(`Error ${fallback.status}`);
 }
-container.innerHTML =
-'<h2 style="flex-basis:100%; margin:0 0 1rem 0;">Nuestros Equipos</h2>';
-iphoneContainer.innerHTML =
-'<h2 style="flex-basis:100%; margin:0 0 1rem 0;">Últimos iPhone</h2>';
-const cards = products.slice(0, 3).map((p) => {
-const basePrice =
-p.variantes && p.variantes.length
-? Math.min(...p.variantes.map((v) => v.precio))
-: null;
-const priceText = basePrice != null ? `$${basePrice}` : "";
-const imgBase64 = p.img || p.Img;
-const img = imgBase64
-? `data:image/webp;base64,${imgBase64}`
-: "/img/LOGO+CIRCULO.webp";
-const productId = p.id ?? p.Id;
-const a = document.createElement("a");
-a.href = `DetalleProducto.html?id=${productId}`;
-a.style.textDecoration = "none";
-a.style.color = "inherit";
-const card = document.createElement("div");
-card.className = "glass-effect card";
-card.style.flex = "0 0 260px";
-card.style.minHeight = "200px";
-card.style.padding = "1.5rem";
-card.style.borderRadius = "var(--medium-radius)";
-// Contenedor para marca y modelo
-const titleContainer = document.createElement("div");
-titleContainer.style.textAlign = "center";
-titleContainer.style.marginBottom = "1rem";
-titleContainer.style.lineHeight = "1";
-// Marca - más grande y gruesa
-const marca = document.createElement("h3");
-marca.textContent = p.Marca || p.marca || "Marca";
-marca.style.fontSize = "1.3rem";
-marca.style.fontWeight = "700";
-marca.style.margin = "0";
-marca.style.lineHeight = "1.1";
-marca.style.color = "var(--text-color)";
-// Modelo - más pequeño y fino
-const modelo = document.createElement("p");
-modelo.textContent = p.Modelo || p.modelo || "Modelo";
-modelo.style.fontSize = "0.95rem";
-modelo.style.fontWeight = "400";
-modelo.style.margin = "0";
-modelo.style.lineHeight = "1.2";
-modelo.style.color = "var(--text-muted-color)";
-titleContainer.appendChild(marca);
-titleContainer.appendChild(modelo);
-const fig = document.createElement("figure");
-fig.className = "card__media";
-const image = document.createElement("img");
-image.src = img;
-image.alt = "Producto";
-image.loading = "lazy";
-fig.appendChild(image);
-const pDesc = document.createElement("p");
-pDesc.textContent = p.Categoria || p.categoria || "";
-const price = document.createElement("div");
-price.className = "card__price";
-price.textContent = priceText;
-card.appendChild(titleContainer);
-card.appendChild(fig);
-card.appendChild(pDesc);
-card.appendChild(price);
-a.appendChild(card);
-return a;
-});
-if (cards.length === 0) {
-const empty = document.createElement("div");
-empty.className = "glass-effect";
-empty.style.padding = "1rem";
-empty.textContent = "No hay productos disponibles.";
-container.appendChild(empty);
-} else {
-cards.forEach((c) => container.appendChild(c));
-// Botón "Ver más"
-const verMasWrapper = document.createElement("div");
-verMasWrapper.style.cssText = "flex-basis:100%; text-align:center;";
-const verMasBtn = document.createElement("a");
-verMasBtn.href = "Tienda.html";
-verMasBtn.textContent = "Ver más";
-verMasBtn.style.cssText =
-"display:inline-block; padding:0.75rem 1.5rem; color:var(--text-color); text-decoration:none; font-weight:500; border-radius:8px; transition:background 0.3s ease;";
-verMasBtn.addEventListener("mouseenter", () => {
-verMasBtn.style.background = "rgba(255, 255, 255, 0.1)";
-});
-verMasBtn.addEventListener("mouseleave", () => {
-verMasBtn.style.background = "transparent";
-});
-verMasWrapper.appendChild(verMasBtn);
-container.appendChild(verMasWrapper);
+const fallbackData = await fallback.json();
+products = Array.isArray(fallbackData)
+? fallbackData
+: fallbackData?.items || [];
 }
-// iPhone (Apple) únicamente
-const appleCards = products
-.filter((p) => (p.Marca || p.marca || "").toLowerCase() === "apple")
-.slice(0, 3)
-.map((p) => {
-const basePrice =
-p.variantes && p.variantes.length
-? Math.min(...p.variantes.map((v) => v.precio))
-: null;
-const priceText = basePrice != null ? `$${basePrice}` : "";
-const imgBase64 = p.img || p.Img;
-const img = imgBase64
-? `data:image/webp;base64,${imgBase64}`
-: "/img/LOGO+CIRCULO.webp";
-const productId = p.id ?? p.Id;
-const a = document.createElement("a");
-a.href = `DetalleProducto.html?id=${productId}`;
-a.style.textDecoding = "none";
-a.style.color = "inherit";
-const card = document.createElement("div");
-card.className = "glass-effect card";
-card.style.flex = "0 0 260px";
-card.style.minHeight = "200px";
-card.style.padding = "1.5rem";
-card.style.borderRadius = "var(--medium-radius)";
-// Contenedor para marca y modelo
-const titleContainer = document.createElement("div");
-titleContainer.style.textAlign = "center";
-titleContainer.style.marginBottom = "1rem";
-titleContainer.style.lineHeight = "1";
-// Marca - más grande y gruesa
-const marca = document.createElement("h3");
-marca.textContent = p.Marca || p.marca || "Marca";
-marca.style.fontSize = "1.3rem";
-marca.style.fontWeight = "700";
-marca.style.margin = "0";
-marca.style.lineHeight = "1.1";
-marca.style.color = "var(--text-color)";
-// Modelo - más pequeño y fino
-const modelo = document.createElement("p");
-modelo.textContent = p.Modelo || p.modelo || "Modelo";
-modelo.style.fontSize = "0.95rem";
-modelo.style.fontWeight = "400";
-modelo.style.margin = "0";
-modelo.style.lineHeight = "1.2";
-modelo.style.color = "var(--text-muted-color)";
-titleContainer.appendChild(marca);
-titleContainer.appendChild(modelo);
-const fig = document.createElement("figure");
-fig.className = "card__media";
-const image = document.createElement("img");
-image.src = img;
-image.alt = "Producto";
-image.loading = "lazy";
-fig.appendChild(image);
-const pDesc = document.createElement("p");
-pDesc.textContent = p.Categoria || p.categoria || "";
-const price = document.createElement("div");
-price.className = "card__price";
-price.textContent = priceText;
-card.appendChild(titleContainer);
-card.appendChild(fig);
-card.appendChild(pDesc);
-card.appendChild(price);
-a.appendChild(card);
-return a;
+renderProducts({
+container: homeContainer,
+titleText: "Nuestros Equipos",
+products: products.slice(0, 3),
+emptyText: "No hay productos disponibles.",
 });
-if (appleCards.length === 0) {
-const empty = document.createElement("div");
-empty.className = "glass-effect";
-empty.style.padding = "1rem";
-empty.textContent = "No hay productos Apple disponibles.";
-iphoneContainer.appendChild(empty);
-} else {
-appleCards.forEach((c) => iphoneContainer.appendChild(c));
-// Botón "Ver más"
-const verMasWrapper = document.createElement("div");
-verMasWrapper.style.cssText = "flex-basis:100%; text-align:center;";
-const verMasBtn = document.createElement("a");
-verMasBtn.href = "Tienda.html";
-verMasBtn.textContent = "Ver más";
-verMasBtn.style.cssText =
-"display:inline-block; padding:0.75rem 1.5rem; color:var(--text-color); text-decoration:none; font-weight:500; border-radius:8px; transition:background 0.3s ease;";
-verMasBtn.addEventListener("mouseenter", () => {
-verMasBtn.style.background = "rgba(255, 255, 255, 0.1)";
+const appleProducts = products.filter(
+(p) => (p.Marca || p.marca || "").toLowerCase() === "apple"
+);
+renderProducts({
+container: iphoneContainer,
+titleText: "Últimos iPhone",
+products: appleProducts.slice(0, 3),
+emptyText: "No hay productos Apple disponibles.",
 });
-verMasBtn.addEventListener("mouseleave", () => {
-verMasBtn.style.background = "transparent";
-});
-verMasWrapper.appendChild(verMasBtn);
-iphoneContainer.appendChild(verMasWrapper);
-}
 } catch (e) {
 console.error("Error cargando productos del backend:", e);
 }
@@ -1597,21 +1492,16 @@ window.location.href = "Tienda.html";
 return;
 }
 try {
-// Cargar axios si no está disponible
-if (typeof axios === "undefined") {
-const script = document.createElement("script");
-script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-await new Promise((resolve, reject) => {
-script.onload = resolve;
-script.onerror = reject;
-document.head.appendChild(script);
-});
-}
 // Obtener producto
 ////console.log("Fetching product with ID:", productId);
-const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}`) : `/api/Producto/${productId}`;
-const res = await axios.get(apiUrl);
-const product = res.data;
+const apiUrl = window.frontendConfig
+? window.frontendConfig.getApiUrl(`/api/Producto/${productId}`)
+: `/api/Producto/${productId}`;
+const res = await fetch(apiUrl);
+if (!res.ok) {
+throw new Error(`Error ${res.status}`);
+}
+const product = await res.json();
 if (!product) {
 alert("Producto no encontrado");
 window.location.href = "Tienda.html";
@@ -1632,10 +1522,16 @@ img.src = `data:image/webp;base64,${imgBase64}`;
 }
 // Obtener variantes
 ////console.log("Fetching variants for product ID:", productId);
-const variantesUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}/variantes`) : `/api/Producto/${productId}/variantes`;
-const variantesRes = await axios.get(variantesUrl);
+const variantesUrl = window.frontendConfig
+? window.frontendConfig.getApiUrl(`/api/Producto/${productId}/variantes`)
+: `/api/Producto/${productId}/variantes`;
+const variantesRes = await fetch(variantesUrl);
+if (!variantesRes.ok) {
+throw new Error(`Error ${variantesRes.status}`);
+}
+const variantesData = await variantesRes.json();
 ////console.log("Variants API response:", variantesRes);
-const variantes = Array.isArray(variantesRes.data) ? variantesRes.data : [];
+const variantes = Array.isArray(variantesData) ? variantesData : [];
 ////console.log("Variantes cargadas:", variantes);
 if (variantes.length === 0) {
 document.getElementById("colorRow").innerHTML =
@@ -2025,22 +1921,16 @@ const missing = items
 //////console.log(`📋 Found ${missing.length} items without condition`);
 if (missing.length === 0) return;
 try {
-if (typeof axios === "undefined") {
-const script = document.createElement("script");
-script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-await new Promise((resolve, reject) => {
-script.onload = resolve;
-script.onerror = reject;
-document.head.appendChild(script);
-});
-}
 await Promise.all(
 missing.map(async ({ it, idx }) => {
 try {
 //   ////console.log(`🔎 Fetching condition for variant ${it.variantId}...`);
 const variantUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/variante/${it.variantId}`) : `/api/Producto/variante/${it.variantId}`;
-const res = await axios.get(variantUrl);
-const data = res.data || {};
+const res = await fetch(variantUrl);
+if (!res.ok) {
+throw new Error(`Respuesta ${res.status}`);
+}
+const data = await res.json();
 // ////console.log(`✅ API response for variant ${it.variantId}:`, data);
 const cond = data.CondicionNombre || data.condicionNombre || "";
 // ////console.log(`📦 Condition found: "${cond}"`);
@@ -2133,21 +2023,14 @@ footerPlaceholder.innerHTML = h;
 // Botón flotante para volver al panel si el admin está autenticado
 (async function addReturnToAdminIfAuthenticated() {
 try {
-// Cargar axios si no está disponible (ya se usa en admin, pero aquí puede no estar)
-if (typeof axios === "undefined") {
-const script = document.createElement("script");
-script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-await new Promise((resolve, reject) => {
-script.onload = resolve;
-script.onerror = reject;
-document.head.appendChild(script);
+const apiBase =
+(window.apiConfig && window.apiConfig.apiUrl) ||
+(window.frontendConfig ? window.frontendConfig.getApiUrl("") : "");
+const res = await fetch(`${apiBase}/api/Admin/verify`, {
+credentials: "include",
 });
-}
-const apiBase = window.apiConfig.apiUrl;
-const res = await axios.get(`${apiBase}/api/Admin/verify`, {
-withCredentials: true,
-});
-if (res?.data?.isAuthenticated) {
+const data = await res.json();
+if (data?.isAuthenticated) {
 const btn = document.createElement("a");
 btn.href = "/admin/dashboard.html";
 btn.setAttribute("aria-label", "Volver al panel de administración");
