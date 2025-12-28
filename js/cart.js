@@ -241,23 +241,16 @@
     if (missing.length === 0) return;
 
     try {
-      if (typeof axios === "undefined") {
-        const script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-        await new Promise((resolve, reject) => {
-          script.onload = resolve;
-          script.onerror = reject;
-          document.head.appendChild(script);
-        });
-      }
-
       await Promise.all(
         missing.map(async ({ it, idx }) => {
           try {
             //   ////console.log(`🔎 Fetching condition for variant ${it.variantId}...`);
             const variantUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/variante/${it.variantId}`) : `/api/Producto/variante/${it.variantId}`;
-            const res = await axios.get(variantUrl);
-            const data = res.data || {};
+            const res = await fetch(variantUrl);
+            if (!res.ok) {
+              throw new Error(`Respuesta ${res.status}`);
+            }
+            const data = await res.json();
             // ////console.log(`✅ API response for variant ${it.variantId}:`, data);
 
             const cond = data.CondicionNombre || data.condicionNombre || "";

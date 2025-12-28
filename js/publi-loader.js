@@ -23,22 +23,14 @@ fetch("Footer/footer.html")
 // Botón flotante para volver al panel si el admin está autenticado
 (async function addReturnToAdminIfAuthenticated() {
   try {
-    // Cargar axios si no está disponible (ya se usa en admin, pero aquí puede no estar)
-    if (typeof axios === "undefined") {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-      await new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-
-    const apiBase = window.apiConfig.apiUrl;
-    const res = await axios.get(`${apiBase}/api/Admin/verify`, {
-      withCredentials: true,
+    const apiBase =
+      (window.apiConfig && window.apiConfig.apiUrl) ||
+      (window.frontendConfig ? window.frontendConfig.getApiUrl("") : "");
+    const res = await fetch(`${apiBase}/api/Admin/verify`, {
+      credentials: "include",
     });
-    if (res?.data?.isAuthenticated) {
+    const data = await res.json();
+    if (data?.isAuthenticated) {
       const btn = document.createElement("a");
       btn.href = "/admin/dashboard.html";
       btn.setAttribute("aria-label", "Volver al panel de administración");
