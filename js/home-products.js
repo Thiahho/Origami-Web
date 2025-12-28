@@ -123,34 +123,37 @@ document.addEventListener("DOMContentLoaded", () => {
   // Render dinámico de productos desde backend
   (async function loadHomeProducts() {
     try {
-      if (typeof axios === "undefined") {
-        const script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-        await new Promise((resolve, reject) => {
-          script.onload = resolve;
-          script.onerror = reject;
-          document.head.appendChild(script);
-        });
-      }
       let products = [];
       try {
-        const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/paged") : "/api/Producto/paged";
-        const res = await axios.get(apiUrl, {
-          params: { page: 1, pageSize: 30 },
-        });
-        const data = res.data || {};
+        const apiUrl = window.frontendConfig
+          ? window.frontendConfig.getApiUrl("/api/Producto/paged")
+          : "/api/Producto/paged";
+        const pagedUrl = new URL(apiUrl, window.location.origin);
+        pagedUrl.searchParams.set("page", "1");
+        pagedUrl.searchParams.set("pageSize", "30");
+        const res = await fetch(pagedUrl.toString());
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
+        }
+        const data = await res.json();
         products = Array.isArray(data.items)
           ? data.items
-          : Array.isArray(res.data)
-          ? res.data
+          : Array.isArray(data)
+          ? data
           : [];
       } catch (e) {
         console.warn("Paged endpoint falló, usando /api/Producto clásico:", e);
-        const fallbackUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto") : "/api/Producto";
-        const fallback = await axios.get(fallbackUrl);
-        products = Array.isArray(fallback.data)
-          ? fallback.data
-          : fallback.data?.items || [];
+        const fallbackUrl = window.frontendConfig
+          ? window.frontendConfig.getApiUrl("/api/Producto")
+          : "/api/Producto";
+        const fallback = await fetch(fallbackUrl);
+        if (!fallback.ok) {
+          throw new Error(`Error ${fallback.status}`);
+        }
+        const fallbackData = await fallback.json();
+        products = Array.isArray(fallbackData)
+          ? fallbackData
+          : fallbackData?.items || [];
       }
 
       renderProducts({

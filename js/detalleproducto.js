@@ -402,22 +402,16 @@ async function loadProductData() {
   }
 
   try {
-    // Cargar axios si no está disponible
-    if (typeof axios === "undefined") {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-      await new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-
     // Obtener producto
     ////console.log("Fetching product with ID:", productId);
-    const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}`) : `/api/Producto/${productId}`;
-    const res = await axios.get(apiUrl);
-    const product = res.data;
+    const apiUrl = window.frontendConfig
+      ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}`)
+      : `/api/Producto/${productId}`;
+    const res = await fetch(apiUrl);
+    if (!res.ok) {
+      throw new Error(`Error ${res.status}`);
+    }
+    const product = await res.json();
 
     if (!product) {
       alert("Producto no encontrado");
@@ -443,10 +437,16 @@ async function loadProductData() {
 
     // Obtener variantes
     ////console.log("Fetching variants for product ID:", productId);
-    const variantesUrl = window.frontendConfig ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}/variantes`) : `/api/Producto/${productId}/variantes`;
-    const variantesRes = await axios.get(variantesUrl);
+    const variantesUrl = window.frontendConfig
+      ? window.frontendConfig.getApiUrl(`/api/Producto/${productId}/variantes`)
+      : `/api/Producto/${productId}/variantes`;
+    const variantesRes = await fetch(variantesUrl);
+    if (!variantesRes.ok) {
+      throw new Error(`Error ${variantesRes.status}`);
+    }
+    const variantesData = await variantesRes.json();
     ////console.log("Variants API response:", variantesRes);
-    const variantes = Array.isArray(variantesRes.data) ? variantesRes.data : [];
+    const variantes = Array.isArray(variantesData) ? variantesData : [];
 
     ////console.log("Variantes cargadas:", variantes);
 

@@ -14,22 +14,14 @@ async function initNavbarAuth() {
   //////console.log('Botón de autenticación encontrado:', authButton);
 
   try {
-    // Cargar axios si no está disponible
-    if (typeof axios === "undefined") {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-      await new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-
-    const apiBase = window.apiConfig.apiUrl;
-    const res = await axios.get(`${apiBase}/api/Admin/verify`, {
-      withCredentials: true,
+    const apiBase =
+      (window.apiConfig && window.apiConfig.apiUrl) ||
+      (window.frontendConfig ? window.frontendConfig.getApiUrl("") : "");
+    const res = await fetch(`${apiBase}/api/Admin/verify`, {
+      credentials: "include",
     });
-    if (res?.data?.isAuthenticated) {
+    const data = await res.json();
+    if (data?.isAuthenticated) {
       // Usuario logueado - cambiar a "Volver al Panel"
       authButton.href = "admin/dashboard.html";
       authButton.setAttribute("aria-label", "Volver al Panel");
@@ -58,22 +50,14 @@ async function initNavbarAuth() {
 // Función para verificar si el usuario está autenticado
 async function isUserAuthenticated() {
   try {
-    // Cargar axios si no está disponible
-    if (typeof axios === "undefined") {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js";
-      await new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-
-    const apiBase = window.apiConfig.apiUrl;
-    const res = await axios.get(`${apiBase}/api/Admin/verify`, {
-      withCredentials: true,
+    const apiBase =
+      (window.apiConfig && window.apiConfig.apiUrl) ||
+      (window.frontendConfig ? window.frontendConfig.getApiUrl("") : "");
+    const res = await fetch(`${apiBase}/api/Admin/verify`, {
+      credentials: "include",
     });
-    return res?.data?.isAuthenticated || false;
+    const data = await res.json();
+    return data?.isAuthenticated || false;
   } catch (error) {
     ////console.log("Error verificando autenticación:", error.message);
     return false;
