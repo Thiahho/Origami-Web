@@ -1,6 +1,39 @@
 // Tienda filters and pagination
+const apiTimeoutMs = () => window.frontendConfig?.apiTimeout ?? 30000;
+const shouldLog = () => !!window.frontendConfig?.enableLogging;
+const logDuration = (label, start) => {
+  if (shouldLog()) {
+    const duration = Math.round(performance.now() - start);
+    console.log(`[Tienda] ${label} en ${duration}ms`);
+  }
+};
+
+const fetchWithTimeout = async (url, options = {}, label = "") => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), apiTimeoutMs());
+  const start = performance.now();
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+    logDuration(label || url, start);
+  }
+};
+
+const axiosGetWithTimeout = async (url, config = {}, label = "") => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), apiTimeoutMs());
+  const start = performance.now();
+  try {
+    return await axios.get(url, { ...config, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+    logDuration(label || url, start);
+  }
+};
+
 // Carga Navbar y Footer
-fetch("Navbar/navbar.html")
+fetchWithTimeout("Navbar/navbar.html", {}, "navbar.html")
   .then((r) => r.text())
   .then((h) => {
     document.getElementById("navbar-placeholder").innerHTML = h;
@@ -12,13 +45,15 @@ fetch("Navbar/navbar.html")
         console.error("initNavbarAuth no está disponible");
       }
     }, 100);
-  });
+  })
+  .catch((err) => console.error("Error cargando navbar:", err));
 
-fetch("Footer/footer.html")
+fetchWithTimeout("Footer/footer.html", {}, "footer.html")
   .then((r) => r.text())
   .then((h) => {
     document.getElementById("footer-placeholder").innerHTML = h;
-  });
+  })
+  .catch((err) => console.error("Error cargando footer:", err));
 
 // -------- refs ----------
 const q = document.getElementById("fSearch");
@@ -37,6 +72,24 @@ let qVal = "";
 let capVal = "";
 let brandVal = "";
 let activeType = ""; // '', 'celulares', 'accesorios', 'notebooks', 'productos'
+const renderStatus = (message, { showRetry = false, onRetry } = {}) => {
+  grid.innerHTML = "";
+  const status = document.createElement("div");
+  status.className = "glass-effect api-status";
+  status.style.padding = "1rem";
+  status.style.textAlign = "center";
+  status.textContent = message;
+  grid.appendChild(status);
+  if (showRetry && typeof onRetry === "function") {
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "detalle-btn primary";
+    retry.style.marginTop = "0.75rem";
+    retry.textContent = "Reintentar";
+    retry.addEventListener("click", onRetry);
+    grid.appendChild(retry);
+  }
+};
 
 // -------- dropdown glass ----------
 function wireDropdown(id, onSelect) {
@@ -292,13 +345,16 @@ async function loadProductsFromApi() {
         document.head.appendChild(script);
       });
     }
+
+    renderStatus("Cargando productos...");
+
     // Paginado inicial: 1ra página grande para no romper filtros locales; si falla, fallback al endpoint antiguo
     let products = [];
     try {
       const apiUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/paged") : "/api/Producto/paged";
-      const res = await axios.get(apiUrl, {
+      const res = await axiosGetWithTimeout(apiUrl, {
         params: { page: 1, pageSize: 100, soloActivos: true },
-      });
+      }, "/api/Producto/paged");
       const data = res.data || {};
       products = Array.isArray(data.items)
         ? data.items
@@ -308,7 +364,7 @@ async function loadProductsFromApi() {
     } catch (e) {
       console.warn("Paged endpoint falló, usando /api/Producto/activos:", e);
       const fallbackUrl = window.frontendConfig ? window.frontendConfig.getApiUrl("/api/Producto/activos") : "/api/Producto/activos";
-      const fallback = await axios.get(fallbackUrl);
+      const fallback = await axiosGetWithTimeout(fallbackUrl, {}, "/api/Producto/activos");
       products = Array.isArray(fallback.data)
         ? fallback.data
         : fallback.data?.items || [];
@@ -469,6 +525,10 @@ async function loadProductsFromApi() {
     render();
   } catch (e) {
     console.error("Error cargando productos de la API:", e);
+    renderStatus("Ocurrió un error al cargar productos. Reintentar", {
+      showRetry: true,
+      onRetry: loadProductsFromApi,
+    });
   }
 }
 
