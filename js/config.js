@@ -74,3 +74,7 @@ class FrontendConfig {
 
 // Exportar instancia global
 window.frontendConfig = new FrontendConfig();
+// Alias retrocompatible
+if (!window.apiConfig) {
+  window.apiConfig = window.frontendConfig;
+}

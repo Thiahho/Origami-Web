@@ -1,24 +1,31 @@
 // Publi page - Navbar and Footer loader
-// Carga Navbar y Footer
-fetch("Navbar/navbar.html")
-  .then((r) => r.text())
-  .then((h) => {
-    document.getElementById("navbar-placeholder").innerHTML = h;
-    // Ejecutar la función de autenticación después de cargar el navbar
-    setTimeout(async () => {
-      if (typeof initNavbarAuth === "function") {
-        await initNavbarAuth();
-      } else {
-        console.error("initNavbarAuth no está disponible");
-      }
-    }, 100);
-  });
+const navbarPlaceholder = document.getElementById("navbar-placeholder");
+const footerPlaceholder = document.getElementById("footer-placeholder");
 
-fetch("Footer/footer.html")
-  .then((r) => r.text())
-  .then((h) => {
-    document.getElementById("footer-placeholder").innerHTML = h;
-  });
+if (navbarPlaceholder) {
+  // Carga Navbar y Footer
+  fetch("Navbar/navbar.html")
+    .then((r) => r.text())
+    .then((h) => {
+      navbarPlaceholder.innerHTML = h;
+      // Ejecutar la función de autenticación después de cargar el navbar
+      setTimeout(async () => {
+        if (typeof initNavbarAuth === "function") {
+          await initNavbarAuth();
+        } else {
+          console.error("initNavbarAuth no está disponible");
+        }
+      }, 100);
+    });
+}
+
+if (footerPlaceholder) {
+  fetch("Footer/footer.html")
+    .then((r) => r.text())
+    .then((h) => {
+      footerPlaceholder.innerHTML = h;
+    });
+}
 
 // Botón flotante para volver al panel si el admin está autenticado
 (async function addReturnToAdminIfAuthenticated() {
@@ -62,4 +69,4 @@ fetch("Footer/footer.html")
   } catch (e) {
     // Usuario no autenticado, no mostrar botón
   }
-})();
+})(); 

@@ -1,5 +1,12 @@
 // Home products loader - Carga productos desde el backend
 document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("home-products");
+  const iphoneContainer = document.getElementById("home-iphone");
+
+  if (!container || !iphoneContainer) {
+    return;
+  }
+
   const navItems = document.querySelectorAll(".bottom-nav__item");
 
   navItems.forEach((item) => {
@@ -65,8 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
           ? fallback.data
           : fallback.data?.items || [];
       }
-      const container = document.getElementById("home-products");
-      const iphoneContainer = document.getElementById("home-iphone");
       container.innerHTML =
         '<h2 style="flex-basis:100%; margin:0 0 1rem 0;">Nuestros Equipos</h2>';
       iphoneContainer.innerHTML =

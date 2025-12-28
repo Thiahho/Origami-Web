@@ -1,4 +1,10 @@
 // Tienda filters and pagination
+(function () {
+  const grid = document.getElementById("grid");
+  const pager = document.getElementById("pager");
+  if (!grid || !pager) {
+    return;
+  }
 // Carga Navbar y Footer
 fetch("Navbar/navbar.html")
   .then((r) => r.text())
@@ -22,8 +28,6 @@ fetch("Footer/footer.html")
 
 // -------- refs ----------
 const q = document.getElementById("fSearch");
-const grid = document.getElementById("grid");
-const pager = document.getElementById("pager");
 let all = [];
 let sections = new Map(); // categoria => { sectionEl, titleEl, gridEl }
 const DEFAULT_LIMIT = 6; // máximo por categoría sin filtro
@@ -473,3 +477,4 @@ async function loadProductsFromApi() {
 }
 
 loadProductsFromApi();
+})();

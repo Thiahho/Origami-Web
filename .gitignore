@@ -149,6 +149,7 @@ lerna-debug.log*
 
 # Build outputs
 dist/
+!dist/
 build/
 out/
 .next/

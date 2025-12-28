@@ -1,6 +1,10 @@
 // Navbar authentication state manager
-document.addEventListener("DOMContentLoaded", function () {
+function updateNavbarButton() {
   const authButton = document.getElementById("authButton");
+
+  if (!authButton) {
+    return;
+  }
 
   // Verificar múltiples posibles nombres de keys
   const token =
@@ -18,11 +22,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Usuario logueado - cambiar a "Volver al Panel"
     authButton.href = "../admin/dashboard.html";
     authButton.setAttribute("aria-label", "Volver al Panel");
-    authButton.querySelector(".btn-login__label").textContent =
-      "Volver al Panel";
-    authButton.querySelector("i").className = "fa-solid fa-gauge";
+    const label = authButton.querySelector(".btn-login__label");
+    if (label) {
+      label.textContent = "Volver al Panel";
+    }
+    const icon = authButton.querySelector("i");
+    if (icon) {
+      icon.className = "fa-solid fa-gauge";
+    }
     ////console.log('Botón actualizado a "Ir al Panel"');
   } else {
     ////console.log('No hay token válido encontrado');
   }
-});
+}
+
+document.addEventListener("DOMContentLoaded", updateNavbarButton);
+if (document.readyState !== "loading") {
+  updateNavbarButton();
+}
+
+window.updateNavbarButton = updateNavbarButton;

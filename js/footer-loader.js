@@ -1,4 +1,10 @@
 // Footer loader - Carga el componente footer dinámicamente
-fetch("Footer/footer.html").then(r=>r.text()).then(html=>{
-  document.getElementById("footer-placeholder").innerHTML = html;
-});
+const footerPlaceholder = document.getElementById("footer-placeholder");
+
+if (footerPlaceholder) {
+  fetch("Footer/footer.html")
+    .then((r) => r.text())
+    .then((html) => {
+      footerPlaceholder.innerHTML = html;
+    });
+}

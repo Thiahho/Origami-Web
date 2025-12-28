@@ -177,8 +177,16 @@ function updateProductImage() {
 
 // Event Listeners
 function setupEventListeners() {
+  const colorRow = document.getElementById("colorRow");
+  const capRow = document.getElementById("capRow");
+  const qtyRow = document.getElementById("qtyRow");
+
+  if (!colorRow || !capRow || !qtyRow) {
+    return;
+  }
+
   // Colores
-  document.getElementById("colorRow").addEventListener("click", (e) => {
+  colorRow.addEventListener("click", (e) => {
     const b = e.target.closest(".detalle-swatch");
     if (!b || b.disabled) return;
     document
@@ -208,7 +216,7 @@ function setupEventListeners() {
   // });
 
   // Capacidad
-  document.getElementById("capRow").addEventListener("click", (e) => {
+  capRow.addEventListener("click", (e) => {
     const b = e.target.closest(".detalle-opt");
     if (!b || b.disabled) return;
     document
@@ -225,7 +233,7 @@ function setupEventListeners() {
   });
 
   // Cantidad 1..5
-  document.getElementById("qtyRow").addEventListener("click", (e) => {
+  qtyRow.addEventListener("click", (e) => {
     const b = e.target.closest(".detalle-opt");
     if (!b) return;
     const op = b.dataset.q;
@@ -233,13 +241,20 @@ function setupEventListeners() {
     const stock = current ? current.Stock || current.stock || 0 : 0;
     if (op === "+1") qty = Math.min(stock > 0 ? stock : 0, qty + 1);
     if (op === "-1") qty = Math.max(1, qty - 1);
-    document.getElementById("qty").textContent = qty;
+    const qtyEl = document.getElementById("qty");
+    if (qtyEl) {
+      qtyEl.textContent = qty;
+    }
     sumQty.textContent = qty;
     calc();
   });
 
   // Botón de consultar por WhatsApp
-  document.getElementById("buyBtn").addEventListener("click", (e) => {
+  const buyBtn = document.getElementById("buyBtn");
+  if (!buyBtn) {
+    return;
+  }
+  buyBtn.addEventListener("click", (e) => {
     const variant = getCurrentVariant();
     if (!variant) {
       alert("Por favor, seleccioná las opciones del producto.");
@@ -600,6 +615,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   ////console.log("DOM loaded. Product ID:", productId);
   ////console.log("Elements initialized:", { img, priceEl, sumModel });
+
+  if (
+    !img ||
+    !priceEl ||
+    !sumModel ||
+    !sumColor ||
+    !sumCap ||
+    !sumQty
+  ) {
+    return;
+  }
 
   setupEventListeners();
   loadProductData();
