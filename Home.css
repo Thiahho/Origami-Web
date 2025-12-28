@@ -539,6 +539,60 @@ section h2 {
   justify-self: center;
 }
 
+.card--skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-block {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 25%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.08) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.2s ease-in-out infinite;
+  border-radius: 10px;
+}
+
+.card__skeleton-title {
+  height: 16px;
+  width: 70%;
+  margin: 0 auto 0.4rem;
+}
+
+.card__skeleton-subtitle {
+  height: 12px;
+  width: 50%;
+  margin: 0 auto 1rem;
+}
+
+.skeleton-media {
+  height: 200px;
+}
+
+.card__skeleton-desc {
+  height: 12px;
+  width: 60%;
+  margin: 1rem auto 0.5rem;
+}
+
+.card__skeleton-price {
+  height: 14px;
+  width: 40%;
+  margin: 0.5rem auto 0;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .nav-search {
   position: relative;
   width: 44px; /* estado cerrado = solo círculo */
