@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "description": "E-commerce platform for Origami Importados",
   "scripts": {
-    "build": "echo 'No build needed - static site'",
-    "vercel-build": "echo 'Static site ready for deployment'"
+    "build": "node scripts/build.js",
+    "dev": "node scripts/build.js --watch",
+    "vercel-build": "node scripts/build.js"
   },
   "keywords": ["ecommerce", "origami", "importados"],
   "author": "Origami Importados",
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  }
 }

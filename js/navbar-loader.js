@@ -1,5 +1,10 @@
 // Navbar loader - Carga el componente navbar dinámicamente
 document.addEventListener("DOMContentLoaded", function () {
+  const placeholder = document.getElementById("navbar-placeholder");
+  if (!placeholder) {
+    return;
+  }
+
   fetch("Navbar/navbar.html")
     .then((res) => {
       if (!res.ok) {
@@ -8,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return res.text();
     })
     .then((html) => {
-      const placeholder = document.getElementById("navbar-placeholder");
       placeholder.innerHTML = html;
 
       // Extraer y ejecutar los scripts del navbar

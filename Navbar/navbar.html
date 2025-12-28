@@ -264,4 +264,8 @@
   setTimeout(initMobileMenu, 500);
 </script>
 
-<script src="../js/navbar.js"></script>
+<script>
+  if (window.updateNavbarButton) {
+    window.updateNavbarButton();
+  }
+</script>

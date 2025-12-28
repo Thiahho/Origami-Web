@@ -1,0 +1,12 @@
+import "./config.js";
+import "./navbar-auth.js";
+import "./navbar-loader.js";
+import "./footer-loader.js";
+import "./store-integration.js";
+import "./home-products.js";
+import "./tienda-filters.js";
+import "./detalleproducto.js";
+import "./cart.js";
+import "./navbar.js";
+import "./publi-loader.js";
+import "./emailjs-config.js";
