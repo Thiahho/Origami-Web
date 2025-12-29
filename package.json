@@ -2,12 +2,23 @@
   "name": "origami-importados",
   "version": "1.0.0",
   "description": "E-commerce platform for Origami Importados",
+  "type": "module",
   "scripts": {
-    "build": "echo 'No build needed - static site'",
-    "vercel-build": "echo 'Static site ready for deployment'"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "vercel-build": "vite build"
   },
   "keywords": ["ecommerce", "origami", "importados"],
   "author": "Origami Importados",
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "vite-plugin-imagemin": "^0.6.1",
+    "vite-plugin-compression": "^0.5.1"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
 }

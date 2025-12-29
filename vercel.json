@@ -6,7 +6,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "."
+        "distDir": "dist"
       }
     }
   ],
@@ -21,7 +21,16 @@
       ]
     },
     {
-      "source": "/(.*\\.(?:js|css|woff|woff2|ttf|eot))",
+      "source": "/(.*\\.html)$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/js/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -30,7 +39,25 @@
       ]
     },
     {
-      "source": "/(.*\\.(?:jpg|jpeg|png|webp|gif|svg|ico))",
+      "source": "/assets/css/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(?:woff|woff2|ttf|eot))",
       "headers": [
         {
           "key": "Cache-Control",
@@ -40,7 +67,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/Home.html" },
+    { "source": "/", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/$1" }
   ]
 }

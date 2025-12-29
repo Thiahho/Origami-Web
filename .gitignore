@@ -50,6 +50,7 @@ certificates/
 !CONFIGURACION_DOMINIO_PROPIO.md
 !CONFIGURACION_APIS.md
 !CONFIGURACION_CONTACTO.md
+!OPTIMIZACIONES.md
 
 # Bloquear documentación interna sensible
 BACKEND_VERIFICATION.md
@@ -308,6 +309,7 @@ fixtures/
 !tsconfig.json
 !tailwind.config.js
 !vite.config.ts
+!vite.config.js
 
 # Permitir directorios de código fuente
 !Backend/Controllers/
