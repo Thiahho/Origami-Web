@@ -1,101 +1,68 @@
 import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import compression from 'vite-plugin-compression';
+import { resolve } from 'path';
 
 export default defineConfig({
   root: './',
   base: '/',
 
+  plugins: [
+    react(),
+    tailwindcss(),
+    compression({ algorithm: 'gzip', ext: '.gz', threshold: 1024 }),
+    compression({ algorithm: 'brotliCompress', ext: '.br', threshold: 1024 }),
+  ],
+
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
-
-    // Optimizaciones de build
     minify: 'esbuild',
     target: 'es2015',
-
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        home: resolve(__dirname, 'Home.html'),
-        tienda: resolve(__dirname, 'Tienda.html'),
-        detalle: resolve(__dirname, 'DetalleProducto.html'),
-        nosotros: resolve(__dirname, 'Nosotros/nosotros.html'),
-        adminLogin: resolve(__dirname, 'admin/auth/login.html'),
-        adminDashboard: resolve(__dirname, 'admin/dashboard.html'),
-        adminProducts: resolve(__dirname, 'admin/products.html'),
-        adminCategories: resolve(__dirname, 'admin/categories.html'),
-        adminMarcas: resolve(__dirname, 'admin/marcas.html'),
-        adminVariants: resolve(__dirname, 'admin/variants.html'),
-        adminOrders: resolve(__dirname, 'admin/orders.html'),
-        adminCondiciones: resolve(__dirname, 'admin/condiciones.html'),
-      },
+      input: resolve(__dirname, 'index.html'),
       output: {
-        // Separar chunks para mejor caching
         manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-query': ['@tanstack/react-query'],
           'vendor-axios': ['axios'],
         },
-        // Naming con hash para cache busting
         entryFileNames: 'assets/js/[name]-[hash].js',
         chunkFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
-          let extType = assetInfo.name.split('.').pop();
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico|webp|avif/i.test(extType)) {
-            return 'assets/img/[name]-[hash][extname]';
-          } else if (/css/i.test(extType)) {
-            return 'assets/css/[name]-[hash][extname]';
-          }
+          const extType = assetInfo.name.split('.').pop();
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico|webp|avif/i.test(extType)) return 'assets/img/[name]-[hash][extname]';
+          if (/css/i.test(extType)) return 'assets/css/[name]-[hash][extname]';
           return 'assets/[name]-[hash][extname]';
         },
       },
     },
-
-    // Chunk size warnings
     chunkSizeWarningLimit: 1000,
-
-    // Source maps solo en desarrollo
     sourcemap: false,
   },
 
-  // Optimizaciones del servidor de desarrollo
   server: {
     port: 3000,
+    strictPort: true,
     open: true,
     cors: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5015',
         changeOrigin: true,
         secure: false,
       },
     },
   },
 
-  // Optimizaciones de assets
-  assetsInlineLimit: 4096, // 4kb - inline assets más pequeños como base64
-
-  plugins: [
-    // Compresión gzip/brotli
-    compression({
-      algorithm: 'gzip',
-      ext: '.gz',
-      threshold: 1024, // Solo comprimir archivos > 1kb
-    }),
-    compression({
-      algorithm: 'brotliCompress',
-      ext: '.br',
-      threshold: 1024,
-    }),
-  ],
-
-  // Optimizaciones de dependencies
-  optimizeDeps: {
-    include: ['axios'],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
   },
 
-  // CSS optimizations
-  css: {
-    devSourcemap: false,
-  },
+  assetsInlineLimit: 4096,
+  css: { devSourcemap: false },
 });

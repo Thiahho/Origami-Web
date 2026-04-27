@@ -9,6 +9,8 @@ using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using OrigamiBack.Data.Vistas;
+using System.IO.Compression;
 
 namespace OrigamiBack.Services
 {
@@ -159,8 +161,40 @@ namespace OrigamiBack.Services
 
         public async Task<IEnumerable<ProductoDto>> GetAllProductsAsync()
         {
-            var productos = await _context.Productos.Include(p => p.Variantes).AsNoTracking().ToListAsync();
-            return _mapper.Map<List<ProductoDto>>(productos);
+            var count = await _context.Productos.CountAsync();
+            Console.Error.WriteLine($"[DIAG] Productos.CountAsync = {count}");
+
+            var productos = await _context.Productos
+                .Include(p => p.Variantes)
+                    .ThenInclude(v => v.Condicion)
+                .AsNoTracking()
+                .ToListAsync();
+
+            Console.Error.WriteLine($"[DIAG] ToListAsync count = {productos.Count}");
+
+            return productos.Select(p => new ProductoDto
+            {
+                Id = p.Id,
+                Marca = p.Marca,
+                Modelo = p.Modelo,
+                Categoria = p.Categoria,
+                Estado = p.Estado,
+                Img = p.Img != null ? Convert.ToBase64String(p.Img) : null,
+                Variantes = p.Variantes.Select(v => new ProductosVariantesDto
+                {
+                    Id = v.Id,
+                    ProductoId = v.ProductoId,
+                    Ram = v.Ram,
+                    Almacenamiento = v.Almacenamiento,
+                    Color = v.Color,
+                    Precio = v.Precio,
+                    Stock = v.Stock,
+                    Imagen = v.Imagen != null ? Convert.ToBase64String(v.Imagen) : null,
+                    CondicionId = v.CondicionId,
+                    CondicionNombre = v.Condicion != null ? v.Condicion.Nombre : null,
+                    Activo = v.Activo,
+                }).ToList()
+            }).ToList();
         }
 
         public async Task<IEnumerable<ProductoDto>> GetAllVariantesAsync()
@@ -465,5 +499,27 @@ namespace OrigamiBack.Services
             image.Save(outStream, encoder);
             return outStream.ToArray();
         }
+
+        public async Task<List<VProductosConVariantes>> GetVProductosConVariantesAsync(bool? activo = null)
+        {
+           var query = _context.VProductosConVariantes.AsQueryable();
+
+            if (activo.HasValue)
+            {
+                query = query.Where(x=> x.Activo== activo.Value);
+            }
+
+            return await query.Select(x => new VProductosConVariantes
+            {
+                Marca= x.Marca,
+                Modelo = x.Modelo,
+                Color= x.Color,
+                PrecioModelo =x.PrecioModelo,
+                Almacenamiento= x.Almacenamiento,
+                Condicion = x.Condicion,
+                Activo = x.Activo
+            }).ToListAsync();
+        }
+
     }
 }

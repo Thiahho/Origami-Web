@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using OrigamiBack.Middleware;
 namespace OrigamiBack.Controllers
 {
+    /// <summary>Autenticación y gestión de administradores.</summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "ADMIN")]
@@ -32,9 +33,13 @@ namespace OrigamiBack.Controllers
             _usuarioService = usuarioService;
         }
 
+        /// <summary>Crea un nuevo usuario administrador.</summary>
         [HttpPost("registro")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // [RateLimit("registro", 2, 10)] // Deshabilitado para permitir intentos ilimitados
-         [AllowAnonymous]
         public async Task<IActionResult> CrearAdmin([FromBody] Usuario usuario)
         {
             try
@@ -68,8 +73,13 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Inicia sesión como administrador. Devuelve una cookie HttpOnly con el JWT.</summary>
         [HttpPost("login")]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // [RateLimit("login", 3, 5)] // Deshabilitado para permitir intentos ilimitados
         public async Task<IActionResult> Login([FromBody] Auth auth)
         {

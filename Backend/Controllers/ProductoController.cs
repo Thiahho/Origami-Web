@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
+using Serilog;
 
 namespace OrigamiBack.Controllers
 {
+    /// <summary>Gestión de productos y sus variantes.</summary>
     [ApiController]
     [Route("api/[controller]")]
     public class ProductoController : ControllerBase
@@ -22,8 +24,12 @@ namespace OrigamiBack.Controllers
             _logger = logger;
         }
 
+        /// <summary>Obtiene todos los productos.</summary>
+        /// <returns>Lista de productos.</returns>
         [AllowAnonymous]
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<ProductoDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<ProductoDto>>> GetAll()
         {
             try
@@ -38,8 +44,11 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Obtiene solo los productos activos.</summary>
         [AllowAnonymous]
         [HttpGet("activos")]
+        [ProducesResponseType(typeof(IEnumerable<ProductoDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<ProductoDto>>> GetActivos()
         {
             try
@@ -55,8 +64,14 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Obtiene productos paginados.</summary>
+        /// <param name="page">Número de página (mínimo 1).</param>
+        /// <param name="pageSize">Elementos por página (1-100, default 20).</param>
+        /// <param name="soloActivos">Si es true, filtra solo productos activos.</param>
         [AllowAnonymous]
         [HttpGet("paged")]
+        [ProducesResponseType(typeof(PagedResult<ProductoDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<PagedResult<ProductoDto>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] bool soloActivos = false)
         {
             if (page < 1) page = 1;
@@ -92,8 +107,13 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Obtiene un producto por ID incluyendo sus variantes.</summary>
+        /// <param name="id">ID del producto.</param>
         [AllowAnonymous]
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ProductoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ProductoDto>> GetById(int id)
         {
             try
@@ -112,8 +132,12 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Obtiene las variantes activas de un producto.</summary>
+        /// <param name="productoId">ID del producto.</param>
         [AllowAnonymous]
         [HttpGet("{productoId}/variantes")]
+        [ProducesResponseType(typeof(IEnumerable<ProductosVariantesDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<ProductosVariantesDto>>> GetVariantesAsync(int productoId)
         {
             try
@@ -129,8 +153,13 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Obtiene todas las variantes de un producto (activas e inactivas). Requiere ADMIN.</summary>
+        /// <param name="productoId">ID del producto.</param>
         [Authorize(Roles = "ADMIN")]
         [HttpGet("{productoId}/variantes/admin")]
+        [ProducesResponseType(typeof(IEnumerable<ProductosVariantesDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<IEnumerable<ProductosVariantesDto>>> GetAllVariantesAdminAsync(int productoId)
         {
             try
@@ -167,8 +196,12 @@ namespace OrigamiBack.Controllers
         //     }
         // }
 
+        /// <summary>Obtiene las opciones de almacenamiento disponibles para un producto.</summary>
+        /// <param name="productoId">ID del producto.</param>
         [AllowAnonymous]
         [HttpGet("{productoId}/Almacenamiento-Opciones")]
+        [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<string>>> GetDistinctAlmacenamientosAsync(int productoId)
         {
             try
@@ -188,8 +221,13 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Obtiene los colores disponibles para un producto filtrados por almacenamiento.</summary>
+        /// <param name="productoId">ID del producto.</param>
+        /// <param name="almacenamiento">Almacenamiento seleccionado (ej: "256GB").</param>
         [AllowAnonymous]
         [HttpGet("{productoId}/Color-Opciones")]
+        [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<string>>> GetDistinctColorsAsync(int productoId, [FromQuery] string almacenamiento)
         {
             try
@@ -209,8 +247,15 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Busca una variante específica por almacenamiento, color y condición.</summary>
+        /// <param name="productId">ID del producto.</param>
+        /// <param name="storage">Almacenamiento (ej: "256GB").</param>
+        /// <param name="color">Color (ej: "Black").</param>
+        /// <param name="condicionId">ID de la condición (opcional).</param>
         [AllowAnonymous]
         [HttpGet("{productId}/variante")]
+        [ProducesResponseType(typeof(ProductosVariantesDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductosVariantesDto>> GetVarianteSpecAsync(
             int productId,
             [FromQuery] string storage,
@@ -233,8 +278,13 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Crea un nuevo producto. Requiere ADMIN.</summary>
         [Authorize(Roles = "ADMIN")]
         [HttpPost]
+        [ProducesResponseType(typeof(ProductoDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         // [EnableRateLimiting("CriticalPolicy")] // Deshabilitado
         public async Task<ActionResult<ProductoDto>> Create([FromBody] ProductoDto producto)
         {
@@ -255,8 +305,14 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Actualiza un producto existente. Requiere ADMIN.</summary>
+        /// <param name="id">ID del producto a actualizar.</param>
         [HttpPut("{id}")]
         [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(typeof(ProductoDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Update(int id, [FromBody] ProductoDto productoDto)
         {
             try
@@ -283,8 +339,13 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Elimina un producto. Requiere ADMIN.</summary>
+        /// <param name="id">ID del producto a eliminar.</param>
         [HttpDelete("{id}")]
         [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         // [EnableRateLimiting("CriticalPolicy")] // Deshabilitado
         public async Task<IActionResult> Delete(int id)
         {
@@ -306,7 +367,11 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Obtiene una variante por su ID.</summary>
+        /// <param name="id">ID de la variante.</param>
         [HttpGet("variante/{id}")]
+        [ProducesResponseType(typeof(ProductosVariantesDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductosVariantesDto>> GetVarianteById(int id)
         {
             try
@@ -325,8 +390,12 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Crea una nueva variante para un producto. Requiere ADMIN.</summary>
         [HttpPost("variante")]
         [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(typeof(ProductosVariantesDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> CreateVariante([FromBody] ProductosVariantesDto varianteDto)
         {
             try
@@ -359,8 +428,13 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Actualiza una variante existente. Requiere ADMIN.</summary>
+        /// <param name="varianteId">ID de la variante a actualizar.</param>
         [HttpPut("variante/{varianteId}")]
         [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(typeof(ProductosVariantesDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UpdateVariante(int varianteId, [FromBody] ProductosVariantesDto varianteDto)
         {
             // 1. Buscar la variante existente (incluso si está inactiva)
@@ -393,8 +467,13 @@ namespace OrigamiBack.Controllers
             return Ok(varianteDto);
         }
 
+        /// <summary>Elimina una variante. Requiere ADMIN.</summary>
+        /// <param name="id">ID de la variante a eliminar.</param>
         [HttpDelete("variante/{id}")]
         [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> DeleteVariante(int id)
         {
             try
@@ -416,8 +495,14 @@ namespace OrigamiBack.Controllers
             }
         }
 
+        /// <summary>Activa o desactiva una variante. Requiere ADMIN.</summary>
+        /// <param name="id">ID de la variante.</param>
+        /// <param name="activo">true para activar, false para desactivar.</param>
         [HttpPatch("variante/{id}/toggle-activo")]
         [Authorize(Roles = "ADMIN")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> ToggleVarianteActivo(int id, [FromBody] bool activo)
         {
             try
@@ -442,6 +527,16 @@ namespace OrigamiBack.Controllers
                 _logger.LogError(ex, $"Error al cambiar el estado de la variante {id}");
                 return StatusCode(500, "Error interno del servidor");
             }
+
+            
         }
+
+        [HttpGet("con-variantes")]
+        public async Task<IActionResult> GetVPCV([FromBody] bool? activo)
+        {
+            var data = await _productoService.GetVProductosConVariantesAsync(activo);
+            return Ok(data);
+        }
+
     }
 }

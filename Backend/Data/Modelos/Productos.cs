@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OrigamiBack.Data.Modelos
 {
+    [Table("productos")]
     public class Productos
     {
         [Key]

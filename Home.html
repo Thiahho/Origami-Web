@@ -35,86 +35,19 @@
     <script src="js/navbar-auth.js"></script>
   </head>
   <body>
+    <!-- burbujas decorativas — posición fija, detrás de todo -->
+    <div id="" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
     <div id="navbar-placeholder"></div>
 
     <script src="js/navbar-loader.js"></script>
     <main>
-      <!--
-    <section id="player" style="padding: 0; background: none; border: none; box-shadow: none; backdrop-filter: none;">
-        <div class="music-player">
-            <div class="music-player__album-art">
-                <img src="https://lh3.googleusercontent.com/eenKvmISndioOoPoC0yNgDgn7CsIIS5JNsqcJn1RY6nNgeawxt2IpRlT-g10mVV1rCKXL5y38Ispcvdb=w544-h544-l90-rj" alt="Album Art">
-            </div>
-            <div class="music-player__info">
-                <div class="music-player__song-title">All Of Me</div>
-                <div class="music-player__artist">Nao</div>
-            </div>
-            <div class="music-player__controls">
-                <i class="fa-solid fa-backward-step"></i>
-                <i class="fa-solid fa-play"></i>
-                <i class="fa-solid fa-forward-step"></i>
-            </div>
-        </div>
-    </section>
-    -->
+      <!-- Las secciones de productos se generan desde js/home-sections-config.js -->
+      <div id="home-root"></div>
 
-      <section
-        id="home-iphone"
-        style="
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          align-items: flex-start;
-          justify-content: center;
-          overflow-x: visible;
-        "
-      >
-        <h2 style="flex-basis: 100%; margin: 0 0 1rem 0">Últimos iPhone</h2>
-        <!-- Skeleton loaders -->
-        <div class="skeleton-card glass-effect" style="flex:0 0 260px; min-height:200px; padding:1.5rem; border-radius:var(--medium-radius);">
-          <div class="skeleton-title" style="height:1.3rem; width:60%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-subtitle" style="height:0.95rem; width:80%; margin:0 auto 1rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-image" style="height:200px; width:100%; margin:0 auto 1rem; background:rgba(255,255,255,0.1); border-radius:8px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-text" style="height:1rem; width:40%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-price" style="height:1.5rem; width:30%; margin:0 auto; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-        </div>
-      </section>
-
-      <section
-        id="home-products"
-        style="
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          align-items: flex-start;
-          justify-content: center;
-          overflow-x: visible;
-        "
-      >
-        <h2 style="flex-basis: 100%; margin: 0 0 1rem 0">Nuestros Equipos</h2>
-        <!-- Skeleton loaders -->
-        <div class="skeleton-card glass-effect" style="flex:0 0 260px; min-height:200px; padding:1.5rem; border-radius:var(--medium-radius);">
-          <div class="skeleton-title" style="height:1.3rem; width:60%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-subtitle" style="height:0.95rem; width:80%; margin:0 auto 1rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-image" style="height:200px; width:100%; margin:0 auto 1rem; background:rgba(255,255,255,0.1); border-radius:8px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-text" style="height:1rem; width:40%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-price" style="height:1.5rem; width:30%; margin:0 auto; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-        </div>
-        <div class="skeleton-card glass-effect" style="flex:0 0 260px; min-height:200px; padding:1.5rem; border-radius:var(--medium-radius);">
-          <div class="skeleton-title" style="height:1.3rem; width:60%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-subtitle" style="height:0.95rem; width:80%; margin:0 auto 1rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-image" style="height:200px; width:100%; margin:0 auto 1rem; background:rgba(255,255,255,0.1); border-radius:8px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-text" style="height:1rem; width:40%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-price" style="height:1.5rem; width:30%; margin:0 auto; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-        </div>
-        <div class="skeleton-card glass-effect" style="flex:0 0 260px; min-height:200px; padding:1.5rem; border-radius:var(--medium-radius);">
-          <div class="skeleton-title" style="height:1.3rem; width:60%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-subtitle" style="height:0.95rem; width:80%; margin:0 auto 1rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-image" style="height:200px; width:100%; margin:0 auto 1rem; background:rgba(255,255,255,0.1); border-radius:8px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-text" style="height:1rem; width:40%; margin:0 auto 0.5rem; background:rgba(255,255,255,0.08); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-          <div class="skeleton-price" style="height:1.5rem; width:30%; margin:0 auto; background:rgba(255,255,255,0.1); border-radius:4px; animation:pulse 1.5s ease-in-out infinite;"></div>
-        </div>
-      </section>
       <section id="info">
         <h2>SOMOS ORIGAMI</h2>
         <p
@@ -193,7 +126,8 @@
 -->
     <script src="js/config.js" defer></script>
     <script src="js/store-integration.js" defer></script>
-    <script src="js/home-products.js?v=2" defer></script>
+    <script src="js/home-sections-config.js" defer></script>
+    <script src="js/home-products.js?v=3" defer></script>
     <script src="js/cart.js?v=2" defer></script>
     <!--<script>
     // Botón flotante para volver al panel si el admin está autenticado

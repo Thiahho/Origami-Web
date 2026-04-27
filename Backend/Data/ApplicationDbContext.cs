@@ -17,10 +17,12 @@ namespace OrigamiBack.Data
         public DbSet<ProductosVariantes> ProductosVariantes { get; set; }
         public DbSet<CondicionProducto> CondicionProductos { get; set; }
         /// VISTAS
-
+        public DbSet<VProductosConVariantes> VProductosConVariantes { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.HasDefaultSchema("public");
             
             modelBuilder.Entity<Usuario>()
                 .ToTable("usuarios")
@@ -58,6 +60,21 @@ namespace OrigamiBack.Data
             .HasForeignKey(v=>v.CondicionId)
             .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<VProductosConVariantes>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("VProductosConVariantes", "public");
+
+                entity.Property(e => e.Marca).HasColumnName("marca");
+                entity.Property(e => e.Modelo).HasColumnName("modelo");
+                entity.Property(e => e.Color).HasColumnName("color");
+                entity.Property(e => e.PrecioModelo).HasColumnName("preciomodelo");
+                entity.Property(e => e.Almacenamiento).HasColumnName("almacenamiento");
+                entity.Property(e => e.Condicion).HasColumnName("condicion");
+                entity.Property(e => e.Activo).HasColumnName("activo");
+            });
+
+
             modelBuilder.Entity<Productos>()
                 .HasMany(p => p.Variantes)
                 .WithOne(v => v.Producto)
@@ -81,7 +98,11 @@ namespace OrigamiBack.Data
                 .WithMany(c=>c.Variantes)
                 .HasForeignKey(v=>v.CondicionId)
                 .OnDelete(DeleteBehavior.Cascade);
-            });
+            }
+
+
+            
+            );
                 
         
           

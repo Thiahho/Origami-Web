@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OrigamiBack.Data.Dtos;
+using OrigamiBack.Data.Vistas;
 
 namespace OrigamiBack.Services.Interface
 {
@@ -28,5 +29,9 @@ namespace OrigamiBack.Services.Interface
         // Modificado: Ya no se valida por RAM
         Task<bool> ExistsVarianteAsync(int productoId, string almacenamiento, string color, int? condicionId);
         Task<bool> ExistsProductoAsync(string marca, string modelo);
+
+
+        Task<List<VProductosConVariantes>> GetVProductosConVariantesAsync(bool? activo = null);
+        
     }
 }

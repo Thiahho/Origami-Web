@@ -8,13 +8,15 @@ namespace OrigamiBack.Data
     {
         public MappingProfile()
         {
-            CreateMap<Productos, ProductoDto>().ReverseMap();
-
             CreateMap<ProductosVariantes, ProductosVariantesDto>()
-                .ForMember(dest => dest.Producto, opt => opt.Ignore());
+                .ForMember(dest => dest.Producto, opt => opt.Ignore())
+                .ForMember(dest => dest.Imagen, opt => opt.MapFrom(src =>
+                    src.Imagen != null ? Convert.ToBase64String(src.Imagen) : null));
             CreateMap<ProductosVariantesDto, ProductosVariantes>()
                 .ForMember(dest => dest.Condicion, opt => opt.Ignore())
-                .ForMember(dest => dest.Producto, opt => opt.Ignore());
+                .ForMember(dest => dest.Producto, opt => opt.Ignore())
+                .ForMember(dest => dest.Imagen, opt => opt.MapFrom(src =>
+                    !string.IsNullOrEmpty(src.Imagen) ? Convert.FromBase64String(src.Imagen) : null));
 
             CreateMap<ProductoDto, Productos>()
                 .ForMember(dest => dest.Img, opt => opt.MapFrom(src =>
