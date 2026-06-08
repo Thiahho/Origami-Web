@@ -159,11 +159,10 @@ try
     }
     else
     {
-        // 🔓 Producción (modo debug): permitir cualquier origin
         options.AddPolicy("ProductionCORS", policy =>
         {
             policy
-                .SetIsOriginAllowed(_ => true) // acepta cualquier Origin
+                .WithOrigins(corsOrigins)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -181,10 +180,10 @@ builder.Services.AddRateLimiter(options =>
 
     options.AddFixedWindowLimiter("AuthPolicy", opt =>
     {
-        opt.PermitLimit = builder.Environment.IsDevelopment() ? 100000 : 10000;
+        opt.PermitLimit = builder.Environment.IsDevelopment() ? 100 : 10;
         opt.Window = TimeSpan.FromMinutes(1);
         opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 1000;
+        opt.QueueLimit = 5;
     });
 
     options.AddFixedWindowLimiter("ApiPolicy", opt =>

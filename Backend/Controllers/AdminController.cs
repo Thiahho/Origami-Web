@@ -1,4 +1,5 @@
 ﻿using OrigamiBack.Data;
+using OrigamiBack.Data.Dtos;
 using OrigamiBack.Data.Modelos;
 using OrigamiBack.Services;
 using OrigamiBack.Services.Interface;
@@ -19,7 +20,6 @@ namespace OrigamiBack.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "ADMIN")]
-    // [EnableRateLimiting("AuthPolicy")] // Deshabilitado para permitir intentos ilimitados
     public class AdminController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -36,19 +36,30 @@ namespace OrigamiBack.Controllers
         /// <summary>Crea un nuevo usuario administrador.</summary>
         [HttpPost("registro")]
         [AllowAnonymous]
+        [EnableRateLimiting("AuthPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        // [RateLimit("registro", 2, 10)] // Deshabilitado para permitir intentos ilimitados
-        public async Task<IActionResult> CrearAdmin([FromBody] Usuario usuario)
+        public async Task<IActionResult> CrearAdmin([FromBody] RegistroAdminRequest request)
         {
             try
             {
-                if (string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.ClaveHash))
+                // Verificar clave de bootstrap
+                var bootstrapKey = _configuration["ADMIN_BOOTSTRAP_KEY"]
+                    ?? Environment.GetEnvironmentVariable("ADMIN_BOOTSTRAP_KEY");
+
+                if (string.IsNullOrEmpty(bootstrapKey))
+                    return StatusCode(403, new { message = "Registro de administradores no habilitado" });
+
+                if (request.BootstrapKey != bootstrapKey)
+                    return StatusCode(403, new { message = "Clave de bootstrap inválida" });
+
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 {
                     return BadRequest(new { message = "Email y contraseña son requeridos" });
                 }
 
+                var usuario = new Usuario { Email = request.Email, ClaveHash = request.Password };
                 usuario.Rol = "ADMIN";
                 var usuarioCreado = await _usuarioService.CrearUsuarioAsync(usuario);
 
@@ -76,11 +87,11 @@ namespace OrigamiBack.Controllers
         /// <summary>Inicia sesión como administrador. Devuelve una cookie HttpOnly con el JWT.</summary>
         [HttpPost("login")]
         [AllowAnonymous]
+        [EnableRateLimiting("AuthPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        // [RateLimit("login", 3, 5)] // Deshabilitado para permitir intentos ilimitados
         public async Task<IActionResult> Login([FromBody] Auth auth)
         {
             try
