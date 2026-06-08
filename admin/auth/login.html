@@ -16,19 +16,25 @@
         position: absolute;
         top: 2rem;
         left: 2rem;
-        color: var(--text-color);
+        color: rgba(255, 255, 255, 0.75);
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: var(--nav-item-radius);
-        background: rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.07);
+        font-size: 0.85rem;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+        transition: all 0.2s ease;
       }
 
       .back-link:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(0, 212, 255, 0.1);
+        border-color: rgba(0, 212, 255, 0.3);
+        color: #00d4ff;
       }
       .toggle-password {
         position: absolute;
@@ -47,10 +53,16 @@
     </style>
   </head>
   <body>
+    <div id="bg-bubbles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
     <a href="/Home.html" class="back-link">
       <i class="fa-solid fa-arrow-left"></i>
       Volver a la tienda
     </a>
+
     <div class="login-container">
       <div class="login-card glass-effect">
         <div class="login-header">
@@ -68,6 +80,7 @@
               height="300px"
             />
           </div>
+          <p style="margin:0.75rem 0 0;font-size:0.8rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(0,212,255,0.8);">Panel de Administración</p>
         </div>
 
         <form id="loginForm" class="login-form">
@@ -80,7 +93,7 @@
                 id="email"
                 name="email"
                 required
-                placeholder="Ingresa tu email"
+                placeholder="tu@email.com"
               />
             </div>
           </div>
@@ -94,7 +107,7 @@
                 id="password"
                 name="password"
                 required
-                placeholder="Ingresa tu contraseña"
+                placeholder="••••••••"
               />
               <button
                 type="button"
@@ -106,17 +119,18 @@
             </div>
           </div>
 
-          <button type="submit" class="login-btn">
-            <i class="fa-solid fa-sign-in-alt"></i>
+          <button type="submit" class="login-btn" style="margin-top:0.4rem;">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
             Iniciar Sesión
           </button>
         </form>
 
-        <div
-          id="errorMessage"
-          class="error-message"
-          style="display: none"
-        ></div>
+        <div id="errorMessage" class="error-message" style="display:none;"></div>
+
+        <p style="margin:1.5rem 0 0;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,0.08);font-size:0.78rem;color:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;gap:0.4rem;">
+          <i class="fa-solid fa-shield-halved"></i>
+          Acceso restringido · Solo personal autorizado
+        </p>
       </div>
     </div>
 
@@ -145,13 +159,10 @@
       const body = document.body;
 
       function changeBackground() {
-        const nextImage = new Image();
-        const nextImageIndex =
-          (currentImageIndex + 1) % backgroundImages.length;
-        nextImage.src = backgroundImages[nextImageIndex];
-
         body.style.backgroundImage = `url('${backgroundImages[currentImageIndex]}')`;
-        currentImageIndex = nextImageIndex;
+        body.style.backgroundSize = 'cover';
+        body.style.backgroundPosition = 'center';
+        body.style.backgroundAttachment = 'fixed';
       }
 
       changeBackground();
