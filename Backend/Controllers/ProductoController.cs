@@ -532,7 +532,8 @@ namespace OrigamiBack.Controllers
         }
 
         [HttpGet("con-variantes")]
-        public async Task<IActionResult> GetVPCV([FromBody] bool? activo)
+        [AllowAnonymous]
+        public async Task<IActionResult> GetVPCV([FromQuery] bool? activo)
         {
             var data = await _productoService.GetVProductosConVariantesAsync(activo);
             return Ok(data);

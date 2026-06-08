@@ -14,7 +14,7 @@
     <link rel="prefetch" href="Tienda.html" />
     <link rel="prefetch" href="DetalleProducto.html" />
 
-    <link rel="stylesheet" href="/Home.css?v=11" />
+    <link rel="stylesheet" href="/Home.css?v=14" />
     <link rel="stylesheet" href="/Footer/footer.css?v=3" />
     <link rel="icon" type="image/webp" href="img/LOGO+CIRCULO.webp" />
 
@@ -36,7 +36,7 @@
   </head>
   <body>
     <!-- burbujas decorativas — posición fija, detrás de todo -->
-    <div id="" aria-hidden="true">
+    <div id="bg-bubbles" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span><span></span>
     </div>
@@ -49,18 +49,20 @@
       <div id="home-root"></div>
 
       <section id="info">
-        <h2>SOMOS ORIGAMI</h2>
+        <p style="font-size:0.75rem;font-weight:700;letter-spacing:3px;color:var(--brand-cyan,#00d4ff);text-transform:uppercase;text-align:center;margin:0 0 0.75rem;">Quiénes somos</p>
+        <h2 style="font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 1rem;">Origami Importados</h2>
         <p
           style="
-            font-size: 1.2rem;
-            color: var(--text-muted-color);
-            text-align: center;
+            font-size:1.05rem;
+            color:var(--text-muted-color);
+            text-align:center;
+            max-width:560px;
+            margin:0 auto;
+            line-height:1.7;
           "
         >
-          Somos un emprendimiento enfocado en la importación y venta de
-          productos tecnológicos, insumos electrónicos y dispositivos móviles.
-          Ofrecemos atención personalizada, productos originales y precios
-          accesibles.
+          Emprendimiento dedicado a la importación y venta de dispositivos móviles, accesorios y electrónica.
+          Atención personalizada, productos originales y precios accesibles.
         </p>
       </section>
     </main>
@@ -94,8 +96,8 @@
             <strong id="cartTotal">$0</strong>
           </div>
           <div class="cart-modal__actions">
-            <button id="sendWhatsAppBtn" class="detalle primary" type="button">
-              Cotizar
+            <button id="sendWhatsAppBtn" class="detalle-btn primary" type="button">
+              Cotizar por WhatsApp
             </button>
           </div>
         </footer>

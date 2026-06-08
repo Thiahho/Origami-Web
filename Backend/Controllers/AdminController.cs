@@ -1,4 +1,5 @@
 ﻿using OrigamiBack.Data;
+using OrigamiBack.Data.Dtos;
 using OrigamiBack.Data.Modelos;
 using OrigamiBack.Services;
 using OrigamiBack.Services.Interface;
@@ -19,36 +20,48 @@ namespace OrigamiBack.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "ADMIN")]
-    // [EnableRateLimiting("AuthPolicy")] // Deshabilitado para permitir intentos ilimitados
     public class AdminController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IUsuarioService _usuarioService;
-        //private readonly ICelularesService _celularesService;
-        public AdminController(ApplicationDbContext context, IConfiguration config, IUsuarioService usuarioService)
+        private readonly ILogger<AdminController> _logger;
+
+        public AdminController(ApplicationDbContext context, IConfiguration config, IUsuarioService usuarioService, ILogger<AdminController> logger)
         {
             _context = context;
             _configuration = config;
             _usuarioService = usuarioService;
+            _logger = logger;
         }
 
         /// <summary>Crea un nuevo usuario administrador.</summary>
         [HttpPost("registro")]
         [AllowAnonymous]
+        [EnableRateLimiting("AuthPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        // [RateLimit("registro", 2, 10)] // Deshabilitado para permitir intentos ilimitados
-        public async Task<IActionResult> CrearAdmin([FromBody] Usuario usuario)
+        public async Task<IActionResult> CrearAdmin([FromBody] RegistroAdminRequest request)
         {
             try
             {
-                if (string.IsNullOrEmpty(usuario.Email) || string.IsNullOrEmpty(usuario.ClaveHash))
+                // Verificar clave de bootstrap
+                var bootstrapKey = _configuration["ADMIN_BOOTSTRAP_KEY"]
+                    ?? Environment.GetEnvironmentVariable("ADMIN_BOOTSTRAP_KEY");
+
+                if (string.IsNullOrEmpty(bootstrapKey))
+                    return StatusCode(403, new { message = "Registro de administradores no habilitado" });
+
+                if (request.BootstrapKey != bootstrapKey)
+                    return StatusCode(403, new { message = "Clave de bootstrap inválida" });
+
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 {
                     return BadRequest(new { message = "Email y contraseña son requeridos" });
                 }
 
+                var usuario = new Usuario { Email = request.Email, ClaveHash = request.Password };
                 usuario.Rol = "ADMIN";
                 var usuarioCreado = await _usuarioService.CrearUsuarioAsync(usuario);
 
@@ -69,18 +82,19 @@ namespace OrigamiBack.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error al crear el administrador", error = ex.Message });
+                _logger.LogError(ex, "Error al crear el administrador");
+                return StatusCode(500, new { message = "Error al crear el administrador" });
             }
         }
 
         /// <summary>Inicia sesión como administrador. Devuelve una cookie HttpOnly con el JWT.</summary>
         [HttpPost("login")]
         [AllowAnonymous]
+        [EnableRateLimiting("AuthPolicy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        // [RateLimit("login", 3, 5)] // Deshabilitado para permitir intentos ilimitados
         public async Task<IActionResult> Login([FromBody] Auth auth)
         {
             try
@@ -126,13 +140,7 @@ namespace OrigamiBack.Controllers
 
                 Response.Cookies.Append("AuthToken", token, cookieOptions);
 
-                // Log para debug
-                Console.WriteLine($"\n========== LOGIN ==========");
-                Console.WriteLine($"✅ Usuario: {usuario.Email}");
-                Console.WriteLine($"✅ Token generado (primeros 20 chars): {token.Substring(0, Math.Min(20, token.Length))}...");
-                Console.WriteLine($"✅ Cookie configurada: HttpOnly={cookieOptions.HttpOnly}, Secure={cookieOptions.Secure}, SameSite={cookieOptions.SameSite}");
-                Console.WriteLine($"✅ Environment: {_configuration["ASPNETCORE_ENVIRONMENT"]}");
-                Console.WriteLine($"===========================\n");
+                _logger.LogInformation("Login exitoso para {Email}", usuario.Email);
 
                 return Ok(new
                 {
@@ -147,7 +155,8 @@ namespace OrigamiBack.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error al iniciar sesión", error = ex.Message });
+                _logger.LogError(ex, "Error al iniciar sesión");
+                return StatusCode(500, new { message = "Error al iniciar sesión" });
             }
         }
 
@@ -181,58 +190,29 @@ namespace OrigamiBack.Controllers
         {
             try
             {
-                Console.WriteLine("\n========== VERIFY SESSION ==========");
-                Console.WriteLine($"Cookies recibidas: {Request.Cookies.Count}");
-
-                foreach (var cookie in Request.Cookies)
+                if (Request.Cookies.TryGetValue("AuthToken", out _) && User.Identity?.IsAuthenticated == true)
                 {
-                    Console.WriteLine($"  - {cookie.Key}: {cookie.Value?.Substring(0, Math.Min(20, cookie.Value.Length))}...");
-                }
+                    var email = User.FindFirst(ClaimTypes.Email)?.Value;
+                    _logger.LogDebug("Sesión válida para {Email}", email);
 
-                // Verificar si hay token en cookies
-                if (Request.Cookies.TryGetValue("AuthToken", out var token))
-                {
-                    Console.WriteLine($"✅ AuthToken ENCONTRADO");
-                    Console.WriteLine($"Usuario autenticado: {User.Identity?.IsAuthenticated}");
-                    Console.WriteLine($"Claims count: {User.Claims?.Count() ?? 0}");
-
-                    // El middleware JwtCookieMiddleware ya habrá validado el token
-                    if (User.Identity?.IsAuthenticated == true)
+                    return Ok(new
                     {
-                        var email = User.FindFirst(ClaimTypes.Email)?.Value;
-                        Console.WriteLine($"✅ SESIÓN VÁLIDA para: {email}");
-                        Console.WriteLine($"====================================\n");
-
-                        return Ok(new
+                        isAuthenticated = true,
+                        usuario = new
                         {
-                            isAuthenticated = true,
-                            usuario = new
-                            {
-                                id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                                email = email,
-                                rol = User.FindFirst(ClaimTypes.Role)?.Value
-                            }
-                        });
-                    }
-                    else
-                    {
-                        Console.WriteLine("❌ Token presente pero NO autenticado (middleware falló)");
-                        Console.WriteLine($"====================================\n");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("❌ AuthToken NO encontrado");
-                    Console.WriteLine($"====================================\n");
+                            id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                            email = email,
+                            rol = User.FindFirst(ClaimTypes.Role)?.Value
+                        }
+                    });
                 }
 
                 return Ok(new { isAuthenticated = false });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Exception: {ex.Message}");
-                Console.WriteLine($"====================================\n");
-                return StatusCode(500, new { message = "Error al verificar sesión", error = ex.Message });
+                _logger.LogError(ex, "Error al verificar sesión");
+                return StatusCode(500, new { message = "Error al verificar sesión" });
             }
         }
 

@@ -453,16 +453,22 @@ body {
 }
 .detalle-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.35),
-    0 0 34px rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.35);
 }
 .detalle-btn.primary {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.28),
-    rgba(255, 255, 255, 0.16)
-  );
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  color: #001d3d;
+  border-color: transparent;
+  box-shadow: 0 4px 24px rgba(0, 212, 255, 0.38);
+  font-weight: 900;
+}
+
+.detalle-btn.primary:hover {
+  background: linear-gradient(135deg, #33ddff 0%, #00aadd 100%);
+  box-shadow: 0 8px 36px rgba(0, 212, 255, 0.55);
+  border-color: transparent;
 }
 
 /* ---------- Responsivo ---------- */

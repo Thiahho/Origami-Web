@@ -75,21 +75,20 @@ namespace OrigamiBack.Controllers
         /// </summary>
         private string GetClientIp()
         {
-            // Intentar obtener la IP desde headers de proxy/load balancer
             var xForwardedFor = Request.Headers["X-Forwarded-For"].FirstOrDefault();
             if (!string.IsNullOrEmpty(xForwardedFor))
             {
+                // Tomar la última IP de la cadena (agregada por el proxy de confianza, no por el cliente)
                 var ips = xForwardedFor.Split(',');
-                return ips[0].Trim(); // Tomar la primera IP (cliente original)
+                var candidate = ips[^1].Trim();
+                if (System.Net.IPAddress.TryParse(candidate, out _))
+                    return candidate;
             }
 
             var xRealIp = Request.Headers["X-Real-IP"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(xRealIp))
-            {
+            if (!string.IsNullOrEmpty(xRealIp) && System.Net.IPAddress.TryParse(xRealIp.Trim(), out _))
                 return xRealIp.Trim();
-            }
 
-            // Fallback a la IP directa de la conexión
             return HttpContext.Connection.RemoteIpAddress?.ToString() ?? "0.0.0.0";
         }
     }

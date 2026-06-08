@@ -16,32 +16,40 @@
         position: absolute;
         top: 2rem;
         left: 2rem;
-        color: var(--text-color);
+        color: rgba(255, 255, 255, 0.75);
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: var(--nav-item-radius);
-        background: rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.07);
+        font-size: 0.85rem;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+        transition: all 0.2s ease;
       }
 
       .back-link:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(0, 212, 255, 0.1);
+        border-color: rgba(0, 212, 255, 0.3);
+        color: #00d4ff;
       }
 
       .admin-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: var(--active-text-color);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: var(--large-radius);
-        font-size: 0.9rem;
+        background: rgba(0, 212, 255, 0.15);
+        border: 1px solid rgba(0, 212, 255, 0.3);
+        color: #e8f8ff;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
         font-weight: 600;
-        margin-bottom: 1rem;
+        letter-spacing: 0.3px;
+        margin-bottom: 0.75rem;
       }
 
       .input-group {
@@ -82,6 +90,11 @@
     </style>
   </head>
   <body>
+    <div id="bg-bubbles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
     <a href="../Home.html" class="back-link">
       <i class="fa-solid fa-arrow-left"></i>
       Volver a la tienda
@@ -91,30 +104,25 @@
       <div class="login-card glass-effect">
         <div class="login-header">
           <div class="logo">
-            <img
-              src="../img/LOGO+CIRCULO.webp"
-              alt="Origami"
-              class="logo-img"
-            />
-            <h1>Panel de Administración</h1>
+            <img src="../img/LOGO+CIRCULO.webp" alt="Origami" class="logo-img" />
             <div class="admin-badge">
               <i class="fa-solid fa-user-shield"></i>
-              Administradores y Empleados
+              Panel de Administración
             </div>
           </div>
         </div>
 
         <form id="loginForm" class="login-form">
           <div class="form-group">
-            <label for="email">Usuario</label>
+            <label for="email">Email</label>
             <div class="input-group">
-              <i class="fa-solid fa-user"></i>
+              <i class="fa-solid fa-envelope"></i>
               <input
                 type="email"
                 id="email"
                 name="email"
                 required
-                placeholder="Ingresa tu email"
+                placeholder="tu@email.com"
               />
             </div>
           </div>
@@ -128,7 +136,7 @@
                 id="password"
                 name="password"
                 required
-                placeholder="Ingresa tu contraseña"
+                placeholder="••••••••"
               />
               <button
                 type="button"
@@ -140,31 +148,18 @@
             </div>
           </div>
 
-          <button type="submit" class="login-btn">
-            <i class="fa-solid fa-sign-in-alt"></i>
+          <button type="submit" class="login-btn" style="margin-top:0.4rem;">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
             Acceder al Panel
           </button>
         </form>
 
-        <div
-          id="errorMessage"
-          class="error-message"
-          style="display: none"
-        ></div>
+        <div id="errorMessage" class="error-message" style="display:none;"></div>
 
-        <div
-          style="
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-          "
-        >
-          <p style="color: var(--text-muted-color); font-size: 0.85rem">
-            <i class="fa-solid fa-shield-halved"></i>
-            Acceso restringido solo para personal autorizado
-          </p>
-        </div>
+        <p style="margin:1.5rem 0 0;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,0.08);font-size:0.78rem;color:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;gap:0.4rem;">
+          <i class="fa-solid fa-shield-halved"></i>
+          Acceso restringido · Solo personal autorizado
+        </p>
       </div>
     </div>
 

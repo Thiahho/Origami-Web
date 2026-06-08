@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(
         (sec) => `
       <section id="${sec.id}" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-start;justify-content:center;overflow-x:visible;">
-        <h2 style="flex-basis:100%;margin:0 0 1rem 0">${sec.title}</h2>
+        <h2 style="flex-basis:100%;margin:0 0 1.5rem 0;font-size:1.6rem;font-weight:800;letter-spacing:-0.5px;">${sec.title}</h2>
         ${Array.from({ length: sec.limit })
           .map(
             () => `
@@ -70,8 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!filtered.length) {
           container.innerHTML = `
-            <h2 style="flex-basis:100%;margin:0 0 1rem 0">${sec.title}</h2>
-            <div class="glass-effect" style="padding:1rem;">No hay productos disponibles.</div>`;
+            <h2 style="flex-basis:100%;margin:0 0 1.5rem 0;font-size:1.6rem;font-weight:800;letter-spacing:-0.5px;">${sec.title}</h2>
+            <div class="glass-effect" style="padding:1rem;opacity:0.7;">No hay productos disponibles.</div>`;
           continue;
         }
 
@@ -109,16 +109,16 @@ document.addEventListener("DOMContentLoaded", () => {
           .join("");
 
         container.innerHTML = `
-          <h2 style="flex-basis:100%;margin:0 0 1rem 0">${sec.title}</h2>
-          ${cardsHTML}
-          <div style="flex-basis:100%;text-align:center;">
+          <div style="flex-basis:100%;margin:0 0 1.5rem 0;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+            <h2 style="margin:0;font-size:1.6rem;font-weight:800;letter-spacing:-0.5px;color:var(--text-color);">${sec.title}</h2>
             <a href="Tienda.html"
-               style="display:inline-block;padding:0.75rem 1.5rem;color:var(--text-color);text-decoration:none;font-weight:500;border-radius:8px;transition:background 0.3s ease;"
-               onmouseenter="this.style.background='rgba(255,255,255,0.1)'"
-               onmouseleave="this.style.background='transparent'">
-              Ver más
+               style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1.1rem;color:#e8f8ff;text-decoration:none;font-weight:600;font-size:0.85rem;border-radius:999px;border:1px solid rgba(0,212,255,0.3);background:rgba(0,212,255,0.1);backdrop-filter:blur(10px);transition:all 0.2s ease;white-space:nowrap;"
+               onmouseenter="this.style.background='rgba(0,212,255,0.2)';this.style.borderColor='rgba(0,212,255,0.5)'"
+               onmouseleave="this.style.background='rgba(0,212,255,0.1)';this.style.borderColor='rgba(0,212,255,0.3)'">
+              Ver todo <i class="fa-solid fa-arrow-right" style="font-size:0.75rem;"></i>
             </a>
-          </div>`;
+          </div>
+          ${cardsHTML}`;
       }
     } catch (e) {
       console.error("Error cargando productos del backend:", e);
