@@ -96,11 +96,12 @@ namespace OrigamiBack.Services
                     new Claim(ClaimTypes.Role, usuario.Rol ?? "USER")
                 };
 
+                var expiryHours = _config.GetValue<int>("JWTKey:TokenExpiryTimeInHour", 1);
                 var token = new JwtSecurityToken(
                     issuer: _config["JWTKey:ValidIssuer"],
                     audience: _config["JWTKey:ValidAudience"],
                     claims: claims,
-                    expires: DateTime.Now.AddHours(8),
+                    expires: DateTime.UtcNow.AddHours(expiryHours),
                     signingCredentials: credentials
                 );
 

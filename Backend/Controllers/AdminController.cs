@@ -25,12 +25,14 @@ namespace OrigamiBack.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IUsuarioService _usuarioService;
-        //private readonly ICelularesService _celularesService;
-        public AdminController(ApplicationDbContext context, IConfiguration config, IUsuarioService usuarioService)
+        private readonly ILogger<AdminController> _logger;
+
+        public AdminController(ApplicationDbContext context, IConfiguration config, IUsuarioService usuarioService, ILogger<AdminController> logger)
         {
             _context = context;
             _configuration = config;
             _usuarioService = usuarioService;
+            _logger = logger;
         }
 
         /// <summary>Crea un nuevo usuario administrador.</summary>
@@ -80,7 +82,8 @@ namespace OrigamiBack.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error al crear el administrador", error = ex.Message });
+                _logger.LogError(ex, "Error al crear el administrador");
+                return StatusCode(500, new { message = "Error al crear el administrador" });
             }
         }
 
@@ -137,13 +140,7 @@ namespace OrigamiBack.Controllers
 
                 Response.Cookies.Append("AuthToken", token, cookieOptions);
 
-                // Log para debug
-                Console.WriteLine($"\n========== LOGIN ==========");
-                Console.WriteLine($"✅ Usuario: {usuario.Email}");
-                Console.WriteLine($"✅ Token generado (primeros 20 chars): {token.Substring(0, Math.Min(20, token.Length))}...");
-                Console.WriteLine($"✅ Cookie configurada: HttpOnly={cookieOptions.HttpOnly}, Secure={cookieOptions.Secure}, SameSite={cookieOptions.SameSite}");
-                Console.WriteLine($"✅ Environment: {_configuration["ASPNETCORE_ENVIRONMENT"]}");
-                Console.WriteLine($"===========================\n");
+                _logger.LogInformation("Login exitoso para {Email}", usuario.Email);
 
                 return Ok(new
                 {
@@ -158,7 +155,8 @@ namespace OrigamiBack.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error al iniciar sesión", error = ex.Message });
+                _logger.LogError(ex, "Error al iniciar sesión");
+                return StatusCode(500, new { message = "Error al iniciar sesión" });
             }
         }
 
@@ -192,58 +190,29 @@ namespace OrigamiBack.Controllers
         {
             try
             {
-                Console.WriteLine("\n========== VERIFY SESSION ==========");
-                Console.WriteLine($"Cookies recibidas: {Request.Cookies.Count}");
-
-                foreach (var cookie in Request.Cookies)
+                if (Request.Cookies.TryGetValue("AuthToken", out _) && User.Identity?.IsAuthenticated == true)
                 {
-                    Console.WriteLine($"  - {cookie.Key}: {cookie.Value?.Substring(0, Math.Min(20, cookie.Value.Length))}...");
-                }
+                    var email = User.FindFirst(ClaimTypes.Email)?.Value;
+                    _logger.LogDebug("Sesión válida para {Email}", email);
 
-                // Verificar si hay token en cookies
-                if (Request.Cookies.TryGetValue("AuthToken", out var token))
-                {
-                    Console.WriteLine($"✅ AuthToken ENCONTRADO");
-                    Console.WriteLine($"Usuario autenticado: {User.Identity?.IsAuthenticated}");
-                    Console.WriteLine($"Claims count: {User.Claims?.Count() ?? 0}");
-
-                    // El middleware JwtCookieMiddleware ya habrá validado el token
-                    if (User.Identity?.IsAuthenticated == true)
+                    return Ok(new
                     {
-                        var email = User.FindFirst(ClaimTypes.Email)?.Value;
-                        Console.WriteLine($"✅ SESIÓN VÁLIDA para: {email}");
-                        Console.WriteLine($"====================================\n");
-
-                        return Ok(new
+                        isAuthenticated = true,
+                        usuario = new
                         {
-                            isAuthenticated = true,
-                            usuario = new
-                            {
-                                id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                                email = email,
-                                rol = User.FindFirst(ClaimTypes.Role)?.Value
-                            }
-                        });
-                    }
-                    else
-                    {
-                        Console.WriteLine("❌ Token presente pero NO autenticado (middleware falló)");
-                        Console.WriteLine($"====================================\n");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("❌ AuthToken NO encontrado");
-                    Console.WriteLine($"====================================\n");
+                            id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                            email = email,
+                            rol = User.FindFirst(ClaimTypes.Role)?.Value
+                        }
+                    });
                 }
 
                 return Ok(new { isAuthenticated = false });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Exception: {ex.Message}");
-                Console.WriteLine($"====================================\n");
-                return StatusCode(500, new { message = "Error al verificar sesión", error = ex.Message });
+                _logger.LogError(ex, "Error al verificar sesión");
+                return StatusCode(500, new { message = "Error al verificar sesión" });
             }
         }
 
