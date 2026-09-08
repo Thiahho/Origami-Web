@@ -12,7 +12,7 @@ using OrigamiBack.Data;
 namespace OrigamiBack.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260427202321_AddProductosTables")]
+    [Migration("20260908214425_AddProductosTables")]
     partial class AddProductosTables
     {
         /// <inheritdoc />

@@ -23,7 +23,7 @@ export const productoApi = {
 };
 
 export const adminApi = {
-  verify: () => api.get('/Admin/verify'),
-  login: (data) => api.post('/Admin/login', data),
-  logout: () => api.post('/Admin/logout'),
+  verify: () => api.get('/api/Admin/verify'),
+  login: (data) => api.post('/api/Admin/login', data),
+  logout: () => api.post('/api/Admin/logout'),
 };
